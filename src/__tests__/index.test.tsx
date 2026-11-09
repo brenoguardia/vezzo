@@ -1,6 +1,6 @@
 import { expect, it, jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react-native";
-import Today from "@/app/(tabs)/index";
+import Today from "@/app/(tabs)/home";
 
 // O client do Better Auth é ESM e não é necessário para renderizar a tela.
 jest.mock("@/auth/client", () => ({ authClient: {} }));
