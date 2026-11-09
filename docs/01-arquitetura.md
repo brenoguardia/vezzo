@@ -2,7 +2,7 @@
 
 ## Visão
 ```
-[ App Expo (telas em app/) ] --fetch /api/*--> [ Servidor Expo Router: app/api/**/+api.ts ]
+[ App Expo (telas em src/app/) ] --fetch /api/*--> [ Servidor Expo Router: src/app/api/**/+api.ts ]
          |                                         |--Prisma--> [ MongoDB Atlas ]
          |                                         |--Better Auth (sessões, OAuth)
          |                                         \--Resend (e-mails)
@@ -12,13 +12,13 @@ Um único projeto Expo contém app e backend. O mesmo código TypeScript e os me
 
 ## Expo Router full stack (API Routes)
 - `app.json`: `"web": { "output": "server" }` e plugin `expo-router` com `"origin"` (URL de produção; usado para resolver `fetch("/api/...")` nativo). Consulte a documentação atual de "API Routes" do Expo Router, pois a configuração pode mudar entre SDKs.
-- Cada arquivo `app/api/**/+api.ts` exporta funções nomeadas por método HTTP (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) com assinatura `(request: Request, params: Record<string,string>) => Response` (Web Standard Request/Response). Arquivos `+api.ts` não entram no bundle do cliente.
+- Cada arquivo `src/app/api/**/+api.ts` exporta funções nomeadas por método HTTP (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) com assinatura `(request: Request, params: Record<string,string>) => Response` (Web Standard Request/Response). Arquivos `+api.ts` não entram no bundle do cliente.
 - Rotas dinâmicas: `habits/[id]+api.ts`; catch-all: `auth/[...auth]+api.ts`.
 - Em desenvolvimento, `bunx expo start` serve as rotas junto com o app. Em produção o servidor é gerado com `bunx expo export --platform web` e hospedado (ver abaixo). O app nativo aponta para o servidor por `EXPO_PUBLIC_API_URL`.
 - **Fronteira cliente/servidor**: código de servidor fica em `src/server/` e só é importado por arquivos `+api.ts`. Variáveis sem prefixo `EXPO_PUBLIC_` existem apenas no servidor. Nunca importar `src/server` de uma tela.
 
 ### Hospedagem e riscos (decidir na Fase 0)
-- **EAS Hosting** (`eas deploy`) é o caminho padrão do Expo. Ele roda em ambiente de edge/worker. **Verifique antes de avançar** se Prisma 6 com MongoDB (driver com conexão TCP e engine do Prisma) e Resend funcionam nesse ambiente. Se não funcionarem, use um servidor Node: o Expo oferece adaptadores de servidor (por exemplo Express) para hospedar o build em Node (Railway, Fly.io, Render ou VPS). A estrutura de código não muda; só o deploy.
+- **Decisão da Fase 0: servidor Node** com `expo-server/adapter/express` (`server.js`, `Dockerfile`). O EAS Hosting roda em workers e não carrega o engine nativo do Prisma (testado: `/api/health` ok, rotas com Prisma falham); Prisma 6 + MongoDB + Resend funcionam em Node. Detalhes em `docs/11-hospedagem.md`.
 - Reutilizar uma única instância de `PrismaClient` por processo (`src/server/db.ts`) e pool de conexões do MongoDB Atlas adequado ao modelo de hospedagem.
 - Limite de taxa em memória não funciona em ambientes sem estado; use o rate limit do Better Auth com armazenamento em banco e um contador em MongoDB para as demais rotas.
 - Variáveis secretas configuradas no host (EAS: `eas env:create`), nunca no bundle do cliente.
@@ -28,7 +28,7 @@ Um único projeto Expo contém app e backend. O mesmo código TypeScript e os me
 vezzo/
   app.json  package.json  tsconfig.json  eslint.config.js  .env
   prisma/ schema.prisma  seed.ts
-  app/
+  src/app/
     _layout.tsx
     (auth)/ welcome.tsx  sign-in.tsx  sign-up.tsx
             forgot-password.tsx  check-email.tsx  reset-password.tsx
@@ -58,7 +58,7 @@ vezzo/
 ```
 Exemplo de rota:
 ```ts
-// app/api/v1/logs/index+api.ts
+// src/app/api/v1/logs/index+api.ts
 import { withSession, json } from "@/server/http";
 import { logUpsert } from "@/shared/schemas";
 import { prisma } from "@/server/db";
@@ -73,7 +73,7 @@ export const PUT = withSession(async ({ userId, body }) => {
 
 ## Navegação (Expo Router)
 - Grupo `(auth)`: sem sessão. `(onboarding)`: sessão e `Profile.onboardingDone = false`. `(tabs)`: sessão e onboarding concluído.
-- Guarda em `app/_layout.tsx`: lê `authClient.useSession()` e `useOnboardingStore`; redireciona com `<Redirect />`.
+- Guarda em `src/app/_layout.tsx`: lê `authClient.useSession()` e `useOnboardingStore`; redireciona com `<Redirect />`.
 - Abas (bottom bar flutuante, 68 pt): Hoje, Progresso, Hábitos, Perfil.
 - Tela de tema é aberta a partir de Perfil. Detalhe do hábito e sequência abrem em pilha.
 

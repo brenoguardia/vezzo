@@ -55,7 +55,7 @@ Estado de referência: tema escuro, cor lima, idioma pt-BR. As telas funcionam e
 | Banco | MongoDB (Atlas, com replica set) |
 | Notificações | `expo-notifications` |
 | Gerenciador de pacotes | Bun (`bun install`, `bunx`, `bun.lock`) |
-| Backend | API Routes do Expo Router (`app/api/**/+api.ts`), no mesmo projeto do app |
+| Backend | API Routes do Expo Router (`src/app/api/**/+api.ts`), no mesmo projeto do app |
 
 Projeto único (sem monorepo e sem API externa): o Expo Router serve o app e as rotas de API. Telas e código de cliente nunca importam Prisma, Resend nem MongoDB; só os arquivos `+api.ts` e `src/server/**` fazem isso. Ver `docs/01-arquitetura.md`.
 

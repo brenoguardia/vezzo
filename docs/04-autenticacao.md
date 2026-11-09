@@ -41,7 +41,7 @@ export const auth = betterAuth({
 ```
 Monte como rota do Expo Router:
 ```ts
-// app/api/auth/[...auth]+api.ts
+// src/app/api/auth/[...auth]+api.ts
 import { auth } from "@/server/auth";
 export const GET = (request: Request) => auth.handler(request);
 export const POST = (request: Request) => auth.handler(request);

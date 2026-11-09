@@ -3,11 +3,11 @@
 App de hábitos. Leia `README.md` e `docs/` antes de implementar. A referência visual é `design/Vezzo Habit App.dc.html` e as capturas em `screenshots/` (HTML apenas para consulta).
 
 ## Stack
-React Native + Expo (SDK mais recente) com **Expo Router full stack**: telas em `app/` e API em `app/api/**/+api.ts`. React Hook Form, Zustand, Zod, Better Auth (+ `@better-auth/expo`), Prisma 6 + MongoDB, Resend, `expo-notifications`. Projeto único, sem monorepo e sem servidor separado.
+React Native + Expo (SDK mais recente) com **Expo Router full stack**: telas em `src/app/` e API em `src/app/api/**/+api.ts`. React Hook Form, Zustand, Zod, Better Auth (+ `@better-auth/expo`), Prisma 6 + MongoDB, Resend, `expo-notifications`. Projeto único, sem monorepo e sem servidor separado.
 
 ## Estrutura
 ```
-app/                 telas (Expo Router) e rotas de API (+api.ts)
+src/app/             telas (Expo Router) e rotas de API (src/app/api/**/+api.ts)
 src/shared/          schemas Zod, tipos, constantes, stats (importável por cliente e servidor)
 src/server/          SOMENTE servidor: prisma, auth, resend, helpers de rota
 src/...              cliente: api, auth, components, features, i18n, store, lib
@@ -19,7 +19,7 @@ prisma/              schema.prisma e seed
 2. Todo dado que cruza a rede tem schema Zod em `src/shared`. Rotas de API e cliente importam o mesmo schema.
 3. Formulários: React Hook Form + `zodResolver`. Nunca validar à mão.
 4. Zustand só para estado de cliente (tema, onboarding em andamento, cache de hábitos, fila de sincronização). Dados do servidor são carregados pelo cliente de API (`src/api`) e gravados no store.
-5. **Fronteira cliente/servidor**: `@prisma/client`, `resend`, `better-auth` (instância de servidor) e variáveis secretas só podem ser importados em `app/**/+api.ts` e `src/server/**`. Telas e `src/**` fora de `src/server` nunca os importam. Garanta com a regra ESLint `no-restricted-imports`.
+5. **Fronteira cliente/servidor**: `@prisma/client`, `resend`, `better-auth` (instância de servidor) e variáveis secretas só podem ser importados em `src/app/**/+api.ts` e `src/server/**`. Telas e `src/**` fora de `src/server` nunca os importam. Garanta com a regra ESLint `no-restricted-imports`.
 6. Auth exclusivamente via Better Auth. Não criar fluxo próprio de sessão ou hash de senha.
 7. Estilo: tokens de `src/shared/tokens.ts`. Sem cores soltas no JSX. Tema (cor de destaque e modo) vem do store.
 8. Textos em i18n (`pt-BR` padrão, `en`). Sem string fixa em componente.

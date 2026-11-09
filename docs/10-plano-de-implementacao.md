@@ -9,10 +9,10 @@ Prompt:
 Aceite: `bun run typecheck` passa; `bun install` gera apenas `bun.lock`; app abre no simulador; `GET /api/health` responde em dev e no host escolhido; consulta de teste ao MongoDB funciona no host escolhido.
 
 ## Fase 1 · Banco e API
-> Leia docs/02 e docs/03. Configure Prisma 6 com MongoDB (`src/server/db.ts` com instância única), escreva `prisma/schema.prisma` (modelos do domínio; os do Better Auth virão na fase 2), seed com categorias e templates a partir de `src/shared/categories.ts`. Implemente as rotas `app/api/v1/catalog`, `profile`, `habits`, `logs`, `stats` com Zod e `withSession` (sessão simulada em teste). Escreva os testes de `src/shared/stats.ts`, streak e de autorização por usuário.
+> Leia docs/02 e docs/03. Configure Prisma 6 com MongoDB (`src/server/db.ts` com instância única), escreva `prisma/schema.prisma` (modelos do domínio; os do Better Auth virão na fase 2), seed com categorias e templates a partir de `src/shared/categories.ts`. Implemente as rotas `src/app/api/v1/catalog`, `profile`, `habits`, `logs`, `stats` com Zod e `withSession` (sessão simulada em teste). Escreva os testes de `src/shared/stats.ts`, streak e de autorização por usuário.
 
 ## Fase 2 · Autenticação e e-mail
-> Leia docs/04. Integre Better Auth com adapter Prisma (mongodb), plugin Expo, rota `app/api/auth/[...auth]+api.ts`, e-mail/senha com verificação e redefinição, Apple e Google. Gere os modelos com o CLI e mescle no schema. Implemente `sendEmail` com Resend e os templates verify-email, reset-password, password-changed em pt-BR e en. Crie o hook que cria `Profile` após cadastro. Teste o fluxo de redefinição de ponta a ponta com o domínio de teste do Resend.
+> Leia docs/04. Integre Better Auth com adapter Prisma (mongodb), plugin Expo, rota `src/app/api/auth/[...auth]+api.ts`, e-mail/senha com verificação e redefinição, Apple e Google. Gere os modelos com o CLI e mescle no schema. Implemente `sendEmail` com Resend e os templates verify-email, reset-password, password-changed em pt-BR e en. Crie o hook que cria `Profile` após cadastro. Teste o fluxo de redefinição de ponta a ponta com o domínio de teste do Resend.
 
 ## Fase 3 · Design tokens e componentes base
 > Leia docs/06 e docs/05 (componentes recorrentes). Implemente tema (useThemeStore, useTheme), fonte Manrope e os componentes: Button, Field, PasswordField, Card, Chip, EmojiTile, Ring, BarChart, DayPills, Stepper, ProgressSteps, TabBar flutuante. Crie uma tela de playground em modo dev que exibe todos em claro e escuro com as 7 cores.

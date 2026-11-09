@@ -1,6 +1,6 @@
 # 03 · API Routes (Expo Router) e schemas Zod
 
-Base: `/api`. Cada rota é um arquivo `+api.ts` em `app/api/` (ver `docs/01-arquitetura.md`). Rotas de auth ficam em `/api/auth/*` (Better Auth). Demais rotas em `/api/v1/*` exigem sessão (`withSession`), validam entrada com Zod (`body(schema)` e `query(schema)` de `src/server/http.ts`) e devolvem JSON via `json()`.
+Base: `/api`. Cada rota é um arquivo `+api.ts` em `src/app/api/` (ver `docs/01-arquitetura.md`). Rotas de auth ficam em `/api/auth/*` (Better Auth). Demais rotas em `/api/v1/*` exigem sessão (`withSession`), validam entrada com Zod (`body(schema)` e `query(schema)` de `src/server/http.ts`) e devolvem JSON via `json()`.
 
 Erro padrão: `{ "error": { "code": "VALIDATION_ERROR" | "UNAUTHORIZED" | "NOT_FOUND" | "RATE_LIMITED", "message": string, "fields"?: Record<string,string> } }`.
 
