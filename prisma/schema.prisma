@@ -1,0 +1,122 @@
+// Modelos do domínio (docs/02). Os modelos do Better Auth entram na Fase 2.
+// MongoDB exige replica set. Use `bunx prisma db push` (sem migrations).
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum ThemeMode {
+  DARK
+  LIGHT
+  SYSTEM
+}
+
+enum GoalUnit {
+  COUNT
+  LITERS
+  MILLILITERS
+  MINUTES
+  PAGES
+  BOOLEAN
+  CURRENCY
+}
+
+enum LogStatus {
+  PENDING
+  DONE
+  SKIPPED
+}
+
+enum LogSource {
+  APP
+  NOTIFICATION
+}
+
+model Profile {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String    @unique
+  displayName    String
+  accent         String    @default("#b9d94c")
+  themeMode      ThemeMode @default(SYSTEM)
+  language       String    @default("pt-BR")
+  timezone       String    @default("America/Sao_Paulo")
+  onboardingDone Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Category {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  slug      String          @unique
+  namePt    String
+  nameEn    String
+  order     Int
+  templates HabitTemplate[]
+}
+
+model HabitTemplate {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug             String   @unique
+  categoryId       String   @db.ObjectId
+  category         Category @relation(fields: [categoryId], references: [id])
+  namePt           String
+  nameEn           String
+  emoji            String
+  defaultGoalValue Float
+  goalUnit         GoalUnit
+  defaultDays      Int[]
+  order            Int
+}
+
+model Habit {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String
+  templateId   String?     @db.ObjectId
+  name         String
+  emoji        String
+  goalValue    Float
+  goalUnit     GoalUnit
+  days         Int[]
+  reminders    String[]
+  quickActions Boolean     @default(true)
+  order        Int         @default(0)
+  archivedAt   DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  logs         HabitLog[]
+
+  @@index([userId, archivedAt])
+}
+
+model HabitLog {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  habitId     String    @db.ObjectId
+  habit       Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId      String
+  date        String
+  value       Float     @default(0)
+  status      LogStatus @default(PENDING)
+  source      LogSource @default(APP)
+  completedAt DateTime?
+  clientId    String?
+  // Últimos clientIds já aplicados (máx. 50): reenvios da fila offline são ignorados.
+  appliedClientIds String[]
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([habitId, date])
+  @@index([userId, date])
+}
+
+model PushToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  token     String   @unique
+  platform  String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

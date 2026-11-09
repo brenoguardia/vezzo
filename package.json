@@ -61,5 +61,8 @@
     "postinstall": "prisma generate"
   },
   "private": true,
-  "packageManager": "bun@1.4.4"
+  "packageManager": "bun@1.4.4",
+  "prisma": {
+    "seed": "bun prisma/seed.ts"
+  }
 }
