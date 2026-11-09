@@ -1,4 +1,5 @@
-// Modelos do domínio (docs/02). Os modelos do Better Auth entram na Fase 2.
+// Modelos do domínio (docs/02) + modelos do Better Auth (User, Session, Account, Verification, RateLimit),
+// gerados por `bunx @better-auth/cli generate --config src/server/auth.ts` e mesclados aqui.
 // MongoDB exige replica set. Use `bunx prisma db push` (sem migrations).
 generator client {
   provider = "prisma-client-js"
@@ -73,39 +74,39 @@ model HabitTemplate {
 }
 
 model Habit {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
   userId       String
-  templateId   String?     @db.ObjectId
+  templateId   String?    @db.ObjectId
   name         String
   emoji        String
   goalValue    Float
   goalUnit     GoalUnit
   days         Int[]
   reminders    String[]
-  quickActions Boolean     @default(true)
-  order        Int         @default(0)
+  quickActions Boolean    @default(true)
+  order        Int        @default(0)
   archivedAt   DateTime?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
   logs         HabitLog[]
 
   @@index([userId, archivedAt])
 }
 
 model HabitLog {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  habitId     String    @db.ObjectId
-  habit       Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
-  userId      String
-  date        String
-  value       Float     @default(0)
-  status      LogStatus @default(PENDING)
-  source      LogSource @default(APP)
-  completedAt DateTime?
-  clientId    String?
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  habitId          String    @db.ObjectId
+  habit            Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId           String
+  date             String
+  value            Float     @default(0)
+  status           LogStatus @default(PENDING)
+  source           LogSource @default(APP)
+  completedAt      DateTime?
+  clientId         String?
   // Últimos clientIds já aplicados (máx. 50): reenvios da fila offline são ignorados.
   appliedClientIds String[]
-  updatedAt   DateTime  @updatedAt
+  updatedAt        DateTime  @updatedAt
 
   @@unique([habitId, date])
   @@index([userId, date])
@@ -119,4 +120,79 @@ model PushToken {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// ---- Better Auth ----
+
+model User {
+  id            String    @id @map("_id")
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @map("_id")
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @map("_id")
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @map("_id")
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model RateLimit {
+  id          String @id @map("_id")
+  key         String
+  count       Int
+  lastRequest BigInt
+
+  @@unique([key])
+  @@map("rateLimit")
 }

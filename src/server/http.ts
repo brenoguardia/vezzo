@@ -88,8 +88,12 @@ export function query<S extends ZodType>(request: Request, schema: S): z.output<
 export type Session = { userId: string };
 export type SessionResolver = (headers: Headers) => Promise<Session | null>;
 
-// Fase 2: troca por Better Auth (auth.api.getSession). Até lá, nenhuma sessão existe.
-let resolveSession: SessionResolver = async () => null;
+// Padrão: sessão do Better Auth (cookie/Bearer). Import dinâmico mantém testes sem a instância de auth.
+let resolveSession: SessionResolver = async (headers) => {
+  const { auth } = await import("./auth");
+  const session = await auth.api.getSession({ headers });
+  return session ? { userId: session.user.id } : null;
+};
 
 export function setSessionResolver(resolver: SessionResolver): void {
   resolveSession = resolver;
