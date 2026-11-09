@@ -141,6 +141,7 @@ export type FakeDb = {
   habitLog: FakeModel;
   pushToken: FakeModel;
   $reset(): void;
+  $transaction<T>(fn: (tx: FakeDb) => Promise<T>): Promise<T>;
 };
 
 export function createFakeDb(): FakeDb {
@@ -181,8 +182,21 @@ export function createFakeDb(): FakeDb {
     }),
     pushToken: new FakeModel({ unique: [["token"]] }),
   });
-  const db = { ...build(), $reset() {} } as FakeDb;
+  const db = { ...build(), $reset() {}, $transaction: async () => undefined } as unknown as FakeDb;
   db.$reset = () => Object.assign(db, build());
+  // Rollback simulado: restaura as linhas de todos os modelos se o callback lançar.
+  db.$transaction = async (fn) => {
+    const models = Object.values(db).filter((m): m is FakeModel => m instanceof FakeModel);
+    const snapshot = models.map((m) => m.rows.map((r) => ({ ...r })));
+    try {
+      return await fn(db);
+    } catch (error) {
+      models.forEach((m, i) => {
+        m.rows = snapshot[i] ?? [];
+      });
+      throw error;
+    }
+  };
   return db;
 }
 

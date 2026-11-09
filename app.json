@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.srguardia.vezzo"
+      "bundleIdentifier": "com.itbuilder.vezzo",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.srguardia.vezzo"
+      "package": "com.itbuilder.vezzo"
     },
     "web": {
       "output": "server",
@@ -35,7 +36,8 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true,
