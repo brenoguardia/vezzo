@@ -1,0 +1,6 @@
+{
+  "replaceAttrValues": {
+    "#BADC4E": "{props.acc}",
+    "#15170F": "{props.ink}"
+  }
+}
