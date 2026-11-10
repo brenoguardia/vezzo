@@ -1,0 +1,35 @@
+# Trocar o idioma atualiza o app inteiro sem reabrir (regressão do i18n não reativo).
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+# Normaliza para português (o idioma fica salvo no perfil entre execuções).
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Idioma.*|Language.*"
+- tapOn: "Português"
+- assertVisible: "Preferências"
+- tapOn: "Idioma.*"
+- tapOn: "English"
+# Perfil, barra de abas e demais abas já em inglês, sem fechar o app.
+- assertVisible: "Preferences"
+- assertVisible: "Today"
+- assertVisible: "Progress"
+- takeScreenshot: lang-en-profile
+- tapOn:
+    id: "tab-home"
+- assertVisible: "Hi, .*"
+- takeScreenshot: lang-en-home
+- tapOn:
+    id: "tab-habits"
+- assertVisible: "New habit"
+- tapOn:
+    id: "tab-progress"
+- assertVisible: "Week"
+- tapOn:
+    id: "tab-profile"
+# Volta para português.
+- tapOn: "Language.*"
+- tapOn: "Português"
+- assertVisible: "Preferências"
+- assertVisible: "Hoje"
+- takeScreenshot: lang-pt-profile

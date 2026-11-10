@@ -1,0 +1,12 @@
+# Abre o app e passa pelo Dev Launcher (development build) se ele aparecer.
+appId: com.itbuilder.vezzo
+---
+- launchApp
+- runFlow:
+    when:
+      visible: "DEVELOPMENT SERVERS"
+    commands:
+      - tapOn: ".*:8081"
+- extendedWaitUntil:
+    visible: "Hoje|Today|Olá.*|Hi, .*|Criar conta|Create account"
+    timeout: 60000

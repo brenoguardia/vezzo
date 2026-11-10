@@ -1,0 +1,23 @@
+# Tema, testar lembrete e excluir conta abrem (antes redirecionavam para a Home).
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Tema.*"
+- assertVisible: "Cor de destaque"
+- assertVisible: "Aplicar"
+- takeScreenshot: profile-theme
+- tapOn: "Voltar"
+- assertVisible: "Preferências"
+- tapOn: "Testar lembrete.*"
+- assertVisible: "Agendadas"
+- takeScreenshot: profile-debug
+- tapOn: "Voltar"
+- scrollUntilVisible:
+    element: "Excluir conta"
+- tapOn: "Excluir conta"
+- assertVisible: "Excluir definitivamente"
+- takeScreenshot: profile-delete
+- tapOn: "Voltar"
+- assertVisible: "Preferências"

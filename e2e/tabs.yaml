@@ -1,0 +1,20 @@
+# As quatro abas abrem e mostram o conteúdo esperado.
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-home"
+- assertVisible: "Hábitos"
+- takeScreenshot: tabs-hoje
+- tapOn:
+    id: "tab-progress"
+- assertVisible: "Semana"
+- takeScreenshot: tabs-progresso
+- tapOn:
+    id: "tab-habits"
+- assertVisible: "Novo hábito"
+- takeScreenshot: tabs-habitos
+- tapOn:
+    id: "tab-profile"
+- assertVisible: "Preferências"
+- takeScreenshot: tabs-perfil
