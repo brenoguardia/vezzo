@@ -130,6 +130,26 @@ describe("Progresso · dual", () => {
   });
 });
 
+describe("Progresso · cartões empilhados", () => {
+  const flexOf = (id: string) => {
+    const style = screen.getByTestId(id).props.style;
+    return Object.assign({}, ...(Array.isArray(style) ? style : [style])).flex;
+  };
+
+  it("em coluna (dual) os cartões não usam flex, para não esticar", async () => {
+    await render(<Progress />);
+    expect(flexOf("progress-streak-card")).toBeUndefined();
+    expect(flexOf("progress-best-card")).toBeUndefined();
+  });
+
+  it("lado a lado (single) os cartões dividem a linha com flex: 1", async () => {
+    mockWidth = 390;
+    await render(<Progress />);
+    expect(flexOf("progress-streak-card")).toBe(1);
+    expect(flexOf("progress-best-card")).toBe(1);
+  });
+});
+
 describe("Hábitos · dual", () => {
   it("selecionar abre a edição à direita", async () => {
     await render(<Habits />);

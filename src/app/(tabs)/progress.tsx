@@ -38,8 +38,10 @@ export default function Progress() {
   const bestDayName = week.best === null ? "—" : t(`onboarding.daysNames.${week.best}`);
   const names = new Map(habits.map((h) => [h.id, h.name]));
 
+  // Lado a lado (single) os cartões dividem a linha com flex; empilhados em coluna (dual) o flex os esticaria.
+  const pairStyle = dual ? undefined : styles.flex;
   const bestCard = (
-    <Card radius={20} padding={16} style={styles.flex}>
+    <Card testID="progress-best-card" radius={20} padding={16} style={pairStyle}>
       <Text variant="caption" tone="mute">
         {t("progress.bestDay")}
       </Text>
@@ -47,7 +49,7 @@ export default function Progress() {
     </Card>
   );
   const streakCard = (
-    <Card radius={20} padding={16} style={styles.flex}>
+    <Card testID="progress-streak-card" radius={20} padding={16} style={pairStyle}>
       <Text variant="caption" tone="mute">
         {t("progress.streak")}
       </Text>

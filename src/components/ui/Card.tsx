@@ -9,15 +9,30 @@ interface Props {
   padding?: number;
   onPress?: () => void;
   accessibilityLabel?: string;
+  testID?: string;
   style?: StyleProp<ViewStyle>;
 }
 
-export function Card({ children, radius = radii.card, padding = 16, onPress, accessibilityLabel, style }: Props) {
+export function Card({
+  children,
+  radius = radii.card,
+  padding = 16,
+  onPress,
+  accessibilityLabel,
+  testID,
+  style,
+}: Props) {
   const theme = useTheme();
   const base: ViewStyle = { backgroundColor: theme.card, borderRadius: radius, padding };
-  if (!onPress) return <View style={[base, style]}>{children}</View>;
+  if (!onPress)
+    return (
+      <View testID={testID} style={[base, style]}>
+        {children}
+      </View>
+    );
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
