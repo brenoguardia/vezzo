@@ -1,0 +1,8 @@
+# Confirma o alerta "Abrir com Vezzo?" que o iOS mostra a cada deep link aberto pelo simctl.
+appId: com.itbuilder.vezzo
+---
+- runFlow:
+    when:
+      visible: "Abrir com.*"
+    commands:
+      - tapOn: "Abrir"
