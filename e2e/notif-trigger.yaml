@@ -1,0 +1,10 @@
+# Agenda o lembrete de teste (5 s) e manda o app para segundo plano.
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Testar lembrete.*"
+- tapOn:
+    text: "Testar lembrete.*"
+    index: 1

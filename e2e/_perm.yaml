@@ -1,0 +1,13 @@
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Testar lembrete.*"
+- tapOn: "requestReminderPermission.*"
+- runFlow:
+    when:
+      visible: "Permitir"
+    commands:
+      - tapOn: "Permitir"
+- takeScreenshot: perm-after

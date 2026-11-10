@@ -15,6 +15,13 @@ configureNotificationHandler();
 
 const openHabit = (habitId: string) => router.push({ pathname: "/habit/[id]", params: { id: habitId } });
 
+// Escopo de módulo, não de efeito: com o app encerrado o iOS o inicia em segundo plano só para entregar a
+// ação (Concluir/Adiar/Pular). Se o listener esperasse a sessão e o perfil (gate "tabs"), o evento chegaria
+// antes dele e a ação se perderia. Os stores persistidos bastam para gravá-la; a fila envia depois.
+addNotificationResponseReceivedListener((response) => void handleNotificationResponse(response, openHabit));
+const initialResponse = getLastNotificationResponse();
+if (initialResponse) void handleNotificationResponse(initialResponse, openHabit);
+
 /** Só o que muda lembretes: nome, meta, dias, horários, ações rápidas e arquivamento. */
 const scheduleFingerprint = (habits: ReturnType<typeof useHabitsStore.getState>["habits"]) =>
   JSON.stringify(
@@ -33,12 +40,6 @@ export function useNotificationRuntime(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
     void registerBackgroundActions();
-    const sub = addNotificationResponseReceivedListener(
-      (response) => void handleNotificationResponse(response, openHabit),
-    );
-    // iOS: toque em ação com o app fechado chega aqui na abertura.
-    const last = getLastNotificationResponse();
-    if (last) void handleNotificationResponse(last, openHabit);
     void registerForPush();
     const app = AppState.addEventListener("change", (s) => {
       if (s !== "active") return;
@@ -46,7 +47,6 @@ export function useNotificationRuntime(enabled: boolean) {
       void registerForPush(); // permissão pode ter sido concedida nos Ajustes
     });
     return () => {
-      sub.remove();
       app.remove();
     };
   }, [enabled]);

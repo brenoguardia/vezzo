@@ -1,0 +1,33 @@
+# Lembrete com o app em segundo plano ou fechado. Uso: -e MODE=background|closed -e Y=28
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Testar lembrete.*"
+- tapOn:
+    text: "Testar lembrete.*"
+    index: 1
+- runFlow:
+    when:
+      true: ${MODE == 'closed'}
+    commands:
+      - stopApp
+- runFlow:
+    when:
+      true: ${MODE == 'background'}
+    commands:
+      - launchApp:
+          appId: com.apple.Preferences
+- extendedWaitUntil:
+    visible: "__espera__"
+    timeout: 4600
+    optional: true
+- swipe:
+    start: "40%, 9%"
+    end: "40%, 30%"
+- takeScreenshot: notif-${MODE}-menu
+- tapOn:
+    point: "29%, ${Y}%"
+- waitForAnimationToEnd
+- takeScreenshot: notif-${MODE}-after

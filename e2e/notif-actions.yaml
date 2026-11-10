@@ -1,0 +1,25 @@
+# Dispara o lembrete de teste e abre as ações do banner (toque longo).
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Testar lembrete.*"
+- tapOn:
+    text: "Testar lembrete.*"
+    index: 1
+# O banner é do sistema (fora da árvore do app): espera ~5 s e age por coordenadas.
+# Espera real: aguarda um texto que nunca aparece até o tempo limite (opcional = não falha).
+- extendedWaitUntil:
+    visible: "__espera__"
+    timeout: 4600
+    optional: true
+- swipe:
+    start: "40%, 9%"
+    end: "40%, 30%"
+- takeScreenshot: notif-actions
+# Y%: Concluir 28, Adiar 1h 34, Pular 40 (rode com -e Y=28).
+- tapOn:
+    point: "29%, ${Y}%"
+- waitForAnimationToEnd
+- takeScreenshot: notif-after-${Y}

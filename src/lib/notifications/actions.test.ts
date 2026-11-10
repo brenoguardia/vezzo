@@ -97,6 +97,7 @@ describe("SKIP", () => {
   it("grava SKIPPED", async () => {
     expect(await handleNotificationResponse(response("SKIP"), undefined, NOW)).toBe("skipped");
     expect(useHabitsStore.getState().logs[logKey(ID, TODAY)]?.status).toBe("SKIPPED");
+    expect(useSyncStore.getState().queue.at(-1)).toMatchObject({ status: "SKIPPED", source: "NOTIFICATION" });
   });
 });
 

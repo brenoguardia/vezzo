@@ -97,8 +97,8 @@ export async function handleNotificationResponse(
   const today = localDate(now, useProfileStore.getState().profile?.timezone ?? deviceZone());
 
   if (action === ACTION_COMPLETE || action === ACTION_SKIP) {
-    if (action === ACTION_COMPLETE) habits.applyLog(habitId, today, { status: "DONE" }, "NOTIFICATION");
-    else habits.skip(habitId, today);
+    // As duas ações vêm da notificação: `source` registra isso (docs/07).
+    habits.applyLog(habitId, today, { status: action === ACTION_COMPLETE ? "DONE" : "SKIPPED" }, "NOTIFICATION");
     await cancelSnoozes(habitId);
     void useSyncStore.getState().flush();
     return action === ACTION_COMPLETE ? "completed" : "skipped";

@@ -22,7 +22,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
       icon: "./assets/expo.icon",
       bundleIdentifier: "com.itbuilder.vezzo",
-      // usesAppleSignIn: enabled,
+      usesAppleSignIn: false,
     },
     android: {
       adaptiveIcon: {
@@ -52,7 +52,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           backgroundColor: "#BADC4E",
           dark: {
             image: "./assets/images/splash-icon-dark.png",
-            backgroundColor: "000000",
+            backgroundColor: "#000000",
           },
           imageWidth: 228,
         },

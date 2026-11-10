@@ -5,6 +5,7 @@ import { SettingsShell } from "@/features/profile/SettingsShell";
 import { useReminderPermission } from "@/features/profile/useReminderPermission";
 import { useT } from "@/i18n/useT";
 import { pendingCount, scheduleTestReminder } from "@/lib/notifications/debug";
+import { requestReminderPermission } from "@/lib/notifications/permission";
 import { rescheduleAll } from "@/lib/notifications/reschedule";
 import { useToastStore } from "@/store/toast";
 
@@ -56,6 +57,13 @@ export default function NotificationsDebug() {
           await scheduleTestReminder(5);
           showToast(t("profile.debugReminderSent"));
           refresh();
+        }}
+      />
+      <Button
+        label="requestReminderPermission()"
+        variant="secondary"
+        onPress={async () => {
+          showToast(await requestReminderPermission());
         }}
       />
       <Button
