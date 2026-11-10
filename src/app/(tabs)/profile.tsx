@@ -151,12 +151,14 @@ export default function ProfileScreen() {
           last={!__DEV__ && reminderPermission !== "denied"}
         />
         {__DEV__ ? (
-          <SettingsRow
-            label={t("profile.debugReminder")}
-            chevron
-            last
-            onPress={() => router.push("/notifications-debug")}
-          />
+          <>
+            <SettingsRow
+              label={t("profile.debugReminder")}
+              chevron
+              onPress={() => router.push("/notifications-debug")}
+            />
+            <SettingsRow label={t("profile.debugLayout")} chevron last onPress={() => router.push("/layout-debug")} />
+          </>
         ) : null}
       </Card>
 

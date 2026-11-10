@@ -125,6 +125,7 @@ export const ptBR = {
     openSettings: "Abrir Ajustes",
     debugReminder: "Testar lembrete (dev)",
     debugReminderSent: "Lembrete em 5 segundos.",
+    debugLayout: "Layout e dobrável (dev)",
     account: "Conta e segurança",
     email: "E-mail",
     resetPassword: "Redefinir senha",
@@ -138,6 +139,13 @@ export const ptBR = {
     deleteConfirm: "Excluir definitivamente",
     deleteCancel: "Cancelar",
     deleteError: "Não foi possível excluir a conta. Tente de novo.",
+  },
+  layoutDebug: {
+    window: "Janela",
+    pixelRatio: "Densidade",
+    insets: "Safe area",
+    rail: "Rail vertical",
+    mode: "Modo de layout",
   },
   tabs: { today: "Hoje", progress: "Progresso", habits: "Hábitos", profile: "Perfil" },
   home: {

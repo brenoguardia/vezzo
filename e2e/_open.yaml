@@ -8,6 +8,13 @@ appId: com.itbuilder.vezzo
       visible: "DEVELOPMENT SERVERS"
     commands:
       - tapOn: ".*:8081"
+# O dev client mostra uma folha de boas-vindas do menu de desenvolvedor na primeira carga.
+- runFlow:
+    when:
+      visible: "This is the developer menu.*"
+    commands:
+      - tapOn:
+          point: "50%,8%"
 - extendedWaitUntil:
     visible: "Hoje|Today|Olá.*|Hi, .*|Criar conta|Create account"
     timeout: 60000

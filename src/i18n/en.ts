@@ -129,6 +129,7 @@ export const en: Catalog<typeof ptBR> = {
     openSettings: "Open Settings",
     debugReminder: "Test reminder (dev)",
     debugReminderSent: "Reminder in 5 seconds.",
+    debugLayout: "Layout and foldable (dev)",
     account: "Account and security",
     email: "Email",
     resetPassword: "Reset password",
@@ -142,6 +143,13 @@ export const en: Catalog<typeof ptBR> = {
     deleteConfirm: "Delete permanently",
     deleteCancel: "Cancel",
     deleteError: "Couldn't delete the account. Try again.",
+  },
+  layoutDebug: {
+    window: "Window",
+    pixelRatio: "Pixel ratio",
+    insets: "Safe area",
+    rail: "Vertical rail",
+    mode: "Layout mode",
   },
   tabs: { today: "Today", progress: "Progress", habits: "Habits", profile: "Profile" },
   home: {

@@ -1,0 +1,32 @@
+# iPhone Duo: percorre o app numa pose e tira capturas para conferir rail, dobra e abas.
+# O Maestro não muda a pose: dobre/abra no Device Hub e rode com o nome dela.
+#   maestro --device <UDID do Duo> test -e POSE=closed e2e/duo/pose.yaml
+# POSE livre (closed, open-portrait, open-landscape, laptop); só dá nome às capturas.
+appId: com.itbuilder.vezzo
+---
+- runFlow: ../_open.yaml
+- tapOn:
+    id: "tab-home"
+- extendedWaitUntil:
+    visible: "Olá.*|Hi, .*"
+    timeout: 15000
+- takeScreenshot: ${POSE}-1-hoje
+- tapOn:
+    id: "tab-progress"
+- assertVisible: "Seu progresso|Your progress"
+- takeScreenshot: ${POSE}-2-progresso
+- tapOn:
+    id: "tab-habits"
+- assertVisible: "Novo hábito|New habit"
+- takeScreenshot: ${POSE}-3-habitos
+- tapOn:
+    id: "tab-profile"
+- assertVisible: "Preferências|Preferences"
+- takeScreenshot: ${POSE}-4-perfil
+- tapOn: "Layout e dobrável.*|Layout and foldable.*"
+- assertVisible: "Safe area"
+- takeScreenshot: ${POSE}-5-medidas
+- tapOn: "Voltar|Back"
+- tapOn: "Tema.*|Theme.*"
+- assertVisible: "Aplicar|Apply"
+- takeScreenshot: ${POSE}-6-tema
