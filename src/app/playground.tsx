@@ -23,10 +23,10 @@ import { ACCENTS, type ThemeScheme } from "@/shared/tokens";
 
 // Playground apenas para desenvolvimento: textos fixos são aceitáveis aqui (fora do app de produção).
 const TABS: TabItem[] = [
-  { key: "today", label: "Hoje", icon: "circle" },
-  { key: "progress", label: "Progresso", icon: "square" },
-  { key: "habits", label: "Hábitos", icon: "rounded" },
-  { key: "profile", label: "Perfil", icon: "tab" },
+  { key: "today", label: "Hoje", icon: "today" },
+  { key: "progress", label: "Progresso", icon: "progress" },
+  { key: "habits", label: "Hábitos", icon: "habits" },
+  { key: "profile", label: "Perfil", icon: "profile" },
 ];
 const DAY_LABELS = ["S", "T", "Q", "Q", "S", "S", "D"];
 const WEEK = [0.4, 0.7, 0.55, 0.9, 0.8, 0.3, 0.6].map((value, i) => ({

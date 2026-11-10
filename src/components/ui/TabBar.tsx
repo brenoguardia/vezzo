@@ -2,14 +2,13 @@ import { Platform, Pressable, StyleSheet, View, type ViewStyle } from "react-nat
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/lib/useTheme";
 import { layout, radius, tabBarShadow } from "@/shared/tokens";
+import { TabIcon, type TabIconName } from "./TabIcon";
 import { Text } from "./Text";
-
-export type TabIconShape = "circle" | "square" | "rounded" | "tab";
 
 export interface TabItem {
   key: string;
   label: string;
-  icon: TabIconShape;
+  icon: TabIconName;
 }
 
 interface Props {
@@ -18,16 +17,9 @@ interface Props {
   onSelect: (key: string) => void;
 }
 
-const iconShape: Record<TabIconShape, ViewStyle> = {
-  circle: { borderRadius: 9 },
-  square: { borderRadius: 5 },
-  rounded: { borderRadius: 9 },
-  tab: { borderTopLeftRadius: 9, borderTopRightRadius: 9, borderBottomLeftRadius: 4, borderBottomRightRadius: 4 },
-};
-
 /**
- * Barra de abas flutuante (docs/05). Os ícones são formas simples, a substituir por uma lib
- * mantendo 18×18. Para usar com Expo Router, passe-a em `tabBar={...}` adaptando `state`.
+ * Barra de abas flutuante (docs/05), ícones de traço 18×18. Para usar com Expo Router, passe-a
+ * em `tabBar={...}` adaptando `state`.
  */
 export function TabBar({ items, activeKey, onSelect }: Props) {
   const theme = useTheme();
@@ -40,17 +32,19 @@ export function TabBar({ items, activeKey, onSelect }: Props) {
       >
         {items.map((item) => {
           const active = item.key === activeKey;
-          const color = active ? theme.acc : theme.mute;
+          // `accText`: a cor de destaque crua não tem contraste suficiente no modo claro.
+          const color = active ? theme.accText : theme.mute;
           return (
             <Pressable
               key={item.key}
+              testID={`tab-${item.key}`}
               accessibilityRole="tab"
               accessibilityLabel={item.label}
               accessibilityState={{ selected: active }}
               onPress={() => onSelect(item.key)}
               style={styles.item}
             >
-              <View style={[styles.icon, iconShape[item.icon], { backgroundColor: color }]} />
+              <TabIcon name={item.icon} color={color} active={active} />
               <Text variant="captionStrong" style={[styles.label, { color }]}>
                 {item.label}
               </Text>
@@ -84,6 +78,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   item: { flex: 1, alignItems: "center", justifyContent: "center", gap: 5, minHeight: 44 },
-  icon: { width: 18, height: 18 },
   label: { fontSize: 10, lineHeight: 13 },
 });

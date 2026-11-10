@@ -12,6 +12,7 @@ export { Ring } from "./Ring";
 export { SegmentedControl } from "./SegmentedControl";
 export { Stepper } from "./Stepper";
 export { TabBar, type TabItem } from "./TabBar";
+export { TabIcon, type TabIconName } from "./TabIcon";
 export { TimeChips } from "./TimeChips";
 export { MAX_FONT_SCALE, Text } from "./Text";
 export { ToastHost } from "./ToastHost";
