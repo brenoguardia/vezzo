@@ -141,7 +141,7 @@ export const ptBR = {
   },
   tabs: { today: "Hoje", progress: "Progresso", habits: "Hábitos", profile: "Perfil" },
   home: {
-    offline: "Sem conexão. Mostrando os dados salvos no aparelho.",
+    offline: "Não foi possível atualizar. Mostrando os dados salvos no aparelho.",
     selectHint: "Toque em um hábito para ver o detalhe.",
     today: "Hoje",
     hello: "Olá, %{name}",

@@ -1,4 +1,5 @@
 import { fetchHabits } from "@/api/summary";
+import { reportError } from "@/lib/monitoring";
 import { fetchLogs } from "@/api/logs";
 import { addDays, localDate } from "@/shared/dates";
 import { useHabitsStore } from "@/store/habits";
@@ -24,7 +25,10 @@ export async function hydrateHabits(timeZone: string, now = new Date()): Promise
     useHabitsStore.getState().hydrate(habits, logs);
     status("ready");
     return true;
-  } catch {
+  } catch (error) {
+    // Sem isso a faixa de erro não diz o motivo (rede, servidor, resposta fora do schema).
+    if (__DEV__) console.warn("[hydrate] falhou:", error);
+    reportError(error);
     status("error");
     return false;
   }

@@ -145,7 +145,7 @@ export const en: Catalog<typeof ptBR> = {
   },
   tabs: { today: "Today", progress: "Progress", habits: "Habits", profile: "Profile" },
   home: {
-    offline: "You're offline. Showing the data saved on this device.",
+    offline: "Couldn't refresh. Showing the data saved on this device.",
     selectHint: "Tap a habit to see its details.",
     today: "Today",
     hello: "Hi, %{name}",

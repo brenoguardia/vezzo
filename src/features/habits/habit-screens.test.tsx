@@ -90,7 +90,7 @@ describe("Hoje · carregamento e erro", () => {
     useHabitsStore.getState().hydrate([habit("a".repeat(24))], []);
     useHydrationStore.setState({ status: "error" });
     await render(<Today />);
-    expect(screen.getByText(/Sem conexão. Mostrando/)).toBeTruthy();
+    expect(screen.getByText(/Não foi possível atualizar. Mostrando/)).toBeTruthy();
     expect(screen.getByText("Meditar")).toBeTruthy();
     await fireEvent.press(screen.getByText("Tentar de novo"));
     expect(hydrateHabits).toHaveBeenCalledWith("UTC");

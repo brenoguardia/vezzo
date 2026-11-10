@@ -12,3 +12,6 @@ jest.mock("react-native-reanimated", () => ({
   useAnimatedProps: (factory) => factory(),
   withTiming: (value) => value,
 }));
+
+// O SDK do Sentry é nativo: nos testes o monitoramento fica desligado (sem DSN) e o módulo é um stub.
+jest.mock("@sentry/react-native", () => ({ init: jest.fn(), wrap: (c) => c, captureException: jest.fn() }));
