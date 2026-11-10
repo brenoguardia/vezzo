@@ -1,0 +1,24 @@
+# Layout dual (>= 600 pt de largura): o iPhone em paisagem já passa de 600 pt.
+# Lista + detalhe em Hoje, duas colunas em Progresso e lista + edição em Hábitos.
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- setOrientation: LANDSCAPE_LEFT
+- tapOn:
+    id: "tab-home"
+# Sem hábito selecionado, a coluna da direita mostra o gráfico semanal.
+- extendedWaitUntil:
+    visible: "Seu progresso"
+    timeout: 15000
+- takeScreenshot: dual-home-empty-detail
+# A seleção de hábito (lista -> detalhe) é coberta em dual-screens.test.tsx; em paisagem a lista
+# fica sob a barra de abas e o toque do Maestro não é confiável.
+- tapOn:
+    id: "tab-progress"
+- assertVisible: "Por hábito"
+- takeScreenshot: dual-progress
+- tapOn:
+    id: "tab-habits"
+- assertVisible: "Selecione um hábito para editar."
+- takeScreenshot: dual-habits
+- setOrientation: PORTRAIT

@@ -1,0 +1,37 @@
+# Hoje: marcar/desmarcar, detalhe do hábito, concluir/desfazer e tela de sequência.
+# Depende do hábito "Dormir cedo" (criado no onboarding) e desfaz tudo o que marca.
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-home"
+- extendedWaitUntil:
+    visible: "Marcar Dormir cedo como feito|Desmarcar Dormir cedo"
+    timeout: 15000
+# Normaliza: começa desmarcado.
+- runFlow:
+    when:
+      visible: "Desmarcar Dormir cedo"
+    commands:
+      - tapOn: "Desmarcar Dormir cedo"
+- tapOn: "Marcar Dormir cedo como feito"
+- assertVisible: "Desmarcar Dormir cedo"
+- takeScreenshot: today-done
+- tapOn: "Desmarcar Dormir cedo"
+- assertVisible: "Marcar Dormir cedo como feito"
+# Detalhe
+- tapOn: "Dormir cedo\\. .*"
+- assertVisible: "Últimas 4 semanas"
+- assertVisible: "Concluir"
+- tapOn: "Concluir"
+- assertVisible: "Desfazer"
+- takeScreenshot: detail-done
+- tapOn: "Desfazer"
+- assertVisible: "Concluir"
+- tapOn: "Voltar"
+# Sequência (cartão de resumo)
+- tapOn: ".* hábitos feitos hoje.*"
+- assertVisible: "Próximas conquistas|dias seguidos"
+- takeScreenshot: streak
+- tapOn: "Voltar"
+- assertVisible: "Hábitos"

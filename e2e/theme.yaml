@@ -1,0 +1,33 @@
+# Tema: escolher outra cor/modo, ver a prévia, aplicar e restaurar o original.
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+# Normaliza para verde-limão + sistema (sem efeito se já estiver assim).
+- tapOn: "Tema.*"
+- tapOn: "Verde-limão"
+- tapOn: "Sistema"
+- tapOn: "Aplicar"
+- runFlow:
+    when:
+      visible: "Cor de destaque"
+    commands:
+      - tapOn: "Voltar"
+- assertVisible: "Preferências"
+# Fluxo principal.
+- tapOn: "Tema.*"
+- assertVisible: "Aplicar"
+- tapOn: "Azul"
+- tapOn: "Escuro"
+- takeScreenshot: theme-dark-blue
+- tapOn: "Aplicar"
+- assertVisible: "Preferências"
+- assertVisible: "Tema.*Azul"
+- takeScreenshot: theme-applied
+# Restaura verde-limão + sistema.
+- tapOn: "Tema.*"
+- tapOn: "Verde-limão"
+- tapOn: "Sistema"
+- tapOn: "Aplicar"
+- assertVisible: "Tema.*Verde-limão"

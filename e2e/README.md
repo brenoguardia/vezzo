@@ -7,6 +7,21 @@ Fluxos que rodam no simulador iOS com o development build (`com.itbuilder.vezzo`
 - Servidor de desenvolvimento no ar (`bunx expo start --dev-client`) e o simulador aberto.
 - Sessão iniciada no app (os fluxos de `auth` partem de deslogado e fazem o próprio login).
 
+## Fluxos
+| Arquivo | Cobre |
+|---|---|
+| `tabs.yaml` | as 4 abas |
+| `today.yaml` | marcar/desmarcar, detalhe, concluir/desfazer, sequência |
+| `habit-lifecycle.yaml` | criar, persistir após reabrir, editar, arquivar, desarquivar |
+| `progress.yaml` | semana, mês e ano |
+| `profile-language.yaml` | idioma muda no app inteiro sem reabrir |
+| `profile-screens.yaml` | Tema, Testar lembrete e Excluir conta abrem |
+| `theme.yaml` | trocar cor e modo, aplicar e restaurar |
+| `notifications.yaml` | tela de debug agenda um lembrete |
+| `dual-layout.yaml` | layout de duas colunas (iPhone em paisagem) |
+
+Não cobertos: cadastro, login, Apple/Google e recuperação de senha (exigem credenciais ou e-mail) e as ações das notificações com o app fechado (só em aparelho real).
+
 ## Rodar
 ```
 maestro test e2e/tabs.yaml

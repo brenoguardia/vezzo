@@ -1,0 +1,23 @@
+# Progresso: semana, mês e ano abrem sem erro.
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-progress"
+- assertVisible: "Seu progresso"
+- assertVisible: "Conclusão"
+- takeScreenshot: progress-week
+- tapOn: "Mês"
+- extendedWaitUntil:
+    notVisible: "Carregando seus hábitos"
+    timeout: 15000
+- assertNotVisible: "Não foi possível carregar.*"
+- takeScreenshot: progress-month
+- tapOn: "Ano"
+- extendedWaitUntil:
+    notVisible: "Carregando seus hábitos"
+    timeout: 15000
+- assertNotVisible: "Não foi possível carregar.*"
+- takeScreenshot: progress-year
+- tapOn: "Semana"
+- assertVisible: "Por hábito"

@@ -1,0 +1,17 @@
+# Lembretes: tela de debug agenda um lembrete de teste e mostra o aviso (app em primeiro plano).
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Testar lembrete.*"
+- assertVisible: "Agendadas"
+- tapOn:
+    text: "Testar lembrete.*"
+    index: 1
+- assertVisible: "Lembrete em 5 segundos."
+- takeScreenshot: notif-scheduled
+# O banner é do sistema (fora da árvore do app): confira a captura manualmente ou pelo simulador.
+- waitForAnimationToEnd:
+    timeout: 6000
+- takeScreenshot: notif-delivered
