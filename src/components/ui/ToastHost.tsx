@@ -22,7 +22,10 @@ export function ToastHost() {
 
   if (!message) return null;
   return (
-    <View pointerEvents="none" style={[styles.wrap, { top: insets.top + 12 }]}>
+    <View
+      pointerEvents="none"
+      style={[styles.wrap, { top: insets.top + 12, paddingLeft: 22 + insets.left, paddingRight: 22 + insets.right }]}
+    >
       <View
         accessibilityRole="alert"
         accessibilityLiveRegion="polite"
@@ -35,6 +38,6 @@ export function ToastHost() {
 }
 
 const styles = StyleSheet.create({
-  wrap: { position: "absolute", left: 0, right: 0, alignItems: "center", paddingHorizontal: 22 },
+  wrap: { position: "absolute", left: 0, right: 0, alignItems: "center" },
   toast: { maxWidth: 480, borderRadius: radius.field, borderWidth: 1, paddingVertical: 14, paddingHorizontal: 18 },
 });

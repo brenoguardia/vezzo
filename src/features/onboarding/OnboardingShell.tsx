@@ -31,8 +31,8 @@ export function OnboardingShell({ step, title, titleVariant = "authTitle", subti
   const t = useT();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { dual, width } = useLayoutMode();
-  const contentWidth = Math.min(width, layout.formMaxWidth);
+  const { dual, usableWidth, sides } = useLayoutMode();
+  const contentWidth = Math.min(usableWidth, layout.formMaxWidth);
 
   const heading = (
     <>
@@ -77,7 +77,15 @@ export function OnboardingShell({ step, title, titleVariant = "authTitle", subti
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 56 }]}
+        contentContainerStyle={[
+          styles.scroll,
+          {
+            paddingTop: insets.top + 16,
+            paddingBottom: insets.bottom + 56,
+            paddingLeft: sides.left,
+            paddingRight: sides.right,
+          },
+        ]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

@@ -22,7 +22,7 @@ interface Props {
  * o lado ativo.
  */
 export function SplitView({ left, right, active = "left", tabBar = true, rightScrolls = true }: Props) {
-  const { dual, columnWidth } = useLayoutMode();
+  const { dual, columnWidth, sides } = useLayoutMode();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const bottom = Math.max(22, insets.bottom) + (tabBar ? layout.tabBarHeight + 24 : 0);
@@ -47,7 +47,7 @@ export function SplitView({ left, right, active = "left", tabBar = true, rightSc
   );
 
   return (
-    <View style={[styles.row, { backgroundColor: theme.bg }]}>
+    <View style={[styles.row, { backgroundColor: theme.bg, paddingLeft: sides.left, paddingRight: sides.right }]}>
       {pane(left, "split-left")}
       {rightScrolls ? (
         pane(right, "split-right")

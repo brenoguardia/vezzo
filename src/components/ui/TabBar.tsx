@@ -25,7 +25,12 @@ export function TabBar({ items, activeKey, onSelect }: Props) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <View pointerEvents="box-none" style={[styles.wrap, { bottom: Math.max(22, insets.bottom) }]}>
+    <View
+      testID="tab-bar"
+      pointerEvents="box-none"
+      // O rail do dobrável (inset lateral) não pode cobrir a barra: soma o inset à margem de 16.
+      style={[styles.wrap, { bottom: Math.max(22, insets.bottom), left: 16 + insets.left, right: 16 + insets.right }]}
+    >
       <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: theme.card }, shadow]}>
         {items.map((item) => {
           const active = item.key === activeKey;
@@ -67,7 +72,7 @@ const shadow: ViewStyle = Platform.select<ViewStyle>({
 })!;
 
 const styles = StyleSheet.create({
-  wrap: { position: "absolute", left: 16, right: 16, alignItems: "center" },
+  wrap: { position: "absolute", alignItems: "center" },
   bar: {
     height: layout.tabBarHeight,
     width: "100%",

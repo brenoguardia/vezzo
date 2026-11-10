@@ -1,17 +1,10 @@
 import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui";
 import { useT } from "@/i18n/useT";
+import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
 import { layout } from "@/shared/tokens";
 
@@ -33,8 +26,8 @@ export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const contentWidth = Math.min(width, MAX_CONTENT_WIDTH);
+  const { usableWidth, sides } = useLayoutMode();
+  const contentWidth = Math.min(usableWidth, MAX_CONTENT_WIDTH);
 
   return (
     <KeyboardAvoidingView
@@ -44,7 +37,12 @@ export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
       <ScrollView
         contentContainerStyle={[
           styles.scroll,
-          { paddingTop: insets.top + 16, paddingBottom: Math.max(insets.bottom, 0) + 56 },
+          {
+            paddingTop: insets.top + 16,
+            paddingBottom: Math.max(insets.bottom, 0) + 56,
+            paddingLeft: sides.left,
+            paddingRight: sides.right,
+          },
         ]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}

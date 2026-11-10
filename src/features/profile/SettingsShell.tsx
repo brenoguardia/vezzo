@@ -30,7 +30,7 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { dual, width } = useLayoutMode();
+  const { dual, usableWidth, sides } = useLayoutMode();
 
   const header = (
     <>
@@ -74,18 +74,26 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
 
   return (
     <ScrollView
+      testID="settings-scroll"
       style={{ backgroundColor: theme.bg }}
       contentContainerStyle={[
         styles.scroll,
         {
           paddingTop: insets.top + 16,
           paddingBottom: Math.max(22, insets.bottom) + (tabBar ? layout.tabBarHeight + 24 : 24),
+          // Rail do dobrável: o conteúdo fica fora dele, mas o fundo continua de borda a borda.
+          paddingLeft: sides.left,
+          paddingRight: sides.right,
         },
       ]}
       showsVerticalScrollIndicator={false}
     >
       <View
-        style={{ width: Math.min(width, layout.formMaxWidth), paddingHorizontal: layout.screenMargin, flexGrow: 1 }}
+        style={{
+          width: Math.min(usableWidth, layout.formMaxWidth),
+          paddingHorizontal: layout.screenMargin,
+          flexGrow: 1,
+        }}
       >
         {header}
         <View style={styles.body}>{children}</View>
