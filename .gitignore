@@ -45,3 +45,6 @@ example
 
 # Capturas dos fluxos E2E
 e2e/.shots/
+
+# Playwright MCP
+.playwright-mcp/
