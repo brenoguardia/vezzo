@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, TextInput, View } from "react-native";
-import { Button, Text } from "@/components/ui";
+import { Button, MAX_FONT_SCALE, Text } from "@/components/ui";
 import { OnboardingShell } from "@/features/onboarding/OnboardingShell";
 import { t } from "@/i18n";
 import { useTheme } from "@/lib/useTheme";
@@ -48,6 +48,7 @@ export default function OnboardingName() {
         render={({ field, fieldState }) => (
           <View>
             <TextInput
+            maxFontSizeMultiplier={MAX_FONT_SCALE}
               ref={field.ref}
               accessibilityLabel={t("onboarding.nameLabel")}
               value={field.value}

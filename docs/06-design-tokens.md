@@ -6,10 +6,10 @@
 | `bg` | `#121413` | `#f6f4ee` |
 | `card` | `#1c1f1d` | `#ffffff` |
 | `ink` | `#f2f3ef` | `#1b1d1a` |
-| `mute` | `#9aa19b` | `#6f746c` |
+| `mute` | `#9aa19b` | `#656a62` |
 | `line` | `#2e332f` | `#e4e1d8` |
 | `accInk` | `#14170c` | `#14170c` |
-| `danger` | `#ee6f6f` | `#ee6f6f` |
+| `danger` | `#ee6f6f` | `#bf3a3a` |
 | `tint` (fundo do emoji) | `acc` + alfa `30` hex | `acc` + alfa `40` hex |
 
 Cores de destaque (escolha do usuário, padrão a primeira): lima `#b9d94c`, verde-água `#3fbf9f`, azul `#4f9cf0`, violeta `#9a7df0`, rosa `#ee6f8f`, laranja `#f08a52`, âmbar `#eab33a`. Todas aceitam `accInk` como texto. A sobreposição de texto sobre `acc` deve manter contraste mínimo de 4,5:1 (conferir violeta e azul ao implementar; ajustar `accInk` por cor se necessário).
@@ -47,3 +47,9 @@ Line-height: 1,1 em títulos, 1,4 em texto corrido.
 
 ## Ícone do app (V-check)
 Quadrado com raio 0,26·lado, fundo `acc` (`#b9d94c`). V formado por dois traços de espessura 0,09·lado com pontas arredondadas, cor `#14170c`: traço curto de comprimento 0,20 centrado em (0,355; 0,54) girado 45°; traço longo de comprimento 0,42 centrado em (0,585; 0,46) girado -50°. Variantes de arte em `design/` (1a escolhida, 1b e 1c alternativas). Exportar 1024×1024 sem transparência para o iOS, adaptive icon (foreground com o V, fundo `#b9d94c`) e versão monocromática para Android.
+
+## Acessibilidade e contraste (Fase 10)
+- `mute` e `danger` do modo claro foram escurecidos para atingir 4,5:1 sobre `bg` e `card` (o original dava 4,35:1 e 2,7:1). O escuro não mudou.
+- `acc` como **texto** no modo claro dá de 1,5:1 (lima) a 2,9:1 (violeta). O tema expõe `accText`, a cor de destaque escurecida em direção a `ink` até 4,5:1; `Text tone="acc"` usa `accText`. `acc` continua valendo para fundos, bordas, anel e gráficos.
+- Dynamic Type/escala de fonte: `Text` limita a escala a 130% (`MAX_FONT_SCALE`).
+- Os pisos estão em `src/shared/contrast.test.ts` (4,5:1 para `accInk` sobre as 7 cores).

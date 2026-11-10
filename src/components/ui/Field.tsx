@@ -2,7 +2,7 @@ import { type ComponentRef, forwardRef, useState } from "react";
 import { Pressable, StyleSheet, TextInput, type TextInputProps, View } from "react-native";
 import { useTheme } from "@/lib/useTheme";
 import { fontFamily, radius } from "@/shared/tokens";
-import { Text } from "./Text";
+import { MAX_FONT_SCALE, Text } from "./Text";
 
 export interface FieldProps extends Omit<TextInputProps, "style" | "placeholderTextColor"> {
   label: string;
@@ -28,6 +28,7 @@ export const Field = forwardRef<FieldInput, FieldProps>(function Field(
             {label}
           </Text>
           <TextInput
+            maxFontSizeMultiplier={MAX_FONT_SCALE}
             ref={ref}
             accessibilityLabel={label}
             placeholderTextColor={theme.mute}

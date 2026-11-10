@@ -1,3 +1,4 @@
+import { readableOn } from "./contrast";
 import { ACCENTS } from "./schemas/common";
 
 export { ACCENTS };
@@ -33,10 +34,10 @@ export const palettes: Record<ThemeScheme, Palette> = {
     bg: "#f6f4ee",
     card: "#ffffff",
     ink: "#1b1d1a",
-    mute: "#6f746c",
+    mute: "#656a62",
     line: "#e4e1d8",
     accInk: "#14170c",
-    danger: "#ee6f6f",
+    danger: "#bf3a3a",
     tintAlpha: "40",
   },
 };
@@ -44,13 +45,16 @@ export const palettes: Record<ThemeScheme, Palette> = {
 export interface ThemeTokens extends Palette {
   scheme: ThemeScheme;
   acc: Accent;
+  /** `acc` usada como cor de TEXTO: no claro é escurecida até 4,5:1 sobre o fundo. */
+  accText: string;
   /** Fundo do emoji tile: `acc` + alfa. */
   tint: string;
 }
 
 export function buildTheme(scheme: ThemeScheme, acc: Accent): ThemeTokens {
   const palette = palettes[scheme];
-  return { ...palette, scheme, acc, tint: `${acc}${palette.tintAlpha}` };
+  const accText = scheme === "dark" ? acc : readableOn(acc, palette.bg, palette.ink);
+  return { ...palette, scheme, acc, accText, tint: `${acc}${palette.tintAlpha}` };
 }
 
 /** Pesos da Manrope (nomes de `@expo-google-fonts/manrope`). */
@@ -140,6 +144,15 @@ export const layout = {
   minTouch: 44,
   tabBarHeight: 68,
   tabBarMaxWidth: 540,
+  /** Largura mínima da janela para o modo dual (docs/08). */
+  dualBreakpoint: 600,
+  /** Espaço entre as colunas (a dobradiça do design). */
+  dualGap: 28,
+  dualColumnMax: 640,
+  dualPaddingTop: 44,
+  dualPaddingSide: 28,
+  /** Telas de formulário, perfil e tema: coluna única centralizada. */
+  formMaxWidth: 480,
 } as const;
 
 export const tabBarShadow = {
