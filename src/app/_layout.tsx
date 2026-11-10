@@ -15,13 +15,20 @@ import { StyleSheet, View } from "react-native";
 import { authClient } from "@/auth/client";
 import { resolveGate } from "@/auth/guard";
 import { Button, Text, ToastHost } from "@/components/ui";
+import { clearHabitData } from "@/features/habits/hydrate";
+import { useNotificationRuntime } from "@/features/habits/useNotificationRuntime";
+import { useHabitsSync } from "@/features/habits/useHabitsSync";
 import { t } from "@/i18n";
+import { cancelAllReminders } from "@/lib/notifications/reschedule";
+import { DEFAULT_TIMEZONE } from "@/lib/habit-stats";
+import { initMonitoring, withMonitoring } from "@/lib/monitoring";
 import { useTheme } from "@/lib/useTheme";
 import { useProfileStore } from "@/store/profile";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+initMonitoring();
 
-export default function RootLayout() {
+function RootLayout() {
   const theme = useTheme();
   const [fontsLoaded, fontError] = useFonts({
     Manrope_400Regular,
@@ -44,10 +51,17 @@ export default function RootLayout() {
   useEffect(() => {
     if (isPending) return;
     if (userId) void loadProfile();
-    else clearProfile();
+    else {
+      clearProfile();
+      clearHabitData();
+      void cancelAllReminders();
+    }
   }, [isPending, userId, loadProfile, clearProfile]);
 
   const gate = resolveGate({ sessionPending: isPending, hasSession: !!userId, profileStatus, onboardingDone });
+  const timezone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
+  useHabitsSync(gate === "tabs", timezone);
+  useNotificationRuntime(gate === "tabs");
   const ready = fontsReady && gate !== "loading";
 
   useEffect(() => {
@@ -74,6 +88,8 @@ export default function RootLayout() {
           </Stack.Protected>
           <Stack.Protected guard={gate === "tabs"}>
             <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="habit" />
+            <Stack.Screen name="streak" />
           </Stack.Protected>
           {/* Recuperação de senha é acessível com ou sem sessão (Perfil → Redefinir senha e deep link). */}
           <Stack.Screen name="(recovery)" />
@@ -87,3 +103,5 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   error: { flex: 1, alignItems: "center", justifyContent: "center", gap: 16, padding: 28 },
 });
+
+export default withMonitoring(RootLayout);

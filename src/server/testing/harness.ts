@@ -5,20 +5,26 @@ import type { FakeDb } from "./fake-db";
 /** Em testes, `@/server/db` é substituído por um FakeDb via vi.mock. */
 export const db = prisma as unknown as FakeDb;
 
-/** Sessão simulada: o usuário vem do cabeçalho `x-test-user`; sem ele, não há sessão. */
+/**
+ * Sessão simulada: o usuário vem do cabeçalho `x-test-user`; sem ele, não há sessão.
+ * `x-test-session-age-min` define há quantos minutos o login aconteceu (padrão: agora).
+ */
 export function installFakeSession(): void {
   setSessionResolver(async (headers) => {
     const userId = headers.get("x-test-user");
-    return userId ? { userId } : null;
+    if (!userId) return null;
+    const ageMin = Number(headers.get("x-test-session-age-min") ?? 0);
+    return { userId, authenticatedAt: new Date(Date.now() - ageMin * 60_000) };
   });
 }
 
 export function req(
   url: string,
-  options: { user?: string; method?: string; body?: unknown } = {},
+  options: { user?: string; method?: string; body?: unknown; sessionAgeMin?: number } = {},
 ): Request {
   const headers = new Headers();
   if (options.user) headers.set("x-test-user", options.user);
+  if (options.sessionAgeMin !== undefined) headers.set("x-test-session-age-min", String(options.sessionAgeMin));
   if (options.body !== undefined) headers.set("content-type", "application/json");
   return new Request(`http://localhost${url}`, {
     method: options.method ?? "GET",

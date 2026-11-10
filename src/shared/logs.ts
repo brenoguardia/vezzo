@@ -1,5 +1,8 @@
 export type LogStatus = "PENDING" | "DONE" | "SKIPPED";
 
+/** Chave de um log por hábito+data nos stores do cliente. */
+export const logKey = (habitId: string, date: string) => `${habitId}:${date}`;
+
 type Goal = { goalValue: number; goalUnit: string };
 type LogChange = { value?: number; status?: LogStatus };
 

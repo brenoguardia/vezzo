@@ -6,6 +6,7 @@ import { GET as listLogs, PUT as putLog } from "@/app/api/v1/logs/index+api";
 import { POST as batchLogs } from "@/app/api/v1/logs/batch+api";
 import { GET as getCatalog } from "@/app/api/v1/catalog+api";
 import { GET as getProfile, PUT as putProfile } from "@/app/api/v1/profile+api";
+import { DELETE as deleteAccount } from "@/app/api/v1/account+api";
 import { GET as getStats } from "@/app/api/v1/stats+api";
 
 vi.mock("@/server/db", async () => {
@@ -34,6 +35,7 @@ describe("sem sessão, toda rota /v1 responde 401", () => {
     ["GET logs", listLogs, "GET", "/api/v1/logs?from=2026-11-01&to=2026-11-02"],
     ["PUT logs", putLog, "PUT", "/api/v1/logs"],
     ["POST logs/batch", batchLogs, "POST", "/api/v1/logs/batch"],
+    ["DELETE account", deleteAccount, "DELETE", "/api/v1/account"],
     ["GET stats", getStats, "GET", "/api/v1/stats?from=2026-11-01&to=2026-11-02"],
   ];
   it.each(cases)("%s", async (_name, handler, method, url) => {

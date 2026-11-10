@@ -140,6 +140,9 @@ export type FakeDb = {
   habit: FakeModel;
   habitLog: FakeModel;
   pushToken: FakeModel;
+  user: FakeModel;
+  session: FakeModel;
+  account: FakeModel;
   $reset(): void;
   $transaction<T>(fn: (tx: FakeDb) => Promise<T>): Promise<T>;
 };
@@ -181,6 +184,9 @@ export function createFakeDb(): FakeDb {
       }),
     }),
     pushToken: new FakeModel({ unique: [["token"]] }),
+    user: new FakeModel({ unique: [["email"]] }),
+    session: new FakeModel(),
+    account: new FakeModel(),
   });
   const db = { ...build(), $reset() {}, $transaction: async () => undefined } as unknown as FakeDb;
   db.$reset = () => Object.assign(db, build());

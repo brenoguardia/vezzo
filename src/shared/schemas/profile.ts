@@ -9,6 +9,8 @@ export const profileUpdate = z.object({
   timezone: timezone.optional(),
 });
 
+export type ProfileUpdate = z.input<typeof profileUpdate>;
+
 export const profileDto = z.object({
   displayName: z.string(),
   accent: z.string(),

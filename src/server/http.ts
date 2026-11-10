@@ -3,6 +3,7 @@ import { z, type ZodType } from "zod";
 export type ApiErrorCode =
   | "VALIDATION_ERROR"
   | "UNAUTHORIZED"
+  | "REAUTH_REQUIRED"
   | "NOT_FOUND"
   | "RATE_LIMITED"
   | "INTERNAL_ERROR";
@@ -10,6 +11,7 @@ export type ApiErrorCode =
 const STATUS: Record<ApiErrorCode, number> = {
   VALIDATION_ERROR: 400,
   UNAUTHORIZED: 401,
+  REAUTH_REQUIRED: 403,
   NOT_FOUND: 404,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,
@@ -85,14 +87,15 @@ export function query<S extends ZodType>(request: Request, schema: S): z.output<
   return parse(schema, params);
 }
 
-export type Session = { userId: string };
+/** `authenticatedAt`: quando o usuário fez login (início da sessão); base da reautenticação recente. */
+export type Session = { userId: string; authenticatedAt?: Date };
 export type SessionResolver = (headers: Headers) => Promise<Session | null>;
 
 // Padrão: sessão do Better Auth (cookie/Bearer). Import dinâmico mantém testes sem a instância de auth.
 let resolveSession: SessionResolver = async (headers) => {
   const { auth } = await import("./auth");
   const session = await auth.api.getSession({ headers });
-  return session ? { userId: session.user.id } : null;
+  return session ? { userId: session.user.id, authenticatedAt: new Date(session.session.createdAt) } : null;
 };
 
 export function setSessionResolver(resolver: SessionResolver): void {
@@ -103,6 +106,7 @@ export type RouteContext = {
   request: Request;
   params: Record<string, string>;
   userId: string;
+  authenticatedAt?: Date;
   body: <S extends ZodType>(schema: S) => Promise<z.output<S>>;
   query: <S extends ZodType>(schema: S) => z.output<S>;
 };
@@ -122,6 +126,7 @@ export function withSession(handler: Handler) {
         request,
         params,
         userId: session.userId,
+        authenticatedAt: session.authenticatedAt,
         body: (schema) => body(request, schema),
         query: (schema) => query(request, schema),
       });
