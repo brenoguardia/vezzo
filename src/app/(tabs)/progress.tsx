@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { BarChart, Card, SegmentedControl, Text } from "@/components/ui";
+import { ListSkeleton, SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
 import { useToday } from "@/features/habits/useToday";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { byMonth, completionOf, type Period } from "@/features/progress/aggregate";
@@ -33,6 +34,7 @@ export default function Progress() {
     new Intl.DateTimeFormat(locale, { month: "narrow", timeZone: "UTC" }).format(new Date(`${month}-01T00:00:00Z`));
 
   const hasHabits = habits.some((h) => !h.archivedAt);
+  const loadingFirst = useLoadingFirst();
   const periodDays = period === "week" ? week.days : remote.days;
   const completion = period === "week" ? week.cmp.current.completion : completionOf(remote.days);
   const bestDayName = week.best === null ? "—" : t(`onboarding.daysNames.${week.best}`);
@@ -89,7 +91,16 @@ export default function Progress() {
           {t("home.loading")}
         </Text>
       ) : remote.status === "error" ? (
-        <Text tone="mute">{t("common.loadError")}</Text>
+        <View accessibilityLiveRegion="polite" style={styles.error}>
+          <Text tone="mute" style={styles.flex}>
+            {t("common.loadError")}
+          </Text>
+          <Pressable accessibilityRole="button" onPress={remote.retry} style={styles.retry}>
+            <Text variant="captionStrong" tone="acc">
+              {t("common.retry")}
+            </Text>
+          </Pressable>
+        </View>
       ) : period === "year" ? (
         <BarChart
           accessibilityLabel={t("progress.completion")}
@@ -163,6 +174,7 @@ export default function Progress() {
           { value: "year", label: t("progress.year") },
         ]}
       />
+      <SyncStatus />
     </>
   );
 
@@ -194,7 +206,9 @@ export default function Progress() {
   return (
     <SettingsShell>
       {header}
-      {!hasHabits ? (
+      {loadingFirst ? (
+        <ListSkeleton summary rows={2} />
+      ) : !hasHabits ? (
         empty
       ) : (
         <>
@@ -212,6 +226,8 @@ export default function Progress() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  error: { flexDirection: "row", alignItems: "center", gap: 8 },
+  retry: { minHeight: 44, minWidth: 44, justifyContent: "center", alignItems: "center" },
   gap: { gap: 12 },
   head: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   badge: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 14 },

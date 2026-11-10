@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { unarchiveHabit } from "@/api/habits";
 import { Button, Card, EmojiTile, Text } from "@/components/ui";
 import { EditHabitPanel } from "@/features/habits/EditHabitPanel";
+import { ListSkeleton, SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
 import { activeHabits } from "@/features/habits/selectors";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { useLocale } from "@/i18n/useLocale";
@@ -27,6 +28,7 @@ export default function Habits() {
   const { dual } = useLayoutMode();
   const upsert = useHabitsStore((s) => s.upsertHabit);
   const showToast = useToastStore((s) => s.show);
+  const loadingFirst = useLoadingFirst();
   const active = activeHabits(habits);
   const archived = habits.filter((h) => h.archivedAt);
 
@@ -62,11 +64,14 @@ export default function Habits() {
         {t("manage.title")}
       </Text>
       <Button label={t("manage.newHabit")} onPress={() => router.push("/habit/new")} />
+      <SyncStatus />
 
       <Text variant="label" tone="mute">
         {t("manage.active")}
       </Text>
-      {active.length === 0 ? (
+      {loadingFirst ? (
+        <ListSkeleton />
+      ) : active.length === 0 ? (
         <Text tone="mute">{t("home.emptySub")}</Text>
       ) : (
         <View style={styles.list}>

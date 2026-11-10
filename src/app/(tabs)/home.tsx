@@ -1,10 +1,10 @@
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, Card, Ring, Text } from "@/components/ui";
 import { HabitDetailView } from "@/features/habits/HabitDetailView";
 import { HabitRow } from "@/features/habits/HabitRow";
-import { hydrateHabits } from "@/features/habits/hydrate";
+import { ListSkeleton, SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
 import { statInputs, todayItems, todaySummary } from "@/features/habits/selectors";
 import { habitSubtitle } from "@/features/habits/subtitle";
 import { useToday } from "@/features/habits/useToday";
@@ -17,9 +17,7 @@ import { DEFAULT_TIMEZONE, dayOfYear } from "@/lib/habit-stats";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { currentStreak } from "@/shared/stats";
 import { useHabitsStore } from "@/store/habits";
-import { useHydrationStore } from "@/store/hydration";
 import { useProfileStore } from "@/store/profile";
-import { useSyncStore } from "@/store/sync";
 
 /** Aba Hoje (docs/05, tela 5): resumo do dia, frase motivacional e lista de hábitos agendados. */
 export default function Today() {
@@ -35,9 +33,6 @@ export default function Today() {
   const selectHabit = useHabitsStore((s) => s.selectHabit);
   const selectedId = useHabitsStore((s) => s.selectedHabitId);
   const { dual } = useLayoutMode();
-  const hydration = useHydrationStore((s) => s.status);
-  const pendingSync = useSyncStore((s) => s.queue.length > 0);
-  const syncFailed = useSyncStore((s) => s.failed);
 
   const items = useMemo(() => todayItems(habits, logs, today, timeZone), [habits, logs, today, timeZone]);
   const summary = useMemo(() => todaySummary(habits, logs, today, timeZone), [habits, logs, today, timeZone]);
@@ -49,7 +44,7 @@ export default function Today() {
   const phrase = dailyPhrase(locale, phraseBand(summary.done, summary.counted), dayOfYear(today));
   const hasHabits = habits.some((h) => !h.archivedAt);
   // Primeira carga sem cache: skeleton em vez do estado vazio, que seria enganoso.
-  const loadingFirst = habits.length === 0 && (hydration === "loading" || hydration === "idle");
+  const loadingFirst = useLoadingFirst();
 
   const selected = dual && selectedId ? items.find((i) => i.habit.id === selectedId)?.habit : undefined;
 
@@ -64,38 +59,10 @@ export default function Today() {
         </Text>
       </View>
 
-      {pendingSync ? (
-        <Text variant="caption" tone="mute" accessibilityLiveRegion="polite">
-          {t(syncFailed ? "home.syncPending" : "home.syncing")}
-        </Text>
-      ) : null}
-
-      {hydration === "error" ? (
-        <View accessibilityLiveRegion="polite">
-          <Card radius={16} padding={12} style={styles.banner}>
-            <Text variant="caption" tone="mute" style={styles.flex}>
-              {t("home.offline")}
-            </Text>
-            <Pressable accessibilityRole="button" onPress={() => void hydrateHabits(timeZone)} style={styles.retry}>
-              <Text variant="captionStrong" tone="acc">
-                {t("common.retry")}
-              </Text>
-            </Pressable>
-          </Card>
-        </View>
-      ) : null}
+      <SyncStatus />
 
       {loadingFirst ? (
-        <View accessibilityRole="progressbar" accessibilityLabel={t("home.loading")} style={styles.list}>
-          <Card radius={28} padding={20} style={styles.skeletonSummary}>
-            {null}
-          </Card>
-          {[0, 1, 2].map((i) => (
-            <Card key={i} radius={20} padding={0} style={styles.skeletonRow}>
-              {null}
-            </Card>
-          ))}
-        </View>
+        <ListSkeleton summary />
       ) : !hasHabits ? (
         <Card radius={28} padding={28} style={styles.empty}>
           <Text style={styles.seed}>🌱</Text>
@@ -162,10 +129,6 @@ export default function Today() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  banner: { flexDirection: "row", alignItems: "center", gap: 8 },
-  retry: { minHeight: 44, minWidth: 44, justifyContent: "center", alignItems: "center" },
-  skeletonSummary: { height: 152 },
-  skeletonRow: { height: 64, opacity: 0.6 },
   header: { gap: 2 },
   summary: { flexDirection: "row", alignItems: "center", gap: 20 },
   ratio: { fontFamily: "Manrope_800ExtraBold", fontSize: 30, lineHeight: 36 },

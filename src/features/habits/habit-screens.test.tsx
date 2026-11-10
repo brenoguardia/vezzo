@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react-nativ
 import { createHabit, deleteHabit, unarchiveHabit } from "@/api/habits";
 import Habits from "@/app/(tabs)/habits";
 import Today from "@/app/(tabs)/home";
+import Progress from "@/app/(tabs)/progress";
 import EditHabit from "@/app/habit/[id]/edit";
 import NewHabit from "@/app/habit/new";
 import { hydrateHabits } from "@/features/habits/hydrate";
@@ -146,6 +147,44 @@ describe("Hoje", () => {
     useSyncStore.setState({ failed: true });
     await render(<Today />);
     expect(screen.getByText(/Sem conexão/)).toBeTruthy();
+  });
+});
+
+describe("Hábitos e Progresso · carregamento e erro", () => {
+  it("Hábitos mostra skeleton na primeira carga sem cache", async () => {
+    useHydrationStore.setState({ status: "loading" });
+    await render(<Habits />);
+    expect(screen.getByLabelText("Carregando seus hábitos")).toBeTruthy();
+    expect(screen.queryByText("Crie seu primeiro hábito para começar.")).toBeNull();
+  });
+
+  it("Hábitos e Progresso mostram a faixa de erro e tentam de novo", async () => {
+    useHabitsStore.getState().hydrate([habit("a".repeat(24))], []);
+    useHydrationStore.setState({ status: "error" });
+    await render(<Habits />);
+    expect(screen.getByText(/Não foi possível atualizar/)).toBeTruthy();
+    await fireEvent.press(screen.getByText("Tentar de novo"));
+    expect(hydrateHabits).toHaveBeenCalledWith("UTC");
+  });
+
+  it("Progresso mostra skeleton na primeira carga sem cache", async () => {
+    useHydrationStore.setState({ status: "loading" });
+    await render(<Progress />);
+    expect(screen.getByLabelText("Carregando seus hábitos")).toBeTruthy();
+    expect(screen.queryByText(/Sem hábitos/)).toBeNull();
+  });
+
+  it("Progresso: erro em mês/ano oferece tentar de novo", async () => {
+    const { fetchStats } = jest.requireMock("@/api/summary") as { fetchStats: jest.Mock<() => Promise<unknown>> };
+    useHabitsStore.getState().hydrate([habit("a".repeat(24))], []);
+    fetchStats.mockRejectedValueOnce(new Error("offline"));
+    fetchStats.mockResolvedValue({ days: [], currentStreak: 0 });
+    await render(<Progress />);
+    await fireEvent.press(screen.getByText("Mês"));
+    await waitFor(() => expect(screen.getByText("Não foi possível carregar sua conta.")).toBeTruthy());
+    await fireEvent.press(screen.getByText("Tentar de novo"));
+    await waitFor(() => expect(screen.queryByText("Não foi possível carregar sua conta.")).toBeNull());
+    expect(fetchStats).toHaveBeenCalledTimes(2);
   });
 });
 
