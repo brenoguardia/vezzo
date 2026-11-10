@@ -13,9 +13,15 @@ export async function findOwnedHabit(db: Db, userId: string, id: string) {
   return habit;
 }
 
+/**
+ * Hábitos não arquivados. No Prisma + MongoDB, `archivedAt: null` só casa com o campo gravado como
+ * null; hábitos criados sem o campo (o Prisma não grava opcionais omitidos) ficariam de fora.
+ */
+export const notArchived = { OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }] };
+
 export async function listHabits(db: Db, userId: string): Promise<HabitDto[]> {
   const habits = await db.habit.findMany({
-    where: { userId, archivedAt: null },
+    where: { userId, ...notArchived },
     orderBy: { order: "asc" },
   });
   return habits.map(toHabitDto);
@@ -31,8 +37,8 @@ export async function createHabit(db: Db, userId: string, input: HabitInput): Pr
     }
     templateId = template.id;
   }
-  const order = await db.habit.count({ where: { userId, archivedAt: null } });
-  const habit = await db.habit.create({ data: { ...fields, userId, templateId, order } });
+  const order = await db.habit.count({ where: { userId, ...notArchived } });
+  const habit = await db.habit.create({ data: { ...fields, userId, templateId, order, archivedAt: null } });
   return toHabitDto(habit);
 }
 

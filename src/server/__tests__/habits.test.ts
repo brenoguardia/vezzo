@@ -17,6 +17,24 @@ beforeEach(() => {
 
 const valid = { name: "Ler", emoji: "📚", goalValue: 15, goalUnit: "PAGES", days: [0, 2, 4] };
 
+describe("GET /v1/habits · documentos sem archivedAt", () => {
+  // Regressão: no Mongo, `archivedAt: null` não casa com hábitos gravados sem o campo (onboarding antigo).
+  it("lista hábitos que não têm o campo archivedAt e esconde os arquivados", async () => {
+    const base = { userId: USER_A, emoji: "💧", goalValue: 1, goalUnit: "BOOLEAN", days: [0], name: "Água" };
+    await db.habit.create({ data: { ...base, name: "Sem campo" } });
+    await db.habit.create({ data: { ...base, name: "Nulo", archivedAt: null } });
+    await db.habit.create({ data: { ...base, name: "Arquivado", archivedAt: new Date() } });
+    const { habits } = habitList.parse(await (await GET(req("/api/v1/habits", { user: USER_A }))).json());
+    expect(habits.map((h) => h.name).sort()).toEqual(["Nulo", "Sem campo"]);
+  });
+
+  it("a ordem do novo hábito conta os existentes sem o campo", async () => {
+    await db.habit.create({ data: { userId: USER_A, name: "Antigo", emoji: "💧", goalValue: 1, goalUnit: "BOOLEAN", days: [0] } });
+    const dto = habitDto.parse(await (await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: valid }))).json());
+    expect(dto.order).toBe(1);
+  });
+});
+
 describe("POST /v1/habits", () => {
   it("cria com userId da sessão, defaults e ordem sequencial", async () => {
     const first = await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, userId: USER_B } }));

@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import type { Db } from "@/server/db";
 import { ApiError } from "@/server/http";
 import { toHabitDto, toProfileDto } from "@/server/mappers";
+import { notArchived } from "@/server/services/habits";
 import type { OnboardingResult, onboardingComplete } from "@/shared/schemas";
 import type { z } from "zod";
 
@@ -19,7 +20,7 @@ export async function completeOnboarding(
     if (!profile) throw new ApiError("NOT_FOUND", "Perfil não encontrado.");
 
     if (profile.onboardingDone) {
-      const habits = await tx.habit.findMany({ where: { userId, archivedAt: null }, orderBy: { order: "asc" } });
+      const habits = await tx.habit.findMany({ where: { userId, ...notArchived }, orderBy: { order: "asc" } });
       return { profile: toProfileDto(profile), habits: habits.map(toHabitDto) };
     }
 
@@ -32,12 +33,12 @@ export async function completeOnboarding(
     });
     if (Object.keys(unknown).length > 0) throw new ApiError("VALIDATION_ERROR", "Dados inválidos.", unknown);
 
-    const base = await tx.habit.count({ where: { userId, archivedAt: null } });
+    const base = await tx.habit.count({ where: { userId, ...notArchived } });
     const habits = [];
     for (const [i, { templateSlug, ...fields }] of input.habits.entries()) {
       habits.push(
         await tx.habit.create({
-          data: { ...fields, userId, templateId: templateSlug ? (templateIds.get(templateSlug) ?? null) : null, order: base + i },
+          data: { ...fields, userId, templateId: templateSlug ? (templateIds.get(templateSlug) ?? null) : null, order: base + i, archivedAt: null },
         }),
       );
     }

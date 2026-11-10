@@ -7,7 +7,7 @@ export type Row = Record<string, unknown>;
 type Where = Record<string, unknown>;
 type OrderBy = Record<string, "asc" | "desc"> | Record<string, "asc" | "desc">[];
 
-const OPERATORS = new Set(["in", "gte", "lte", "gt", "lt", "not", "equals"]);
+const OPERATORS = new Set(["in", "gte", "lte", "gt", "lt", "not", "equals", "isSet"]);
 
 function isPlain(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value) && !(value instanceof Date);
@@ -34,15 +34,22 @@ function matchOperators(actual: unknown, ops: Record<string, unknown>): boolean 
   });
 }
 
+// Como no Prisma + MongoDB: `{ campo: null }` só casa com campo gravado como null; documento sem o
+// campo exige `{ campo: { isSet: false } }`. Esconder essa diferença já escondeu um bug real.
 function matches(row: Row, where: Where = {}): boolean {
   return Object.entries(where).every(([key, expected]) => {
     if (expected === undefined) return true;
+    if (key === "OR") return (expected as Where[]).some((w) => matches(row, w));
     if (isPlain(expected)) {
       const isOperatorBag = Object.keys(expected).every((k) => OPERATORS.has(k));
-      if (isOperatorBag) return matchOperators(row[key] ?? null, expected);
+      if (isOperatorBag) {
+        if ("isSet" in expected) return (key in row && row[key] !== undefined) === expected.isSet;
+        return matchOperators(row[key] ?? null, expected);
+      }
       return matches(row, expected); // chave única composta: habitId_date
     }
-    return (row[key] ?? null) === expected;
+    if (expected === null) return key in row && row[key] === null;
+    return row[key] === expected;
   });
 }
 
@@ -168,7 +175,7 @@ export function createFakeDb(): FakeDb {
         reminders: [],
         quickActions: true,
         order: 0,
-        archivedAt: null,
+        // Sem `archivedAt`: o Prisma não grava opcionais omitidos, e o Mongo distingue ausente de null.
         createdAt: new Date(),
       }),
     }),

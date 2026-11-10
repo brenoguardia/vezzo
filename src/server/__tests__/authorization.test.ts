@@ -67,7 +67,7 @@ describe("isolamento entre usuários", () => {
       const res = await removeHabit(req(url, { user: USER_B, method: "DELETE" }), { id: habit.id as string });
       expect(res.status).toBe(404);
     }
-    expect((await db.habit.findUnique({ where: { id: habit.id } }))?.archivedAt).toBeNull();
+    expect((await db.habit.findUnique({ where: { id: habit.id } }))?.archivedAt ?? null).toBeNull();
     expect(await db.habitLog.count()).toBe(1);
   });
   it("B não registra progresso no hábito de A", async () => {
