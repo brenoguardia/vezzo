@@ -135,7 +135,7 @@ describe("sign-in", () => {
     await fillAndSubmit();
     await fireEvent.press(await screen.findByText("Reenviar e-mail de confirmação"));
     await waitFor(() =>
-      expect(mockAuth.sendVerificationEmail).toHaveBeenCalledWith({ email: "ana@exemplo.com", callbackURL: "/" }),
+      expect(mockAuth.sendVerificationEmail).toHaveBeenCalledWith({ email: "ana@exemplo.com", callbackURL: "vezzo://" }),
     );
   });
 });

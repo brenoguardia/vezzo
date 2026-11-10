@@ -6,6 +6,8 @@ import type { ForgotPasswordInput, SignInInput, SignUpInput } from "@/shared/sch
 export type AuthResult = { ok: true } | { ok: false; key: AuthErrorKey };
 
 export const RESET_REDIRECT = "vezzo://reset-password";
+/** Depois de verificar o e-mail, o servidor redireciona para o app (esquema já está em `trustedOrigins`). */
+export const VERIFY_REDIRECT = "vezzo://";
 
 async function run(call: () => Promise<{ error: AuthErrorLike | null }>): Promise<AuthResult> {
   try {
@@ -21,10 +23,10 @@ export const signInWithEmail = ({ email, password }: SignInInput) =>
 
 // O nome real vem no onboarding (`Profile.displayName`); até lá usamos a parte local do e-mail.
 export const signUpWithEmail = ({ email, password }: SignUpInput) =>
-  run(() => authClient.signUp.email({ email, password, name: email.split("@")[0] ?? email }));
+  run(() => authClient.signUp.email({ email, password, name: email.split("@")[0] ?? email, callbackURL: VERIFY_REDIRECT }));
 
 export const resendVerification = (email: string) =>
-  run(() => authClient.sendVerificationEmail({ email, callbackURL: "/" }));
+  run(() => authClient.sendVerificationEmail({ email, callbackURL: VERIFY_REDIRECT }));
 
 /** A UI responde igual exista ou não a conta (docs/04); só falhas de rede/limite aparecem. */
 export const requestPasswordReset = ({ email }: ForgotPasswordInput) =>
