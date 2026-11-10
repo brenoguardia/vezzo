@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Card, Text } from "@/components/ui";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { useT } from "@/i18n/useT";
-import { layoutInfo } from "@/lib/layout-mode";
+import { useLayoutMode } from "@/lib/useLayoutMode";
 
 /**
  * Somente dev (`__DEV__`): mostra o que o dispositivo informa (janela, safe area, rail vertical)
@@ -15,7 +15,7 @@ export default function LayoutDebug() {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const rail = useVerticalBarEdgeIOS();
-  const info = layoutInfo(width);
+  const info = useLayoutMode();
 
   if (!__DEV__) return null;
 
@@ -24,7 +24,7 @@ export default function LayoutDebug() {
     [t("layoutDebug.pixelRatio"), `${PixelRatio.get()}×`],
     [t("layoutDebug.insets"), `T ${insets.top} · R ${insets.right} · B ${insets.bottom} · L ${insets.left}`],
     [t("layoutDebug.rail"), rail ?? "—"],
-    [t("layoutDebug.mode"), `${info.mode} · ${Math.round(info.columnWidth)} pt`],
+    [t("layoutDebug.mode"), `${info.mode} · ${Math.round(info.columnWidth)} pt (útil ${Math.round(info.usableWidth)})`],
   ];
 
   return (
