@@ -1,7 +1,8 @@
 # Abre o app e passa pelo Dev Launcher (development build) se ele aparecer.
 appId: com.itbuilder.vezzo
 ---
-- launchApp
+- launchApp:
+    stopApp: true
 - runFlow:
     when:
       visible: "DEVELOPMENT SERVERS"

@@ -1,0 +1,79 @@
+# Criar, persistir após reabrir o app, editar e arquivar um hábito.
+# Usa o nome "E2E Teste": rode `bun scripts/e2e-cleanup.ts` depois para remover os hábitos de teste.
+appId: com.itbuilder.vezzo
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-habits"
+- tapOn: "Novo hábito"
+- tapOn: "Ex.: Ler antes de dormir"
+- inputText: "E2E Teste"
+- hideKeyboard
+- takeScreenshot: habit-new-form
+- tapOn:
+    text: "Salvar"
+    point: "25%,50%" # o botão flutuante "Tools" do dev client cobre a ponta direita
+- extendedWaitUntil:
+    visible: "E2E Teste.*"
+    timeout: 10000
+# Persiste: fechar de verdade e abrir de novo.
+- stopApp
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-habits"
+- extendedWaitUntil:
+    visible: "E2E Teste.*"
+    timeout: 15000
+- takeScreenshot: habit-persisted
+# Editar
+- tapOn: "E2E Teste.*"
+- assertVisible: "Editar"
+- takeScreenshot: habit-detail
+- tapOn: "Editar"
+- tapOn: "E2E Teste"
+- inputText: " 2"
+- hideKeyboard
+- tapOn:
+    text: "Salvar"
+    point: "25%,50%" # o botão flutuante "Tools" do dev client cobre a ponta direita
+- extendedWaitUntil:
+    visible: "E2E Teste 2.*"
+    timeout: 10000
+# Arquivar: volta para a lista de Hábitos (não para o detalhe do arquivado).
+- tapOn: "Editar"
+- scrollUntilVisible:
+    element: "Arquivar hábito"
+- tapOn: "Arquivar hábito"
+- extendedWaitUntil:
+    visible: "Novo hábito"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Desarquivar: E2E Teste 2"
+    centerElement: true # a barra de abas flutuante cobre o fim da lista
+- takeScreenshot: habit-archived
+# Arquivados persistem depois de fechar o app.
+- stopApp
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-habits"
+- scrollUntilVisible:
+    element: "Desarquivar: E2E Teste 2"
+    centerElement: true # a barra de abas flutuante cobre o fim da lista
+# Desarquivar e arquivar de novo (deixa o hábito de teste arquivado).
+- tapOn: "Desarquivar: E2E Teste 2"
+- extendedWaitUntil:
+    notVisible: "Desarquivar: E2E Teste 2"
+    timeout: 15000
+# O desarquivado persiste: reabrir o app e ver o hábito de volta entre os ativos.
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-habits"
+- extendedWaitUntil:
+    visible: "E2E Teste 2.*"
+    timeout: 15000
+# A lista aparece do cache e é corrigida quando a hidratação do servidor termina.
+- extendedWaitUntil:
+    notVisible: "Desarquivar: E2E Teste 2"
+    timeout: 15000
+- takeScreenshot: habit-unarchived
+# O hábito de teste fica ativo na conta: `bun scripts/e2e-cleanup.ts` remove os "E2E*".
