@@ -15,7 +15,7 @@ import { StyleSheet, View } from "react-native";
 import { authClient } from "@/auth/client";
 import { resolveGate } from "@/auth/guard";
 import { useInitialSessionPending } from "@/auth/useInitialSessionPending";
-import { Button, Text, ToastHost } from "@/components/ui";
+import { AppShellSkeleton, Button, Text, ToastHost } from "@/components/ui";
 import { clearHabitData } from "@/features/habits/hydrate";
 import { useHabitsSync } from "@/features/habits/useHabitsSync";
 import { useNotificationRuntime } from "@/features/habits/useNotificationRuntime";
@@ -65,13 +65,22 @@ function RootLayout() {
   const timezone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
   useHabitsSync(gate === "tabs", timezone);
   useNotificationRuntime(gate === "tabs");
-  const ready = fontsReady && gate !== "loading";
 
+  // A splash nativa sai assim que as fontes carregam; enquanto sessão e perfil resolvem o gate,
+  // mostramos um skeleton do app em vez de segurar a splash.
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync().catch(() => {});
-  }, [ready]);
+    if (fontsReady) SplashScreen.hideAsync().catch(() => {});
+  }, [fontsReady]);
 
-  if (!ready) return null;
+  if (!fontsReady) return null;
+  if (gate === "loading") {
+    return (
+      <>
+        <StatusBar style={theme.scheme === "dark" ? "light" : "dark"} />
+        <AppShellSkeleton />
+      </>
+    );
+  }
 
   return (
     <>

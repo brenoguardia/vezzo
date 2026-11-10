@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Linking, StyleSheet, View } from "react-native";
 import { authClient } from "@/auth/client";
-import { Button, Card, Text } from "@/components/ui";
+import { Button, Card, ProfileSkeleton, Skeleton, SkeletonGroup, SkeletonSettingRow, Text } from "@/components/ui";
 import { requestPasswordReset } from "@/features/auth/actions";
 import { accentName } from "@/features/profile/AccentSwatches";
 import { SettingsRow } from "@/features/profile/SettingsRow";
@@ -39,7 +39,13 @@ export default function ProfileScreen() {
   const [languageOpen, setLanguageOpen] = useState(false);
   const [sendingReset, setSendingReset] = useState(false);
 
-  if (!profile) return null;
+  if (!profile) {
+    return (
+      <SettingsShell>
+        <ProfileSkeleton />
+      </SettingsShell>
+    );
+  }
   const email = session?.user.email;
 
   async function changeLanguage(next: (typeof LOCALES)[number]) {
@@ -70,19 +76,18 @@ export default function ProfileScreen() {
     });
   }
 
-  const dash = "–";
   const metrics = [
     {
       label: t("profile.streak"),
-      value: summary ? String(summary.streak) : dash,
+      value: summary ? String(summary.streak) : null,
     },
     {
       label: t("profile.habits"),
-      value: summary ? String(summary.habits) : dash,
+      value: summary ? String(summary.habits) : null,
     },
     {
       label: t("profile.completion"),
-      value: summary ? `${Math.round(summary.completion * 100)}%` : dash,
+      value: summary ? `${Math.round(summary.completion * 100)}%` : null,
     },
   ];
 
@@ -107,9 +112,15 @@ export default function ProfileScreen() {
       <View style={styles.metrics}>
         {metrics.map((metric) => (
           <Card key={metric.label} radius={radius.card} padding={14} style={styles.metric}>
-            <Text variant="sectionTitle" accessibilityLabel={`${metric.label}: ${metric.value}`}>
-              {metric.value}
-            </Text>
+            {metric.value === null ? (
+              <SkeletonGroup>
+                <Skeleton width={36} height={22} radius={6} />
+              </SkeletonGroup>
+            ) : (
+              <Text variant="sectionTitle" accessibilityLabel={`${metric.label}: ${metric.value}`}>
+                {metric.value}
+              </Text>
+            )}
             <Text variant="caption" tone="mute">
               {metric.label}
             </Text>
@@ -147,6 +158,7 @@ export default function ProfileScreen() {
           : null}
         <SettingsRow
           label={t("profile.reminders")}
+          loading={reminderPermission === null}
           value={reminderPermission === "granted" ? t("profile.remindersOn") : undefined}
           last={!__DEV__ && reminderPermission !== "denied"}
         />
@@ -175,7 +187,9 @@ export default function ProfileScreen() {
       </Text>
       <Card radius={radius.cardLarge} padding={0}>
         <SettingsRow label={t("profile.email")} value={email} />
-        {hasPassword ? (
+        {hasPassword === null ? (
+          <SkeletonSettingRow />
+        ) : hasPassword ? (
           <SettingsRow
             label={t("profile.resetPassword")}
             chevron

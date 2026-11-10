@@ -59,4 +59,12 @@ Avatar 84 (inicial, fundo `acc`), nome 800/24, "Usando desde ...". Três cartõe
 Especificação em `07-notificacoes.md`. O design mostra o banner expandido com os botões "Concluir", "Adiar 1h", "Pular".
 
 ## Estados a implementar (fora do design)
-Carregando (skeletons com `card`), vazio (sem hábitos: emoji 🌱 + botão "Criar hábito"), erro de rede (faixa discreta e fila offline), dia sem hábitos agendados, hábito arquivado, primeiro dia (sem recorde).
+Carregando (**sempre skeleton**, ver abaixo), vazio (sem hábitos: emoji 🌱 + botão "Criar hábito"), erro de rede (faixa discreta e fila offline), dia sem hábitos agendados, hábito arquivado, primeiro dia (sem recorde).
+
+### Padrão de loading: Skeleton
+- Todo carregamento de **conteúdo** (telas, listas, números, linhas) é um skeleton: blocos `line` pulsando (opacidade 1 ↔ 0,45, 900 ms), sem spinner. O pulso respeita "Reduzir movimento" do sistema.
+- O skeleton **espelha o layout real** (mesmas alturas, raios e margens) para a tela não saltar quando os dados chegam. Composições em `src/components/ui/skeletons.tsx`; a primitiva é `Skeleton` (`Skeleton.tsx`).
+- Acessibilidade: cada região é um `SkeletonGroup` (`progressbar`, rótulo "Carregando", `aria-live` polite); os blocos internos são mudos para o leitor de tela.
+- Quando mostrar: primeira carga sem cache (`useLoadingFirst`), dados que ainda não chegaram (resumo do Perfil, permissão de lembretes, "tem senha?", mês/ano do Progresso) e hábito ainda hidratando (detalhe/edição não dizem "não encontrado" antes de hidratar).
+- Abertura do app: a splash sai quando as fontes carregam e entra `AppShellSkeleton` até sessão e perfil resolverem o gate.
+- Exceção: botões enviando (`Button loading`) mantêm o spinner, por ser ação em andamento e não conteúdo carregando.

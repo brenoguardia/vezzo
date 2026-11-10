@@ -5,12 +5,14 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 // Mock mínimo do Reanimated: os testes cobrem estrutura e acessibilidade, não animação.
 jest.mock("react-native-reanimated", () => ({
   __esModule: true,
-  default: { createAnimatedComponent: (component) => component },
+  default: { createAnimatedComponent: (component) => component, View: require("react-native").View },
   Easing: { inOut: (fn) => fn, ease: (t) => t },
   ReduceMotion: { System: "system" },
   useSharedValue: (initial) => ({ value: initial }),
   useAnimatedProps: (factory) => factory(),
+  useAnimatedStyle: (factory) => factory(),
   withTiming: (value) => value,
+  withRepeat: (value) => value,
 }));
 
 // O SDK do Sentry é nativo: nos testes o monitoramento fica desligado (sem DSN) e o módulo é um stub.

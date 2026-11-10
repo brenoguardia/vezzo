@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { Text } from "@/components/ui";
+import { Skeleton, SkeletonGroup, Text } from "@/components/ui";
 import { useTheme } from "@/lib/useTheme";
 
 interface Props {
@@ -12,6 +12,8 @@ interface Props {
   /** Remove a linha divisória inferior (última linha do cartão). */
   last?: boolean;
   disabled?: boolean;
+  /** Valor ainda carregando: mostra um skeleton no lugar dele. */
+  loading?: boolean;
   accessibilityState?: { expanded?: boolean; busy?: boolean };
 }
 
@@ -24,6 +26,7 @@ export function SettingsRow({
   chevron,
   last,
   disabled,
+  loading,
   accessibilityState,
 }: Props) {
   const theme = useTheme();
@@ -32,7 +35,11 @@ export function SettingsRow({
       <Text variant="bodyStrong" tone={tone}>
         {label}
       </Text>
-      {value ? (
+      {loading ? (
+        <SkeletonGroup>
+          <Skeleton width={72} height={14} radius={6} />
+        </SkeletonGroup>
+      ) : value ? (
         <Text tone="mute" numberOfLines={1} style={styles.value}>
           {value}
         </Text>

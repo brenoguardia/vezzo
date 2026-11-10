@@ -1,12 +1,19 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { i18n } from "@/i18n";
 import { Button } from "./Button";
 import { Chip } from "./Chip";
 import { DayPills } from "./DayPills";
 import { Field } from "./Field";
 import { PasswordField } from "./PasswordField";
 import { ProgressSteps } from "./ProgressSteps";
+import { Skeleton, SkeletonGroup } from "./Skeleton";
 import { Stepper } from "./Stepper";
+import { AppShellSkeleton, HabitsListSkeleton, TodaySkeleton } from "./skeletons";
+
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
 
 describe("componentes base", () => {
   it("Button não dispara onPress quando desabilitado", async () => {
@@ -66,5 +73,32 @@ describe("componentes base", () => {
   it("ProgressSteps expõe etapa atual", async () => {
     await render(<ProgressSteps current={2} accessibilityLabel="Etapa 2 de 3" />);
     expect(screen.getByRole("progressbar").props.accessibilityValue).toMatchObject({ now: 2, max: 3 });
+  });
+});
+
+describe("skeleton", () => {
+  beforeEach(() => {
+    i18n.locale = "pt-BR";
+  });
+
+  it("o grupo é um único item de carregamento para o leitor de tela", async () => {
+    await render(
+      <SkeletonGroup>
+        <Skeleton height={20} />
+        <Skeleton height={20} />
+      </SkeletonGroup>,
+    );
+    expect(screen.getAllByRole("progressbar")).toHaveLength(1);
+    expect(screen.getByLabelText("Carregando")).toBeTruthy();
+  });
+
+  it.each([
+    ["Hoje", <TodaySkeleton key="a" />, "skeleton-today"],
+    ["Hábitos", <HabitsListSkeleton key="b" />, "skeleton-habits"],
+    ["abertura do app", <AppShellSkeleton key="c" />, "skeleton-app"],
+  ])("composição de %s renderiza com rótulo de carregamento", async (_name, element, testID) => {
+    await render(element);
+    expect(screen.getByTestId(testID)).toBeTruthy();
+    expect(screen.getByLabelText("Carregando")).toBeTruthy();
   });
 });

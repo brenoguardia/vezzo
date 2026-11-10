@@ -4,8 +4,10 @@ import { createHabit, deleteHabit, unarchiveHabit } from "@/api/habits";
 import Habits from "@/app/(tabs)/habits";
 import Today from "@/app/(tabs)/home";
 import Progress from "@/app/(tabs)/progress";
+import HabitDetail from "@/app/habit/[id]";
 import EditHabit from "@/app/habit/[id]/edit";
 import NewHabit from "@/app/habit/new";
+import Streak from "@/app/streak";
 import { hydrateHabits } from "@/features/habits/hydrate";
 import { setLocale } from "@/i18n";
 import type { HabitDto, ProfileDto } from "@/shared/schemas";
@@ -88,13 +90,14 @@ beforeEach(() => {
   useHabitsStore.getState().clear();
   useSyncStore.setState({ queue: [], failed: false });
   useHydrationStore.setState({ status: "ready" });
+  mockParams = {};
 });
 
 describe("Hoje · carregamento e erro", () => {
   it("primeira carga sem cache mostra skeleton, não o estado vazio", async () => {
     useHydrationStore.setState({ status: "loading" });
     await render(<Today />);
-    expect(screen.getByLabelText("Carregando seus hábitos")).toBeTruthy();
+    expect(screen.getByLabelText("Carregando")).toBeTruthy();
     expect(screen.queryByText("Nenhum hábito ainda")).toBeNull();
   });
 
@@ -154,7 +157,7 @@ describe("Hábitos e Progresso · carregamento e erro", () => {
   it("Hábitos mostra skeleton na primeira carga sem cache", async () => {
     useHydrationStore.setState({ status: "loading" });
     await render(<Habits />);
-    expect(screen.getByLabelText("Carregando seus hábitos")).toBeTruthy();
+    expect(screen.getByLabelText("Carregando")).toBeTruthy();
     expect(screen.queryByText("Crie seu primeiro hábito para começar.")).toBeNull();
   });
 
@@ -170,7 +173,7 @@ describe("Hábitos e Progresso · carregamento e erro", () => {
   it("Progresso mostra skeleton na primeira carga sem cache", async () => {
     useHydrationStore.setState({ status: "loading" });
     await render(<Progress />);
-    expect(screen.getByLabelText("Carregando seus hábitos")).toBeTruthy();
+    expect(screen.getByLabelText("Carregando")).toBeTruthy();
     expect(screen.queryByText(/Sem hábitos/)).toBeNull();
   });
 
@@ -185,6 +188,43 @@ describe("Hábitos e Progresso · carregamento e erro", () => {
     await fireEvent.press(screen.getByText("Tentar de novo"));
     await waitFor(() => expect(screen.queryByText("Não foi possível carregar sua conta.")).toBeNull());
     expect(fetchStats).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("Skeleton em vez de tela vazia ou 'não encontrado'", () => {
+  it("Detalhe e edição mostram skeleton enquanto hidrata e 'não encontrado' só depois", async () => {
+    mockParams = { id: "9".repeat(24) };
+    useHydrationStore.setState({ status: "loading" });
+    const detail = await render(<HabitDetail />);
+    expect(screen.getByTestId("skeleton-detail")).toBeTruthy();
+    expect(screen.queryByText("Hábito não encontrado.")).toBeNull();
+    await detail.unmount();
+
+    const edit = await render(<EditHabit />);
+    expect(screen.getByTestId("skeleton-form")).toBeTruthy();
+    await edit.unmount();
+
+    useHydrationStore.setState({ status: "ready" });
+    await render(<HabitDetail />);
+    expect(screen.queryByTestId("skeleton-detail")).toBeNull();
+    expect(screen.getByText(/não encontrado/i)).toBeTruthy();
+    mockParams = {};
+  });
+
+  it("Sequência mostra skeleton na primeira carga", async () => {
+    useHydrationStore.setState({ status: "loading" });
+    await render(<Streak />);
+    expect(screen.getByTestId("skeleton-streak")).toBeTruthy();
+  });
+
+  it("Progresso: mês/ano carregam com skeleton do gráfico, não com texto", async () => {
+    const { fetchStats } = jest.requireMock("@/api/summary") as { fetchStats: jest.Mock<() => Promise<unknown>> };
+    useHabitsStore.getState().hydrate([habit("a".repeat(24))], []);
+    fetchStats.mockReturnValue(new Promise(() => {}));
+    await render(<Progress />);
+    await fireEvent.press(screen.getByText("Mês"));
+    expect(screen.getByTestId("skeleton-chart")).toBeTruthy();
+    expect(screen.queryByText("Carregando seus hábitos")).toBeNull();
   });
 });
 

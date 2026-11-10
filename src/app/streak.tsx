@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Card, Text } from "@/components/ui";
+import { Card, StreakSkeleton, Text } from "@/components/ui";
+import { useLoadingFirst } from "@/features/habits/SyncStatus";
 import { statInputs, todaySummary } from "@/features/habits/selectors";
 import { useToday } from "@/features/habits/useToday";
 import { SettingsShell } from "@/features/profile/SettingsShell";
@@ -23,6 +24,7 @@ export default function StreakScreen() {
   const timeZone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
   const habits = useHabitsStore((s) => s.habits);
   const logs = useHabitsStore((s) => s.logs);
+  const loadingFirst = useLoadingFirst();
 
   const { current, best, week, summary } = useMemo(() => {
     const { statHabits, statLogs } = statInputs(habits, logs, timeZone);
@@ -37,6 +39,14 @@ export default function StreakScreen() {
   }, [habits, logs, today, timeZone]);
 
   const phrase = dailyPhrase(locale, phraseBand(summary.done, summary.counted), dayOfYear(today));
+
+  if (loadingFirst) {
+    return (
+      <SettingsShell back>
+        <StreakSkeleton />
+      </SettingsShell>
+    );
+  }
 
   return (
     <SettingsShell back>

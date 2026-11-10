@@ -8,6 +8,7 @@ export const en: Catalog<typeof ptBR> = {
     or: "or",
     show: "Show",
     hide: "Hide",
+    loading: "Loading",
     retry: "Try again",
     loadError: "Couldn't load your account.",
     signOut: "Sign out",
@@ -174,7 +175,6 @@ export const en: Catalog<typeof ptBR> = {
     nothingSub: "Enjoy the rest. Your habits return on the next scheduled day.",
     syncPending: "Offline: your changes will be sent as soon as possible.",
     syncing: "Syncing your changes…",
-    loading: "Loading your habits",
   },
   progress: {
     title: "Your progress",

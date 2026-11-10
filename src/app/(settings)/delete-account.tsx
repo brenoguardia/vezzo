@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 import { deleteAccount } from "@/api/account";
 import { ApiError } from "@/api/client";
 import { authClient } from "@/auth/client";
-import { Button, PasswordField, Text } from "@/components/ui";
+import { Button, FieldSkeleton, PasswordField, Text } from "@/components/ui";
 import { signInWithEmail } from "@/features/auth/actions";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { signOutAndClear } from "@/features/profile/sign-out";
@@ -93,7 +93,9 @@ export default function DeleteAccountScreen() {
       }
     >
       <Text tone="mute">{t("profile.deleteBody")}</Text>
-      {hasPassword && !needsSignIn ? (
+      {hasPassword === null ? (
+        <FieldSkeleton />
+      ) : hasPassword && !needsSignIn ? (
         <View style={styles.form}>
           <Text variant="bodyMedium">{t("profile.deletePassword")}</Text>
           <Controller

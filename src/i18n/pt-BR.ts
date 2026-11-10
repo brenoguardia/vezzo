@@ -4,6 +4,7 @@ export const ptBR = {
     or: "ou",
     show: "Mostrar",
     hide: "Ocultar",
+    loading: "Carregando",
     retry: "Tentar de novo",
     loadError: "Não foi possível carregar sua conta.",
     signOut: "Sair",
@@ -170,7 +171,6 @@ export const ptBR = {
     nothingSub: "Aproveite o descanso. Seus hábitos voltam no próximo dia agendado.",
     syncPending: "Sem conexão: suas alterações serão enviadas assim que possível.",
     syncing: "Sincronizando suas alterações…",
-    loading: "Carregando seus hábitos",
   },
   progress: {
     title: "Seu progresso",

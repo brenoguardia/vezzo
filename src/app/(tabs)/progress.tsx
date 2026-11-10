@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { BarChart, Card, SegmentedControl, Text } from "@/components/ui";
-import { ListSkeleton, SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
+import { BarChart, Card, ChartAreaSkeleton, ProgressSkeleton, SegmentedControl, Text } from "@/components/ui";
+import { SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
 import { useToday } from "@/features/habits/useToday";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { byMonth, completionOf, type Period } from "@/features/progress/aggregate";
@@ -87,9 +87,7 @@ export default function Progress() {
           }))}
         />
       ) : remote.status === "loading" ? (
-        <Text tone="mute" accessibilityLiveRegion="polite">
-          {t("home.loading")}
-        </Text>
+        <ChartAreaSkeleton />
       ) : remote.status === "error" ? (
         <View accessibilityLiveRegion="polite" style={styles.error}>
           <Text tone="mute" style={styles.flex}>
@@ -207,7 +205,7 @@ export default function Progress() {
     <SettingsShell>
       {header}
       {loadingFirst ? (
-        <ListSkeleton summary rows={2} />
+        <ProgressSkeleton />
       ) : !hasHabits ? (
         empty
       ) : (

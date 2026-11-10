@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { deleteHabit, patchHabit } from "@/api/habits";
-import { Button, Text } from "@/components/ui";
+import { Button, HabitFormSkeleton, Text } from "@/components/ui";
 import { HabitForm } from "@/features/habits/HabitForm";
+import { useHydrating } from "@/features/habits/SyncStatus";
 import { useT } from "@/i18n/useT";
 import type { GoalUnit } from "@/shared/categories";
 import { useHabitsStore } from "@/store/habits";
@@ -22,8 +23,9 @@ export function EditHabitPanel({ id, onSaved, onCancel, onArchived }: Props) {
   const upsert = useHabitsStore((s) => s.upsertHabit);
   const archive = useHabitsStore((s) => s.archiveHabit);
   const [archiveFailed, setArchiveFailed] = useState(false);
+  const hydrating = useHydrating();
 
-  if (!habit) return <Text tone="mute">{t("habit.notFound")}</Text>;
+  if (!habit) return hydrating ? <HabitFormSkeleton /> : <Text tone="mute">{t("habit.notFound")}</Text>;
 
   return (
     <HabitForm

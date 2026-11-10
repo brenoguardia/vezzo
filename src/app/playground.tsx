@@ -13,6 +13,10 @@ import {
   PasswordField,
   ProgressSteps,
   Ring,
+  SkeletonChartCard,
+  SkeletonHabitRow,
+  SkeletonStatPair,
+  SkeletonSummaryCard,
   Stepper,
   TabBar,
   type TabItem,
@@ -124,6 +128,14 @@ function Showcase({ title }: { title: string }) {
         <Button label="Desabilitado" disabled style={styles.flex} />
         <Button label="Carregando" loading style={styles.flex} />
       </View>
+
+      <Text variant="label" tone="mute">
+        Skeleton
+      </Text>
+      <SkeletonSummaryCard />
+      <SkeletonHabitRow />
+      <SkeletonChartCard height={90} />
+      <SkeletonStatPair />
 
       <Field label="Nome" value={name} onChangeText={setName} />
       <Field label="E-mail" value="ana@" error="Informe um e-mail válido" keyboardType="email-address" />

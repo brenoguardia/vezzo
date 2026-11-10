@@ -18,6 +18,12 @@ export function useLoadingFirst(): boolean {
   return empty && (status === "loading" || status === "idle");
 }
 
+/** A hidratação inicial ainda não terminou (nem deu erro): dados ausentes podem só não ter chegado. */
+export function useHydrating(): boolean {
+  const status = useHydrationStore((s) => s.status);
+  return status === "loading" || status === "idle";
+}
+
 /**
  * Avisos de sincronização das abas: alterações em envio ("Sincronizando…", ou "Sem conexão" depois
  * de uma falha) e a faixa de erro da última hidratação, com "Tentar de novo".
@@ -54,30 +60,8 @@ export function SyncStatus() {
   );
 }
 
-/** Blocos cinza no lugar do conteúdo enquanto a primeira carga não termina. */
-export function ListSkeleton({ summary = false, rows = 3 }: { summary?: boolean; rows?: number }) {
-  const t = useT();
-  return (
-    <View accessibilityRole="progressbar" accessibilityLabel={t("home.loading")} style={styles.list}>
-      {summary ? (
-        <Card radius={28} padding={20} style={styles.skeletonSummary}>
-          {null}
-        </Card>
-      ) : null}
-      {Array.from({ length: rows }, (_, i) => (
-        <Card key={i} radius={20} padding={0} style={styles.skeletonRow}>
-          {null}
-        </Card>
-      ))}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  list: { gap: 10 },
   banner: { flexDirection: "row", alignItems: "center", gap: 8 },
   retry: { minHeight: 44, minWidth: 44, justifyContent: "center", alignItems: "center" },
-  skeletonSummary: { height: 152 },
-  skeletonRow: { height: 64, opacity: 0.6 },
 });

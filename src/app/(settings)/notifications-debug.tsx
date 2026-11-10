@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { Button, Card, Text } from "@/components/ui";
+import { Button, Card, Skeleton, SkeletonGroup, Text } from "@/components/ui";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { useReminderPermission } from "@/features/profile/useReminderPermission";
 import { useT } from "@/i18n/useT";
@@ -32,11 +32,23 @@ export default function NotificationsDebug() {
         <Text variant="caption" tone="mute">
           {t("profile.reminders")}
         </Text>
-        <Text variant="bodyStrong">{permission ?? "…"}</Text>
+        {permission === null ? (
+          <SkeletonGroup>
+            <Skeleton width={72} height={18} radius={6} />
+          </SkeletonGroup>
+        ) : (
+          <Text variant="bodyStrong">{permission}</Text>
+        )}
         <Text variant="caption" tone="mute">
           Agendadas
         </Text>
-        <Text variant="bodyStrong">{pending ?? "…"}</Text>
+        {pending === null ? (
+          <SkeletonGroup>
+            <Skeleton width={32} height={18} radius={6} />
+          </SkeletonGroup>
+        ) : (
+          <Text variant="bodyStrong">{pending}</Text>
+        )}
       </Card>
       <Button
         label={t("profile.debugReminder")}

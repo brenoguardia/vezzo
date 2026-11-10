@@ -1,8 +1,9 @@
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Button, Card, EmojiTile, Text } from "@/components/ui";
+import { Button, Card, EmojiTile, HabitDetailSkeleton, Text } from "@/components/ui";
 import { cellOpacity, lastFourWeeks, quickAmounts } from "@/features/habits/detail";
+import { useHydrating } from "@/features/habits/SyncStatus";
 import { statInputs } from "@/features/habits/selectors";
 import { useToday } from "@/features/habits/useToday";
 import { useLocale } from "@/i18n/useLocale";
@@ -27,6 +28,7 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
   const timeZone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
   const habit = useHabitsStore((s) => s.habits.find((h) => h.id === id));
   const logs = useHabitsStore((s) => s.logs);
+  const hydrating = useHydrating();
   const { addValue, toggleDone, skip } = useHabitsStore.getState();
 
   const streak = useMemo(() => {
@@ -40,7 +42,8 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
   }, [habit, logs, today, timeZone]);
 
   if (!habit) {
-    return <Text tone="mute">{t("habit.notFound")}</Text>;
+    // Antes de hidratar, "não encontrado" seria enganoso: o hábito pode só não ter chegado.
+    return hydrating ? <HabitDetailSkeleton /> : <Text tone="mute">{t("habit.notFound")}</Text>;
   }
 
   const unit = habit.goalUnit as GoalUnit;

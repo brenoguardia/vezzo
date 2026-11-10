@@ -1,9 +1,9 @@
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 import { unarchiveHabit } from "@/api/habits";
-import { Button, Card, EmojiTile, Text } from "@/components/ui";
+import { Button, Card, EmojiTile, HabitsListSkeleton, Text } from "@/components/ui";
 import { EditHabitPanel } from "@/features/habits/EditHabitPanel";
-import { ListSkeleton, SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
+import { SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
 import { activeHabits } from "@/features/habits/selectors";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { useLocale } from "@/i18n/useLocale";
@@ -70,7 +70,7 @@ export default function Habits() {
         {t("manage.active")}
       </Text>
       {loadingFirst ? (
-        <ListSkeleton />
+        <HabitsListSkeleton />
       ) : active.length === 0 ? (
         <Text tone="mute">{t("home.emptySub")}</Text>
       ) : (

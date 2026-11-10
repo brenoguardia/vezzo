@@ -117,6 +117,27 @@ describe("tela de tema", () => {
   });
 });
 
+describe("tela de perfil · carregando (skeleton)", () => {
+  it("sem perfil mostra o skeleton do perfil, não uma tela em branco", async () => {
+    useProfileStore.setState({ profile: null, status: "loading" });
+    await render(<Profile />);
+    expect(screen.getByTestId("skeleton-profile")).toBeTruthy();
+    expect(screen.getByLabelText("Carregando")).toBeTruthy();
+    expect(screen.queryByText("Ana")).toBeNull();
+  });
+
+  it("estatísticas e linha de senha aparecem como skeleton até os dados chegarem", async () => {
+    mockStats.mockReturnValue(new Promise(() => {}) as never);
+    mockAccounts.mockReturnValue(new Promise(() => {}) as never);
+    await render(<Profile />);
+    // 3 estatísticas + valor de Lembretes + linha de senha (sem "–" nem "…" soltos).
+    expect(screen.getAllByLabelText("Carregando").length).toBeGreaterThanOrEqual(4);
+    expect(screen.getByTestId("skeleton-setting-row")).toBeTruthy();
+    expect(screen.queryByText("–")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Redefinir senha" })).toBeNull();
+  });
+});
+
 describe("tela de perfil", () => {
   it("mostra nome, desde quando, métricas e seções", async () => {
     await render(<Profile />);
@@ -185,6 +206,15 @@ describe("tela de perfil", () => {
     await render(<Profile />);
     await fireEvent.press(screen.getByRole("button", { name: "Excluir conta" }));
     expect(mockRouter.push).toHaveBeenCalledWith("/delete-account");
+  });
+});
+
+describe("tela de excluir conta · carregando", () => {
+  it("o campo de senha é um skeleton enquanto não se sabe se a conta tem senha", async () => {
+    mockAccounts.mockReturnValue(new Promise(() => {}) as never);
+    await render(<DeleteAccount />);
+    expect(screen.getByTestId("skeleton-field")).toBeTruthy();
+    expect(screen.queryByLabelText("Senha")).toBeNull();
   });
 });
 

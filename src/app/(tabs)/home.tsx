@@ -1,10 +1,10 @@
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, Card, Ring, Text } from "@/components/ui";
+import { Button, Card, Ring, Text, TodaySkeleton } from "@/components/ui";
 import { HabitDetailView } from "@/features/habits/HabitDetailView";
 import { HabitRow } from "@/features/habits/HabitRow";
-import { ListSkeleton, SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
+import { SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
 import { statInputs, todayItems, todaySummary } from "@/features/habits/selectors";
 import { habitSubtitle } from "@/features/habits/subtitle";
 import { useToday } from "@/features/habits/useToday";
@@ -62,7 +62,7 @@ export default function Today() {
       <SyncStatus />
 
       {loadingFirst ? (
-        <ListSkeleton summary />
+        <TodaySkeleton />
       ) : !hasHabits ? (
         <Card radius={28} padding={28} style={styles.empty}>
           <Text style={styles.seed}>🌱</Text>
