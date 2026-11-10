@@ -33,7 +33,13 @@ export function SplitView({ left, right, active = "left", tabBar = true, rightSc
     <ScrollView
       testID={testID}
       style={[styles.pane, { width: columnWidth }]}
-      contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top + layout.dualPaddingTop, paddingBottom: bottom, paddingHorizontal: layout.dualPaddingSide, gap: 14 }}
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingTop: insets.top + layout.dualPaddingTop,
+        paddingBottom: bottom,
+        paddingHorizontal: layout.dualPaddingSide,
+        gap: 14,
+      }}
       showsVerticalScrollIndicator={false}
     >
       {children}

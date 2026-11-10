@@ -22,7 +22,11 @@ export function useProfileSummary(timezone: string | undefined): ProfileSummary 
       Promise.all([fetchHabits(), fetchStats(from, addDays(from, 6))])
         .then(([habits, stats]) => {
           if (!cancelled) {
-            setSummary({ streak: stats.currentStreak, habits: habits.filter((h) => !h.archivedAt).length, completion: stats.week.current.completion });
+            setSummary({
+              streak: stats.currentStreak,
+              habits: habits.filter((h) => !h.archivedAt).length,
+              completion: stats.week.current.completion,
+            });
           }
         })
         .catch(() => {});

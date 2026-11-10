@@ -16,7 +16,16 @@ interface Props {
 }
 
 /** Linha de cartão de configurações: altura mínima 52 (≥ 44 de toque), divisória `line`. */
-export function SettingsRow({ label, value, onPress, tone = "ink", chevron, last, disabled, accessibilityState }: Props) {
+export function SettingsRow({
+  label,
+  value,
+  onPress,
+  tone = "ink",
+  chevron,
+  last,
+  disabled,
+  accessibilityState,
+}: Props) {
   const theme = useTheme();
   const content = (
     <View style={[styles.row, !last && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.line }]}>

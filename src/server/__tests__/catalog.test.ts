@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db, installFakeSession, req, USER_A } from "@/server/testing/harness";
 import { GET } from "@/app/api/v1/catalog+api";
+import { db, installFakeSession, req, USER_A } from "@/server/testing/harness";
 import { catalogDto } from "@/shared/schemas";
 
 vi.mock("@/server/db", async () => {
@@ -12,7 +12,6 @@ beforeEach(() => {
   db.$reset();
   installFakeSession();
 });
-
 
 describe("GET /v1/catalog", () => {
   it("exige sessão", async () => {

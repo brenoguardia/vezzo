@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db, installFakeSession, req, seedHabit, USER_A, USER_B } from "@/server/testing/harness";
-import { GET, POST } from "@/app/api/v1/habits/index+api";
 import { DELETE, PATCH } from "@/app/api/v1/habits/[id]+api";
+import { GET, POST } from "@/app/api/v1/habits/index+api";
+import { db, installFakeSession, req, seedHabit, USER_A, USER_B } from "@/server/testing/harness";
 import { habitDto, habitList } from "@/shared/schemas";
 
 vi.mock("@/server/db", async () => {
@@ -13,7 +13,6 @@ beforeEach(() => {
   db.$reset();
   installFakeSession();
 });
-
 
 const valid = { name: "Ler", emoji: "📚", goalValue: 15, goalUnit: "PAGES", days: [0, 2, 4] };
 
@@ -29,8 +28,12 @@ describe("GET /v1/habits · documentos sem archivedAt", () => {
   });
 
   it("a ordem do novo hábito conta os existentes sem o campo", async () => {
-    await db.habit.create({ data: { userId: USER_A, name: "Antigo", emoji: "💧", goalValue: 1, goalUnit: "BOOLEAN", days: [0] } });
-    const dto = habitDto.parse(await (await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: valid }))).json());
+    await db.habit.create({
+      data: { userId: USER_A, name: "Antigo", emoji: "💧", goalValue: 1, goalUnit: "BOOLEAN", days: [0] },
+    });
+    const dto = habitDto.parse(
+      await (await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: valid }))).json(),
+    );
     expect(dto.order).toBe(1);
   });
 });
@@ -43,7 +46,10 @@ describe("arquivados", () => {
     await db.habit.create({ data: { ...base, userId: USER_A, name: "Arquivado", archivedAt: new Date() } });
     await db.habit.create({ data: { ...base, userId: USER_B, name: "Do B", archivedAt: new Date() } });
     const get = async (qs: string) =>
-      habitList.parse(await (await GET(req(`/api/v1/habits${qs}`, { user: USER_A }))).json()).habits.map((h) => h.name).sort();
+      habitList
+        .parse(await (await GET(req(`/api/v1/habits${qs}`, { user: USER_A }))).json())
+        .habits.map((h) => h.name)
+        .sort();
     expect(await get("")).toEqual(["Ativo"]);
     expect(await get("?includeArchived=true")).toEqual(["Arquivado", "Ativo"]);
     expect((await GET(req("/api/v1/habits?includeArchived=talvez", { user: USER_A }))).status).toBe(400);
@@ -51,7 +57,9 @@ describe("arquivados", () => {
 
   it("PATCH archived:false desarquiva e põe no fim dos ativos; archived:true arquiva", async () => {
     await db.habit.create({ data: { ...base, userId: USER_A, name: "Ativo", order: 0, archivedAt: null } });
-    const old = await db.habit.create({ data: { ...base, userId: USER_A, name: "Velho", order: 0, archivedAt: new Date() } });
+    const old = await db.habit.create({
+      data: { ...base, userId: USER_A, name: "Velho", order: 0, archivedAt: new Date() },
+    });
     const patch = (id: string, user: string, body: unknown) =>
       PATCH(req(`/api/v1/habits/${id}`, { user, method: "PATCH", body }), { id });
     const res = await patch(String(old.id), USER_A, { archived: false });
@@ -64,14 +72,18 @@ describe("arquivados", () => {
   it("B não desarquiva o hábito de A", async () => {
     const mine = await db.habit.create({ data: { ...base, userId: USER_A, name: "Meu", archivedAt: new Date() } });
     const id = String(mine.id);
-    const res = await PATCH(req(`/api/v1/habits/${id}`, { user: USER_B, method: "PATCH", body: { archived: false } }), { id });
+    const res = await PATCH(req(`/api/v1/habits/${id}`, { user: USER_B, method: "PATCH", body: { archived: false } }), {
+      id,
+    });
     expect(res.status).toBe(404);
   });
 });
 
 describe("POST /v1/habits", () => {
   it("cria com userId da sessão, defaults e ordem sequencial", async () => {
-    const first = await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, userId: USER_B } }));
+    const first = await POST(
+      req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, userId: USER_B } }),
+    );
     expect(first.status).toBe(201);
     const dto = habitDto.parse(await first.json());
     expect(dto).toMatchObject({ name: "Ler", reminders: [], quickActions: true, order: 0, archivedAt: null });
@@ -85,13 +97,27 @@ describe("POST /v1/habits", () => {
   it("vincula o template pelo slug", async () => {
     const cat = await db.category.create({ data: { slug: "mente", namePt: "Mente", nameEn: "Mind", order: 1 } });
     const tpl = await db.habitTemplate.create({
-      data: { slug: "ler", categoryId: cat.id, namePt: "Ler", nameEn: "Read", emoji: "📚", defaultGoalValue: 15, goalUnit: "PAGES", defaultDays: [0], order: 1 },
+      data: {
+        slug: "ler",
+        categoryId: cat.id,
+        namePt: "Ler",
+        nameEn: "Read",
+        emoji: "📚",
+        defaultGoalValue: 15,
+        goalUnit: "PAGES",
+        defaultDays: [0],
+        order: 1,
+      },
     });
-    const res = await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, templateSlug: "ler" } }));
+    const res = await POST(
+      req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, templateSlug: "ler" } }),
+    );
     expect(habitDto.parse(await res.json()).templateId).toBe(tpl.id);
   });
   it("rejeita template inexistente", async () => {
-    const res = await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, templateSlug: "nao-existe" } }));
+    const res = await POST(
+      req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, templateSlug: "nao-existe" } }),
+    );
     expect(res.status).toBe(400);
     expect((await res.json()).error.fields.templateSlug).toBeDefined();
   });
@@ -125,7 +151,11 @@ describe("PATCH /v1/habits/:id", () => {
       req(`/api/v1/habits/${habit.id}`, { user: USER_A, method: "PATCH", body: { name: "Hidratar" } }),
       { id: habit.id as string },
     );
-    expect(habitDto.parse(await res.json())).toMatchObject({ name: "Hidratar", reminders: ["08:00"], quickActions: false });
+    expect(habitDto.parse(await res.json())).toMatchObject({
+      name: "Hidratar",
+      reminders: ["08:00"],
+      quickActions: false,
+    });
   });
   it("rejeita corpo vazio e id malformado", async () => {
     const habit = await seedHabit(USER_A);

@@ -12,8 +12,16 @@ interface Props extends RNTextProps {
   tone?: TextTone;
 }
 
-export function Text({ variant = "body", tone = "ink", style, maxFontSizeMultiplier = MAX_FONT_SCALE, ...rest }: Props) {
+export function Text({
+  variant = "body",
+  tone = "ink",
+  style,
+  maxFontSizeMultiplier = MAX_FONT_SCALE,
+  ...rest
+}: Props) {
   const theme = useTheme();
   const color = tone === "acc" ? theme.accText : theme[tone];
-  return <RNText {...rest} maxFontSizeMultiplier={maxFontSizeMultiplier} style={[typography[variant], { color }, style]} />;
+  return (
+    <RNText {...rest} maxFontSizeMultiplier={maxFontSizeMultiplier} style={[typography[variant], { color }, style]} />
+  );
 }

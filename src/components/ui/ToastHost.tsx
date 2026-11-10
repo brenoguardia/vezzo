@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/lib/useTheme";
-import { useToastStore } from "@/store/toast";
 import { radius } from "@/shared/tokens";
+import { useToastStore } from "@/store/toast";
 import { Text } from "./Text";
 
 const DURATION_MS = 3500;

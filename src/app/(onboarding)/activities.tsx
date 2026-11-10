@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Button, Chip, Text } from "@/components/ui";
-import { useGoalsForm } from "@/features/onboarding/useGoalsForm";
 import { OnboardingShell } from "@/features/onboarding/OnboardingShell";
+import { useGoalsForm } from "@/features/onboarding/useGoalsForm";
 import { useLocale } from "@/i18n/useLocale";
 import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";

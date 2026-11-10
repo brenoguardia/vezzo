@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
+import Activities from "@/app/(onboarding)/activities";
 import Habits from "@/app/(tabs)/habits";
 import Today from "@/app/(tabs)/home";
 import Progress from "@/app/(tabs)/progress";
-import Activities from "@/app/(onboarding)/activities";
 import { SplitView } from "@/components/layout";
 import { Text } from "@/components/ui";
 import { setLocale } from "@/i18n";
@@ -15,9 +15,16 @@ import { useSyncStore } from "@/store/sync";
 
 let mockWidth = 1100;
 jest.mock("@/lib/useLayoutMode", () => ({
-  useLayoutMode: () => (jest.requireActual("@/lib/layout-mode") as typeof import("@/lib/layout-mode")).layoutInfo(mockWidth),
+  useLayoutMode: () =>
+    (jest.requireActual("@/lib/layout-mode") as typeof import("@/lib/layout-mode")).layoutInfo(mockWidth),
 }));
-const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true), dismissAll: jest.fn() };
+const mockRouter = {
+  push: jest.fn(),
+  replace: jest.fn(),
+  back: jest.fn(),
+  canGoBack: jest.fn(() => true),
+  dismissAll: jest.fn(),
+};
 jest.mock("expo-router", () => ({ useRouter: () => mockRouter, useLocalSearchParams: () => ({}) }));
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),

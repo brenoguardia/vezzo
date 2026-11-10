@@ -3,14 +3,14 @@ import { timezoneOf } from "@/server/services/profile";
 import { localDate } from "@/shared/dates";
 import type { StatsDto } from "@/shared/schemas";
 import {
+  bestDay,
   dailyStats,
   habitWeekProgress,
   milestones,
-  bestDay,
-  streaks,
-  weekComparison,
   type StatHabit,
   type StatLog,
+  streaks,
+  weekComparison,
 } from "@/shared/stats";
 
 export async function getStats(db: Db, userId: string, from: string, to: string, now = new Date()): Promise<StatsDto> {

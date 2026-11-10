@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import { detectLocale, i18n, setLocale, t, translateMessage } from "./index";
 import { en } from "./en";
+import { detectLocale, i18n, setLocale, t, translateMessage } from "./index";
 import { ptBR } from "./pt-BR";
 
 function keys(obj: object, prefix = ""): string[] {

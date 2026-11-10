@@ -13,7 +13,12 @@ export default function Index() {
   const isPending = useInitialSessionPending(sessionRefetching);
   const profileStatus = useProfileStore((s) => s.status);
   const onboardingDone = useProfileStore((s) => s.profile?.onboardingDone ?? false);
-  const gate = resolveGate({ sessionPending: isPending, hasSession: !!session?.user.id, profileStatus, onboardingDone });
+  const gate = resolveGate({
+    sessionPending: isPending,
+    hasSession: !!session?.user.id,
+    profileStatus,
+    onboardingDone,
+  });
 
   if (gate === "auth") return <Redirect href="/welcome" />;
   if (gate === "onboarding") return <Redirect href="/name" />;

@@ -62,7 +62,14 @@ function GoogleLogo() {
 }
 
 const styles = StyleSheet.create({
-  base: { minHeight: 52, borderRadius: radius.button, borderWidth: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 20 },
+  base: {
+    minHeight: 52,
+    borderRadius: radius.button,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
   content: { flexDirection: "row", alignItems: "center", gap: 10 },
   label: { fontFamily: fontFamily.roboto, fontSize: 14, lineHeight: 20, letterSpacing: 0.25 },
 });

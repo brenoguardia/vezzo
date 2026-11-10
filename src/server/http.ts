@@ -1,4 +1,4 @@
-import { z, type ZodType } from "zod";
+import { type ZodType, z } from "zod";
 
 export type ApiErrorCode =
   | "VALIDATION_ERROR"
@@ -47,10 +47,7 @@ export function errorResponse(error: unknown): Response {
     );
   }
   console.error("[api] erro inesperado", error);
-  return json(
-    { error: { code: "INTERNAL_ERROR", message: "Erro interno do servidor." } },
-    { status: 500 },
-  );
+  return json({ error: { code: "INTERNAL_ERROR", message: "Erro interno do servidor." } }, { status: 500 });
 }
 
 function zodFields(error: z.ZodError): Record<string, string> {

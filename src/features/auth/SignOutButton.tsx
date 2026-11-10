@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui";
 import { authClient } from "@/auth/client";
+import { Button } from "@/components/ui";
 import { useT } from "@/i18n/useT";
 import { useProfileStore } from "@/store/profile";
 

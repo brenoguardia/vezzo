@@ -6,7 +6,6 @@ import { useTheme } from "@/lib/useTheme";
 
 type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
 
-
 type TabKey = "home" | "progress" | "habits" | "profile";
 
 function FloatingTabBar({ state, navigateToTab }: BottomTabBarProps) {
@@ -18,7 +17,13 @@ function FloatingTabBar({ state, navigateToTab }: BottomTabBarProps) {
     { key: "profile", label: t("tabs.profile"), icon: "profile" },
   ];
   const activeKey: TabKey = (state.routes[state.index]?.name as TabKey | undefined) ?? "home";
-  return <TabBar items={items} activeKey={activeKey} onSelect={(key) => navigateToTab(state.routes.find((r) => r.name === key)?.key ?? key)} />;
+  return (
+    <TabBar
+      items={items}
+      activeKey={activeKey}
+      onSelect={(key) => navigateToTab(state.routes.find((r) => r.name === key)?.key ?? key)}
+    />
+  );
 }
 
 export default function TabsLayout() {

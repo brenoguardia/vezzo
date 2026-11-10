@@ -3,13 +3,13 @@ import {
   cancelScheduledNotificationAsync,
   getAllScheduledNotificationsAsync,
   getPermissionsAsync,
-  scheduleNotificationAsync,
   SchedulableTriggerInputTypes,
+  scheduleNotificationAsync,
 } from "expo-notifications";
 import { i18n } from "@/i18n";
-import { currentStreak } from "@/shared/stats";
 import { DEFAULT_TIMEZONE, toStatHabit, toStatLogs } from "@/lib/habit-stats";
 import { localDate } from "@/shared/dates";
+import { currentStreak } from "@/shared/stats";
 import { useHabitsStore } from "@/store/habits";
 import { useProfileStore } from "@/store/profile";
 import { useSnoozeStore } from "@/store/snooze";
@@ -25,7 +25,12 @@ let chain: Promise<void> = Promise.resolve();
 
 /** Minuto do dia (0–1439) de um instante no fuso informado. */
 function minuteOfDay(now: Date, timeZone: string): number {
-  const parts = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone }).format(now);
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone,
+  }).format(now);
   const [h = 0, m = 0] = parts.split(":").map(Number);
   return (h % 24) * 60 + m;
 }
@@ -61,7 +66,11 @@ async function run(): Promise<void> {
   for (const plan of plans) {
     const habit = byHabit.get(plan.habitId);
     if (!habit) continue;
-    const streak = currentStreak([toStatHabit(habit, timeZone)], statLogs.filter((l) => l.habitId === habit.id), today);
+    const streak = currentStreak(
+      [toStatHabit(habit, timeZone)],
+      statLogs.filter((l) => l.habitId === habit.id),
+      today,
+    );
     const id = await scheduleNotificationAsync({
       content: {
         title: reminderTitle(habit),

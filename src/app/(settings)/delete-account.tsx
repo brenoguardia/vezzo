@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
-import { ApiError } from "@/api/client";
 import { deleteAccount } from "@/api/account";
+import { ApiError } from "@/api/client";
 import { authClient } from "@/auth/client";
 import { Button, PasswordField, Text } from "@/components/ui";
 import { signInWithEmail } from "@/features/auth/actions";
@@ -82,7 +82,12 @@ export default function DeleteAccountScreen() {
               onPress={() => void (hasPassword ? onSubmit() : remove())}
               style={{ backgroundColor: theme.danger }}
             />
-            <Button label={t("profile.deleteCancel")} variant="secondary" disabled={submitting} onPress={() => router.back()} />
+            <Button
+              label={t("profile.deleteCancel")}
+              variant="secondary"
+              disabled={submitting}
+              onPress={() => router.back()}
+            />
           </>
         )
       }

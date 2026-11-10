@@ -1,14 +1,12 @@
+import type { z } from "zod";
 import type { Db } from "@/server/db";
 import { ApiError } from "@/server/http";
 import { toHabitDto } from "@/server/mappers";
-import { objectId, type HabitDto, type HabitInput, type habitPatch } from "@/shared/schemas";
-import type { z } from "zod";
+import { type HabitDto, type HabitInput, type habitPatch, objectId } from "@/shared/schemas";
 
 /** Busca o hábito somente se pertencer ao usuário; caso contrário, 404. */
 export async function findOwnedHabit(db: Db, userId: string, id: string) {
-  const habit = objectId.safeParse(id).success
-    ? await db.habit.findFirst({ where: { id, userId } })
-    : null;
+  const habit = objectId.safeParse(id).success ? await db.habit.findFirst({ where: { id, userId } }) : null;
   if (!habit) throw new ApiError("NOT_FOUND", "Hábito não encontrado.");
   return habit;
 }

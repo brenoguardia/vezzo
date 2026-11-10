@@ -1,6 +1,6 @@
-import { describe, expect, it } from "@jest/globals";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { describe, expect, it } from "@jest/globals";
 
 /**
  * Com o React Compiler, `t()` importado de `@/i18n` é tratado como puro e fica memorizado no
@@ -15,11 +15,17 @@ function tsxFiles(dir: string): string[] {
   });
 }
 
-const sources = () => tsxFiles(join(process.cwd(), "src")).map((file) => ({ file: file.replace(`${process.cwd()}/`, ""), source: readFileSync(file, "utf8") }));
+const sources = () =>
+  tsxFiles(join(process.cwd(), "src")).map((file) => ({
+    file: file.replace(`${process.cwd()}/`, ""),
+    source: readFileSync(file, "utf8"),
+  }));
 
 describe("i18n reativo", () => {
   it("todo .tsx que chama t() usa const t = useT()", () => {
-    const offenders = sources().filter(({ source }) => /(?<![\w.])t\(/.test(source) && !/const t = useT\(\)/.test(source));
+    const offenders = sources().filter(
+      ({ source }) => /(?<![\w.])t\(/.test(source) && !/const t = useT\(\)/.test(source),
+    );
     expect(offenders.map((o) => o.file)).toEqual([]);
   });
 

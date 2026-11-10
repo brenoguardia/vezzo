@@ -18,19 +18,22 @@ describe("resolveLocale", () => {
 describe("renderEmail", () => {
   const url = "https://api.vezzo.app/api/auth/reset-password/tok?callbackURL=vezzo%3A%2F%2Freset-password";
 
-  it.each(["verify-email", "reset-password"] as const)("%s inclui o link em html e texto, nos dois idiomas", (template) => {
-    for (const locale of ["pt-BR", "en"] as const) {
-      const out = renderEmail(template, locale, { url });
-      expect(out.subject.length).toBeGreaterThan(0);
-      expect(out.html).toContain(url.replaceAll("&", "&amp;"));
-      expect(out.text).toContain(url);
-    }
-  });
+  it.each(["verify-email", "reset-password"] as const)(
+    "%s inclui o link em html e texto, nos dois idiomas",
+    (template) => {
+      for (const locale of ["pt-BR", "en"] as const) {
+        const out = renderEmail(template, locale, { url });
+        expect(out.subject.length).toBeGreaterThan(0);
+        expect(out.html).toContain(url.replaceAll("&", "&amp;"));
+        expect(out.text).toContain(url);
+      }
+    },
+  );
 
   it("password-changed não precisa de link", () => {
     const out = renderEmail("password-changed", "en", {});
     expect(out.subject).toMatch(/password/i);
-    expect(out.html).not.toContain("href=\"undefined\"");
+    expect(out.html).not.toContain('href="undefined"');
   });
 
   it("traduz o assunto", () => {
@@ -47,7 +50,7 @@ describe("renderEmail", () => {
   });
 
   it("escapa HTML em valores dinâmicos", () => {
-    const out = renderEmail("verify-email", "en", { url: "https://x.test/?a=\"><script>" });
+    const out = renderEmail("verify-email", "en", { url: 'https://x.test/?a="><script>' });
     expect(out.html).not.toContain("<script>");
   });
 });

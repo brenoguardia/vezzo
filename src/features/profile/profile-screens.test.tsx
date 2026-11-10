@@ -1,9 +1,12 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
-import { ApiError } from "@/api/client";
 import { deleteAccount } from "@/api/account";
+import { ApiError } from "@/api/client";
 import { updateProfile } from "@/api/profile";
 import { fetchHabits, fetchStats } from "@/api/summary";
+import DeleteAccount from "@/app/(settings)/delete-account";
+import ThemeScreen from "@/app/(settings)/theme";
+import Profile from "@/app/(tabs)/profile";
 import { authClient } from "@/auth/client";
 import { requestPasswordReset, signInWithEmail } from "@/features/auth/actions";
 import { i18n } from "@/i18n";
@@ -11,9 +14,6 @@ import type { ProfileDto } from "@/shared/schemas";
 import { useProfileStore } from "@/store/profile";
 import { useThemeStore } from "@/store/theme";
 import { useToastStore } from "@/store/toast";
-import DeleteAccount from "@/app/(settings)/delete-account";
-import Profile from "@/app/(tabs)/profile";
-import ThemeScreen from "@/app/(settings)/theme";
 
 const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true) };
 jest.mock("expo-router", () => ({
@@ -68,7 +68,10 @@ beforeEach(() => {
   mockSession.mockReturnValue({ data: { user: { email: "ana@exemplo.com" } } });
   mockAccounts.mockResolvedValue({ data: [{ providerId: "credential" }] });
   // 5 ativos + 1 arquivado: o resumo conta só os ativos.
-  mockHabits.mockResolvedValue([...new Array(5).fill({ archivedAt: null }), { archivedAt: "2026-11-01T00:00:00.000Z" }] as never);
+  mockHabits.mockResolvedValue([
+    ...new Array(5).fill({ archivedAt: null }),
+    { archivedAt: "2026-11-01T00:00:00.000Z" },
+  ] as never);
   mockStats.mockResolvedValue({ currentStreak: 12, week: { current: { completion: 0.86 } } } as never);
   mockUpdate.mockImplementation(async (patch) => ({ ...profile, ...patch }) as ProfileDto);
 });

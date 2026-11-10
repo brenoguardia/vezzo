@@ -54,9 +54,7 @@ function matches(row: Row, where: Where = {}): boolean {
 }
 
 function sortRows(rows: Row[], orderBy?: OrderBy): Row[] {
-  const rules = (Array.isArray(orderBy) ? orderBy : orderBy ? [orderBy] : []).flatMap((o) =>
-    Object.entries(o),
-  );
+  const rules = (Array.isArray(orderBy) ? orderBy : orderBy ? [orderBy] : []).flatMap((o) => Object.entries(o));
   return [...rows].sort((a, b) => {
     for (const [field, dir] of rules) {
       const x = a[field] as number | string;
@@ -100,7 +98,10 @@ class FakeModel {
     return this.insert(data);
   }
   async findMany({ where, orderBy }: { where?: Where; orderBy?: OrderBy } = {}) {
-    return sortRows(this.rows.filter((r) => matches(r, where)), orderBy).map((r) => ({ ...r }));
+    return sortRows(
+      this.rows.filter((r) => matches(r, where)),
+      orderBy,
+    ).map((r) => ({ ...r }));
   }
   async findFirst({ where, orderBy }: { where?: Where; orderBy?: OrderBy } = {}) {
     return (await this.findMany({ where, orderBy }))[0] ?? null;

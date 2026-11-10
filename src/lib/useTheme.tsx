@@ -1,7 +1,7 @@
 import { createContext, type ReactNode, useContext, useMemo } from "react";
 import { useColorScheme } from "react-native";
-import { useThemeStore } from "@/store/theme";
 import { type Accent, buildTheme, type ThemeScheme, type ThemeTokens } from "@/shared/tokens";
+import { useThemeStore } from "@/store/theme";
 
 interface ThemeOverride {
   scheme: ThemeScheme;
@@ -11,11 +11,7 @@ interface ThemeOverride {
 const OverrideContext = createContext<ThemeOverride | null>(null);
 
 /** Força modo e cor para a subárvore (playground, prévia da tela de tema). */
-export function ThemeOverrideProvider({
-  scheme,
-  accent,
-  children,
-}: ThemeOverride & { children: ReactNode }) {
+export function ThemeOverrideProvider({ scheme, accent, children }: ThemeOverride & { children: ReactNode }) {
   const value = useMemo(() => ({ scheme, accent }), [scheme, accent]);
   return <OverrideContext.Provider value={value}>{children}</OverrideContext.Provider>;
 }

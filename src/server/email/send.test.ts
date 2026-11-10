@@ -31,7 +31,10 @@ describe("sendEmail", () => {
   });
 
   it("retenta uma vez quando o envio lança exceção", async () => {
-    const send = vi.fn().mockRejectedValueOnce(new Error("rede")).mockResolvedValueOnce({ data: { id: "3" }, error: null });
+    const send = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("rede"))
+      .mockResolvedValueOnce({ data: { id: "3" }, error: null });
     const sendEmail = createSendEmail({ ...base, client: client(send) });
     await sendEmail({ to: "a@b.com", template: "password-changed", locale: "pt-BR", data: {} });
     expect(send).toHaveBeenCalledTimes(2);
@@ -42,7 +45,12 @@ describe("sendEmail", () => {
     const send = vi.fn().mockResolvedValue({ data: null, error: { message: "down" } });
     const sendEmail = createSendEmail({ from: base.from, logger, client: client(send) });
     await expect(
-      sendEmail({ to: "a@b.com", template: "reset-password", locale: "en", data: { url: "https://x.test/secret-token" } }),
+      sendEmail({
+        to: "a@b.com",
+        template: "reset-password",
+        locale: "en",
+        data: { url: "https://x.test/secret-token" },
+      }),
     ).resolves.toBeUndefined();
     expect(send).toHaveBeenCalledTimes(2);
     expect(logger.error).toHaveBeenCalled();

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Db } from "./db";
 import { createAuthCallbacks } from "./auth-callbacks";
+import type { Db } from "./db";
 import type { SendEmailInput } from "./email/send";
 import { createFakeDb, type FakeDb } from "./testing/fake-db";
 
@@ -38,21 +38,36 @@ describe("e-mails", () => {
   it("verificação usa o idioma do perfil", async () => {
     await fake.profile.create({ data: { userId: "u1", displayName: "Ana", language: "en" } });
     await cb.sendVerificationEmail({ user, url: "https://x.test/v" }, reqWith("pt-BR"));
-    await vi.waitFor(() => expect(sendEmail).toHaveBeenCalledWith({
-      to: user.email, template: "verify-email", locale: "en", data: { url: "https://x.test/v" },
-    }));
+    await vi.waitFor(() =>
+      expect(sendEmail).toHaveBeenCalledWith({
+        to: user.email,
+        template: "verify-email",
+        locale: "en",
+        data: { url: "https://x.test/v" },
+      }),
+    );
   });
   it("redefinição cai em Accept-Language sem perfil", async () => {
     await cb.sendResetPassword({ user, url: "https://x.test/r" }, reqWith("en"));
-    await vi.waitFor(() => expect(sendEmail).toHaveBeenCalledWith({
-      to: user.email, template: "reset-password", locale: "en", data: { url: "https://x.test/r" },
-    }));
+    await vi.waitFor(() =>
+      expect(sendEmail).toHaveBeenCalledWith({
+        to: user.email,
+        template: "reset-password",
+        locale: "en",
+        data: { url: "https://x.test/r" },
+      }),
+    );
   });
   it("aviso de senha alterada é enviado após redefinir", async () => {
     await cb.onPasswordReset({ user }, reqWith());
-    await vi.waitFor(() => expect(sendEmail).toHaveBeenCalledWith({
-      to: user.email, template: "password-changed", locale: "pt-BR", data: {},
-    }));
+    await vi.waitFor(() =>
+      expect(sendEmail).toHaveBeenCalledWith({
+        to: user.email,
+        template: "password-changed",
+        locale: "pt-BR",
+        data: {},
+      }),
+    );
   });
   it("não espera o envio terminar (evita timing attack)", async () => {
     sendEmail.mockReturnValue(new Promise(() => {}));

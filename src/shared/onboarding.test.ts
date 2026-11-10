@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { buildOnboardingHabits, DEFAULT_SELECTION, findTemplate, formatGoal, stepGoal, stepSize } from "./onboarding";
 import { onboardingComplete } from "./schemas";
-import {
-  DEFAULT_SELECTION,
-  buildOnboardingHabits,
-  findTemplate,
-  formatGoal,
-  stepGoal,
-  stepSize,
-} from "./onboarding";
 
 describe("stepSize (docs/05: água 0,25 L; minutos 5; páginas 5; contagem 1)", () => {
   it.each([

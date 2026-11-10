@@ -1,6 +1,6 @@
 import type { Db } from "./db";
 import type { SendEmailInput } from "./email/send";
-import { resolveLocale, type EmailLocale } from "./email/templates";
+import { type EmailLocale, resolveLocale } from "./email/templates";
 
 type AuthUser = { id: string; email: string; name?: string | null };
 type Deps = { db: Db; sendEmail: (input: SendEmailInput) => Promise<void> };

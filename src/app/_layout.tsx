@@ -1,4 +1,3 @@
-import { Roboto_500Medium } from "@expo-google-fonts/roboto";
 import {
   Manrope_400Regular,
   Manrope_500Medium,
@@ -7,6 +6,7 @@ import {
   Manrope_800ExtraBold,
   useFonts,
 } from "@expo-google-fonts/manrope";
+import { Roboto_500Medium } from "@expo-google-fonts/roboto";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -17,12 +17,12 @@ import { resolveGate } from "@/auth/guard";
 import { useInitialSessionPending } from "@/auth/useInitialSessionPending";
 import { Button, Text, ToastHost } from "@/components/ui";
 import { clearHabitData } from "@/features/habits/hydrate";
-import { useNotificationRuntime } from "@/features/habits/useNotificationRuntime";
 import { useHabitsSync } from "@/features/habits/useHabitsSync";
+import { useNotificationRuntime } from "@/features/habits/useNotificationRuntime";
 import { useT } from "@/i18n/useT";
-import { cancelAllReminders } from "@/lib/notifications/reschedule";
 import { DEFAULT_TIMEZONE } from "@/lib/habit-stats";
 import { initMonitoring, withMonitoring } from "@/lib/monitoring";
+import { cancelAllReminders } from "@/lib/notifications/reschedule";
 import { useTheme } from "@/lib/useTheme";
 import { useProfileStore } from "@/store/profile";
 

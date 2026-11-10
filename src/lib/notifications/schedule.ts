@@ -31,7 +31,11 @@ const parseTime = (time: string): [number, number] => {
 };
 
 /** Minutos até a próxima ocorrência a partir de `now` (data local + minuto do dia). Domingo→segunda circular. */
-export function minutesUntil(plan: Pick<PlannedReminder, "day" | "hour" | "minute">, today: Ymd, nowMinute: number): number {
+export function minutesUntil(
+  plan: Pick<PlannedReminder, "day" | "hour" | "minute">,
+  today: Ymd,
+  nowMinute: number,
+): number {
   const target = plan.hour * 60 + plan.minute;
   let dayDelta = (plan.day - weekdayIndex(today) + 7) % 7;
   if (dayDelta === 0 && target <= nowMinute) dayDelta = 7;
@@ -53,7 +57,15 @@ export function planReminders(
     for (const time of new Set(habit.reminders)) {
       const [hour, minute] = parseTime(time);
       for (const day of new Set(habit.days)) {
-        all.push({ habitId: habit.id, time, hour, minute, day, weekday: toExpoWeekday(day), quickActions: habit.quickActions });
+        all.push({
+          habitId: habit.id,
+          time,
+          hour,
+          minute,
+          day,
+          weekday: toExpoWeekday(day),
+          quickActions: habit.quickActions,
+        });
       }
     }
   }

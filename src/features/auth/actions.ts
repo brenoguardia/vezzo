@@ -23,7 +23,9 @@ export const signInWithEmail = ({ email, password }: SignInInput) =>
 
 // O nome real vem no onboarding (`Profile.displayName`); até lá usamos a parte local do e-mail.
 export const signUpWithEmail = ({ email, password }: SignUpInput) =>
-  run(() => authClient.signUp.email({ email, password, name: email.split("@")[0] ?? email, callbackURL: VERIFY_REDIRECT }));
+  run(() =>
+    authClient.signUp.email({ email, password, name: email.split("@")[0] ?? email, callbackURL: VERIFY_REDIRECT }),
+  );
 
 export const resendVerification = (email: string) =>
   run(() => authClient.sendVerificationEmail({ email, callbackURL: VERIFY_REDIRECT }));

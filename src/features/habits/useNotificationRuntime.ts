@@ -17,7 +17,9 @@ const openHabit = (habitId: string) => router.push({ pathname: "/habit/[id]", pa
 
 /** Só o que muda lembretes: nome, meta, dias, horários, ações rápidas e arquivamento. */
 const scheduleFingerprint = (habits: ReturnType<typeof useHabitsStore.getState>["habits"]) =>
-  JSON.stringify(habits.map((h) => [h.id, h.name, h.goalValue, h.goalUnit, h.days, h.reminders, h.quickActions, h.archivedAt]));
+  JSON.stringify(
+    habits.map((h) => [h.id, h.name, h.goalValue, h.goalUnit, h.days, h.reminders, h.quickActions, h.archivedAt]),
+  );
 
 /**
  * Liga as notificações (docs/07) enquanto há sessão e onboarding concluído: categoria, ações em primeiro e
@@ -31,7 +33,9 @@ export function useNotificationRuntime(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
     void registerBackgroundActions();
-    const sub = addNotificationResponseReceivedListener((response) => void handleNotificationResponse(response, openHabit));
+    const sub = addNotificationResponseReceivedListener(
+      (response) => void handleNotificationResponse(response, openHabit),
+    );
     // iOS: toque em ação com o app fechado chega aqui na abertura.
     const last = getLastNotificationResponse();
     if (last) void handleNotificationResponse(last, openHabit);

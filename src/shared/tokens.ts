@@ -53,8 +53,7 @@ export interface ThemeTokens extends Palette {
 
 export function buildTheme(scheme: ThemeScheme, acc: Accent): ThemeTokens {
   const palette = palettes[scheme];
-  const accText =
-    scheme === "dark" ? acc : readableOn(acc, palette.bg, palette.ink);
+  const accText = scheme === "dark" ? acc : readableOn(acc, palette.bg, palette.ink);
   return {
     ...palette,
     scheme,

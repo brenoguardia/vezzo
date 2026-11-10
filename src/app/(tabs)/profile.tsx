@@ -9,11 +9,11 @@ import { SettingsRow } from "@/features/profile/SettingsRow";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { signOutAndClear } from "@/features/profile/sign-out";
 import { useHasPassword } from "@/features/profile/useHasPassword";
-import { useReminderPermission } from "@/features/profile/useReminderPermission";
 import { useProfileSummary } from "@/features/profile/useProfileSummary";
+import { useReminderPermission } from "@/features/profile/useReminderPermission";
 import { setLocale } from "@/i18n";
-import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { formatMonthYear } from "@/lib/format";
 import { useTheme } from "@/lib/useTheme";
 import { radius } from "@/shared/tokens";
@@ -60,10 +60,7 @@ export default function ProfileScreen() {
     setSendingReset(true);
     const result = await requestPasswordReset({ email });
     setSendingReset(false);
-    if (
-      !result.ok &&
-      (result.key === "network" || result.key === "tooManyRequests")
-    ) {
+    if (!result.ok && (result.key === "network" || result.key === "tooManyRequests")) {
       showToast(t(`auth.errors.${result.key}`));
       return;
     }
@@ -93,20 +90,11 @@ export default function ProfileScreen() {
     <SettingsShell>
       <View style={styles.header}>
         <View style={[styles.avatar, { backgroundColor: theme.acc }]}>
-          <Text
-            variant="display"
-            tone="accInk"
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-          >
+          <Text variant="display" tone="accInk" accessibilityElementsHidden importantForAccessibility="no">
             {profile.displayName.trim().charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text
-          variant="sectionTitle"
-          accessibilityRole="header"
-          style={styles.name}
-        >
+        <Text variant="sectionTitle" accessibilityRole="header" style={styles.name}>
           {profile.displayName}
         </Text>
         <Text variant="caption" tone="mute">
@@ -118,16 +106,8 @@ export default function ProfileScreen() {
 
       <View style={styles.metrics}>
         {metrics.map((metric) => (
-          <Card
-            key={metric.label}
-            radius={radius.card}
-            padding={14}
-            style={styles.metric}
-          >
-            <Text
-              variant="sectionTitle"
-              accessibilityLabel={`${metric.label}: ${metric.value}`}
-            >
+          <Card key={metric.label} radius={radius.card} padding={14} style={styles.metric}>
+            <Text variant="sectionTitle" accessibilityLabel={`${metric.label}: ${metric.value}`}>
               {metric.value}
             </Text>
             <Text variant="caption" tone="mute">
@@ -167,11 +147,7 @@ export default function ProfileScreen() {
           : null}
         <SettingsRow
           label={t("profile.reminders")}
-          value={
-            reminderPermission === "granted"
-              ? t("profile.remindersOn")
-              : undefined
-          }
+          value={reminderPermission === "granted" ? t("profile.remindersOn") : undefined}
           last={!__DEV__ && reminderPermission !== "denied"}
         />
         {__DEV__ ? (
@@ -188,11 +164,7 @@ export default function ProfileScreen() {
         <Card radius={radius.card} padding={16} style={styles.denied}>
           <Text variant="bodyStrong">{t("profile.remindersDenied")}</Text>
           <Text tone="mute">{t("profile.remindersDeniedSub")}</Text>
-          <Button
-            label={t("profile.openSettings")}
-            variant="secondary"
-            onPress={() => void Linking.openSettings()}
-          />
+          <Button label={t("profile.openSettings")} variant="secondary" onPress={() => void Linking.openSettings()} />
         </Card>
       ) : null}
 
@@ -210,12 +182,7 @@ export default function ProfileScreen() {
             onPress={() => void resetPassword()}
           />
         ) : null}
-        <SettingsRow
-          label={t("profile.signOut")}
-          tone="danger"
-          last
-          onPress={() => void signOutAndClear()}
-        />
+        <SettingsRow label={t("profile.signOut")} tone="danger" last onPress={() => void signOutAndClear()} />
       </Card>
 
       <Card radius={radius.cardLarge} padding={0} style={styles.danger}>

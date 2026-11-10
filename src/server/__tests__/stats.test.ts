@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { db, installFakeSession, req, seedHabit, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 import { GET } from "@/app/api/v1/stats+api";
+import { db, installFakeSession, req, seedHabit, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 import { statsDto } from "@/shared/schemas";
 
 vi.mock("@/server/db", async () => {
@@ -12,7 +12,6 @@ beforeEach(() => {
   db.$reset();
   installFakeSession();
 });
-
 
 afterEach(() => vi.useRealTimers());
 

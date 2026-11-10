@@ -37,7 +37,9 @@ export const useProfileStore = create<ProfileState>()((set) => ({
   },
   markOnboardingDone: (displayName) =>
     set((s) =>
-      s.profile ? { profile: { ...s.profile, onboardingDone: true, displayName: displayName ?? s.profile.displayName } } : s,
+      s.profile
+        ? { profile: { ...s.profile, onboardingDone: true, displayName: displayName ?? s.profile.displayName } }
+        : s,
     ),
   clear: () => set({ profile: null, status: "idle" }),
 }));

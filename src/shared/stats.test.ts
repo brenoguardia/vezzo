@@ -7,11 +7,11 @@ import {
   dayStats,
   habitWeekProgress,
   milestones,
+  type StatHabit,
+  type StatLog,
   scheduled,
   weekComparison,
   weekCompletion,
-  type StatHabit,
-  type StatLog,
 } from "./stats";
 
 // 2026-11-01 é domingo; 2026-11-09 é segunda.

@@ -3,8 +3,8 @@ import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable } from "react-native";
 import { Button, Field, Text } from "@/components/ui";
-import { requestPasswordReset } from "@/features/auth/actions";
 import { AuthScreen } from "@/features/auth/AuthScreen";
+import { requestPasswordReset } from "@/features/auth/actions";
 import { translateMessage } from "@/i18n";
 import { useT } from "@/i18n/useT";
 import { type ForgotPasswordInput, forgotPasswordInput } from "@/shared/schemas";
@@ -36,7 +36,12 @@ export default function ForgotPassword() {
       back
       footer={
         <>
-          <Button label={t("auth.sendLink")} onPress={() => void onSubmit()} disabled={!formState.isValid} loading={formState.isSubmitting} />
+          <Button
+            label={t("auth.sendLink")}
+            onPress={() => void onSubmit()}
+            disabled={!formState.isValid}
+            loading={formState.isSubmitting}
+          />
           <Pressable
             accessibilityRole="link"
             onPress={() => router.replace("/sign-in")}

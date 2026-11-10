@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db, installFakeSession, req, seedHabit, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
-import { GET as listHabits, POST as createHabit } from "@/app/api/v1/habits/index+api";
-import { DELETE as removeHabit, PATCH as editHabit } from "@/app/api/v1/habits/[id]+api";
-import { GET as listLogs, PUT as putLog } from "@/app/api/v1/logs/index+api";
-import { POST as batchLogs } from "@/app/api/v1/logs/batch+api";
-import { GET as getCatalog } from "@/app/api/v1/catalog+api";
-import { GET as getProfile, PUT as putProfile } from "@/app/api/v1/profile+api";
 import { DELETE as deleteAccount } from "@/app/api/v1/account+api";
+import { GET as getCatalog } from "@/app/api/v1/catalog+api";
+import { PATCH as editHabit, DELETE as removeHabit } from "@/app/api/v1/habits/[id]+api";
+import { POST as createHabit, GET as listHabits } from "@/app/api/v1/habits/index+api";
+import { POST as batchLogs } from "@/app/api/v1/logs/batch+api";
+import { GET as listLogs, PUT as putLog } from "@/app/api/v1/logs/index+api";
+import { GET as getProfile, PUT as putProfile } from "@/app/api/v1/profile+api";
 import { GET as getStats } from "@/app/api/v1/stats+api";
+import { db, installFakeSession, req, seedHabit, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 
 vi.mock("@/server/db", async () => {
   const { createFakeDb } = await import("@/server/testing/fake-db");
@@ -18,7 +18,6 @@ beforeEach(() => {
   db.$reset();
   installFakeSession();
 });
-
 
 const id = "0000000000000000000000aa";
 const uuid = "00000000-0000-4000-8000-000000000001";
@@ -56,7 +55,9 @@ describe("isolamento entre usuários", () => {
   });
   it("B não edita o hábito de A", async () => {
     const habit = await seedHabit(USER_A, { name: "Original" });
-    const res = await editHabit(req("/x", { user: USER_B, method: "PATCH", body: { name: "Invadido" } }), { id: habit.id as string });
+    const res = await editHabit(req("/x", { user: USER_B, method: "PATCH", body: { name: "Invadido" } }), {
+      id: habit.id as string,
+    });
     expect(res.status).toBe(404);
     expect((await db.habit.findUnique({ where: { id: habit.id } }))?.name).toBe("Original");
   });

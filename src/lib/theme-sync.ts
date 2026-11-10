@@ -1,6 +1,6 @@
 import { setLocale } from "@/i18n";
-import { ACCENTS, type Accent } from "@/shared/tokens";
 import type { ProfileDto } from "@/shared/schemas";
+import { ACCENTS, type Accent } from "@/shared/tokens";
 import { type ThemeMode, useThemeStore } from "@/store/theme";
 
 type ApiMode = ProfileDto["themeMode"];
@@ -17,7 +17,9 @@ export const isAccent = (value: string): value is Accent => (ACCENTS as readonly
  * Aplica as preferências salvas no servidor (cor, modo, idioma) ao aparelho.
  * Antes do onboarding o idioma do perfil é só o padrão do banco, então vale o do aparelho.
  */
-export function applyPreferences(profile: Pick<ProfileDto, "accent" | "themeMode" | "language" | "onboardingDone">): void {
+export function applyPreferences(
+  profile: Pick<ProfileDto, "accent" | "themeMode" | "language" | "onboardingDone">,
+): void {
   const theme = useThemeStore.getState();
   if (isAccent(profile.accent)) theme.setAccent(profile.accent);
   theme.setMode(modeFromApi(profile.themeMode));

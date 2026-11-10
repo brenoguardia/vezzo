@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db, installFakeSession, req, seedHabit, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 import { POST } from "@/app/api/v1/onboarding/complete+api";
+import { db, installFakeSession, req, seedHabit, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 import { onboardingResult } from "@/shared/schemas";
 
 vi.mock("@/server/db", async () => {
@@ -45,7 +45,10 @@ describe("POST /v1/onboarding/complete", () => {
     expect(res.status).toBe(200);
     const result = onboardingResult.parse(await res.json());
     expect(result.profile).toMatchObject({ displayName: "Ana", onboardingDone: true });
-    expect(result.habits.map((h) => [h.name, h.order])).toEqual([["Beber água", 0], ["Ler", 1]]);
+    expect(result.habits.map((h) => [h.name, h.order])).toEqual([
+      ["Beber água", 0],
+      ["Ler", 1],
+    ]);
     expect(result.habits.every((h) => h.templateId !== null)).toBe(true);
     expect(await db.habit.count({ where: { userId: USER_A } })).toBe(2);
   });
@@ -83,7 +86,10 @@ describe("POST /v1/onboarding/complete", () => {
     await seedHabit(USER_A);
     await post(USER_B, { displayName: "Bia", habits: [water], userId: USER_A });
     expect(await db.habit.count({ where: { userId: USER_A } })).toBe(1);
-    expect(await db.profile.findUnique({ where: { userId: USER_A } })).toMatchObject({ displayName: "A", onboardingDone: false });
+    expect(await db.profile.findUnique({ where: { userId: USER_A } })).toMatchObject({
+      displayName: "A",
+      onboardingDone: false,
+    });
     expect(await db.habit.count({ where: { userId: USER_B } })).toBe(1);
   });
 

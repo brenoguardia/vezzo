@@ -58,11 +58,7 @@ function PlaygroundScreen() {
               accessibilityRole="button"
               accessibilityLabel={c}
               onTouchEnd={() => setAccent(c)}
-              style={[
-                styles.swatch,
-                { backgroundColor: c },
-                c === accent && { borderWidth: 2, borderColor: "#888" },
-              ]}
+              style={[styles.swatch, { backgroundColor: c }, c === accent && { borderWidth: 2, borderColor: "#888" }]}
             />
           ))}
         </View>
@@ -78,7 +74,15 @@ function PlaygroundScreen() {
   );
 }
 
-function Surface({ scheme, accent, children }: { scheme: ThemeScheme; accent: (typeof ACCENTS)[number]; children: React.ReactNode }) {
+function Surface({
+  scheme,
+  accent,
+  children,
+}: {
+  scheme: ThemeScheme;
+  accent: (typeof ACCENTS)[number];
+  children: React.ReactNode;
+}) {
   return (
     <ThemeOverrideProvider scheme={scheme} accent={accent}>
       <SurfaceInner>{children}</SurfaceInner>
@@ -123,7 +127,13 @@ function Showcase({ title }: { title: string }) {
 
       <Field label="Nome" value={name} onChangeText={setName} />
       <Field label="E-mail" value="ana@" error="Informe um e-mail válido" keyboardType="email-address" />
-      <PasswordField label="Senha" value={password} onChangeText={setPassword} showLabel="Mostrar" hideLabel="Ocultar" />
+      <PasswordField
+        label="Senha"
+        value={password}
+        onChangeText={setPassword}
+        showLabel="Mostrar"
+        hideLabel="Ocultar"
+      />
 
       <View style={styles.wrap}>
         {["Água", "Meditar", "Ler", "Treinar"].map((c, i) => (

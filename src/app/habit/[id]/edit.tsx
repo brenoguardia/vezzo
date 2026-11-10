@@ -9,7 +9,12 @@ export default function EditHabit() {
   const theme = useTheme();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
-      <EditHabitPanel id={id} onSaved={() => router.back()} onCancel={() => router.back()} onArchived={() => router.dismissTo("/habits")} />
+      <EditHabitPanel
+        id={id}
+        onSaved={() => router.back()}
+        onCancel={() => router.back()}
+        onArchived={() => router.dismissTo("/habits")}
+      />
     </SafeAreaView>
   );
 }

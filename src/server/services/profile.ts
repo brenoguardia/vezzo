@@ -1,8 +1,8 @@
+import type { z } from "zod";
 import type { Db } from "@/server/db";
 import { ApiError } from "@/server/http";
 import { toProfileDto } from "@/server/mappers";
 import type { ProfileDto, profileUpdate } from "@/shared/schemas";
-import type { z } from "zod";
 
 export const DEFAULT_TIMEZONE = "America/Sao_Paulo";
 

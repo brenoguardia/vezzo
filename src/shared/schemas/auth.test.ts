@@ -39,7 +39,9 @@ describe("signUpInput / signInInput", () => {
   it("rejeita senha fraca no cadastro, mas o login só exige preenchimento", () => {
     expect(signUpInput.safeParse({ email: "a@b.co", password: "abc" }).success).toBe(false);
     expect(signInInput.safeParse({ email: "a@b.co", password: "abc" }).success).toBe(true);
-    expect(messages(signInInput.safeParse({ email: "a@b.co", password: "" }))).toContain("auth.errors.passwordRequired");
+    expect(messages(signInInput.safeParse({ email: "a@b.co", password: "" }))).toContain(
+      "auth.errors.passwordRequired",
+    );
   });
 });
 

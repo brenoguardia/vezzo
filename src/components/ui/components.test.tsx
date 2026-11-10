@@ -29,7 +29,9 @@ describe("componentes base", () => {
   });
 
   it("PasswordField alterna a visibilidade", async () => {
-    await render(<PasswordField label="Senha" value="x" onChangeText={() => {}} showLabel="Mostrar" hideLabel="Ocultar" />);
+    await render(
+      <PasswordField label="Senha" value="x" onChangeText={() => {}} showLabel="Mostrar" hideLabel="Ocultar" />,
+    );
     expect(screen.getByLabelText("Senha").props.secureTextEntry).toBe(true);
     await fireEvent.press(screen.getByRole("button", { name: "Mostrar" }));
     expect(screen.getByLabelText("Senha").props.secureTextEntry).toBe(false);

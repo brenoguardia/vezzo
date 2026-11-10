@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db, installFakeSession, req, seedHabit, USER_A, USER_B } from "@/server/testing/harness";
-import { GET, PUT } from "@/app/api/v1/logs/index+api";
 import { POST as BATCH } from "@/app/api/v1/logs/batch+api";
+import { GET, PUT } from "@/app/api/v1/logs/index+api";
+import { db, installFakeSession, req, seedHabit, USER_A, USER_B } from "@/server/testing/harness";
 import { logBatchResult, logDto, logList } from "@/shared/schemas";
 
 vi.mock("@/server/db", async () => {
@@ -13,7 +13,6 @@ beforeEach(() => {
   db.$reset();
   installFakeSession();
 });
-
 
 const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const put = (user: string | undefined, body: unknown) => PUT(req("/api/v1/logs", { user, method: "PUT", body }));
@@ -62,7 +61,13 @@ describe("PUT /v1/logs", () => {
   });
   it("registra SKIPPED e origem da notificação", async () => {
     const habit = await seedHabit(USER_A);
-    const res = await put(USER_A, { clientId: uuid(1), habitId: habit.id, date: "2026-11-09", status: "SKIPPED", source: "NOTIFICATION" });
+    const res = await put(USER_A, {
+      clientId: uuid(1),
+      habitId: habit.id,
+      date: "2026-11-09",
+      status: "SKIPPED",
+      source: "NOTIFICATION",
+    });
     expect(logDto.parse(await res.json())).toMatchObject({ status: "SKIPPED", source: "NOTIFICATION" });
   });
   it("valida o corpo", async () => {
@@ -73,7 +78,8 @@ describe("PUT /v1/logs", () => {
 });
 
 describe("POST /v1/logs/batch", () => {
-  const batch = (user: string, items: unknown[]) => BATCH(req("/api/v1/logs/batch", { user, method: "POST", body: { items } }));
+  const batch = (user: string, items: unknown[]) =>
+    BATCH(req("/api/v1/logs/batch", { user, method: "POST", body: { items } }));
   it("aplica a fila e separa itens rejeitados", async () => {
     const mine = await seedHabit(USER_A);
     const theirs = await seedHabit(USER_B);

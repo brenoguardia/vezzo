@@ -1,7 +1,7 @@
 import { t } from "@/i18n";
 import type { GoalUnit } from "@/shared/categories";
 import { addDays, startOfWeek, type Ymd } from "@/shared/dates";
-import { formatGoal, stepSize, type Locale } from "@/shared/onboarding";
+import { formatGoal, type Locale, stepSize } from "@/shared/onboarding";
 import type { DayLog } from "@/store/habits";
 
 export type QuickAmount = { delta: number; label: string };

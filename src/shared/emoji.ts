@@ -22,7 +22,9 @@ export function lastEmoji(text: string): string | null {
   const parts =
     typeof Intl !== "undefined" && typeof Intl.Segmenter === "function"
       ? [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text)].map((s) => s.segment)
-      : (text.match(/\p{Regional_Indicator}{2}|\p{Extended_Pictographic}(?:️|\p{Emoji_Modifier}|‍\p{Extended_Pictographic})*/gu) ?? []);
+      : (text.match(
+          /\p{Regional_Indicator}{2}|\p{Extended_Pictographic}(?:️|\p{Emoji_Modifier}|‍\p{Extended_Pictographic})*/gu,
+        ) ?? []);
   for (let i = parts.length - 1; i >= 0; i--) {
     const part = parts[i];
     if (part && isSingleEmoji(part)) return part;

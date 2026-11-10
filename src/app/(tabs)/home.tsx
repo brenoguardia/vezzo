@@ -4,18 +4,18 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Button, Card, Ring, Text } from "@/components/ui";
 import { HabitDetailView } from "@/features/habits/HabitDetailView";
 import { HabitRow } from "@/features/habits/HabitRow";
+import { hydrateHabits } from "@/features/habits/hydrate";
 import { statInputs, todayItems, todaySummary } from "@/features/habits/selectors";
 import { habitSubtitle } from "@/features/habits/subtitle";
 import { useToday } from "@/features/habits/useToday";
-import { WeekChartCard } from "@/features/progress/WeekChartCard";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { useT } from "@/i18n/useT";
-import { useLocale } from "@/i18n/useLocale";
+import { WeekChartCard } from "@/features/progress/WeekChartCard";
 import { dailyPhrase, phraseBand } from "@/i18n/phrases";
+import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { DEFAULT_TIMEZONE, dayOfYear } from "@/lib/habit-stats";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { currentStreak } from "@/shared/stats";
-import { hydrateHabits } from "@/features/habits/hydrate";
 import { useHabitsStore } from "@/store/habits";
 import { useHydrationStore } from "@/store/hydration";
 import { useProfileStore } from "@/store/profile";
@@ -72,16 +72,16 @@ export default function Today() {
 
       {hydration === "error" ? (
         <View accessibilityLiveRegion="polite">
-        <Card radius={16} padding={12} style={styles.banner}>
-          <Text variant="caption" tone="mute" style={styles.flex}>
-            {t("home.offline")}
-          </Text>
-          <Pressable accessibilityRole="button" onPress={() => void hydrateHabits(timeZone)} style={styles.retry}>
-            <Text variant="captionStrong" tone="acc">
-              {t("common.retry")}
+          <Card radius={16} padding={12} style={styles.banner}>
+            <Text variant="caption" tone="mute" style={styles.flex}>
+              {t("home.offline")}
             </Text>
-          </Pressable>
-        </Card>
+            <Pressable accessibilityRole="button" onPress={() => void hydrateHabits(timeZone)} style={styles.retry}>
+              <Text variant="captionStrong" tone="acc">
+                {t("common.retry")}
+              </Text>
+            </Pressable>
+          </Card>
         </View>
       ) : null}
 
@@ -146,7 +146,9 @@ export default function Today() {
                   log={log}
                   subtitle={habitSubtitle(habit, log, locale, timeZone)}
                   selected={dual && selectedId === habit.id}
-                  onOpen={() => (dual ? selectHabit(habit.id) : router.push({ pathname: "/habit/[id]", params: { id: habit.id } }))}
+                  onOpen={() =>
+                    dual ? selectHabit(habit.id) : router.push({ pathname: "/habit/[id]", params: { id: habit.id } })
+                  }
                   onToggle={() => toggleDone(habit.id, today)}
                 />
               ))}

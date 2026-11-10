@@ -243,7 +243,14 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  bar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, paddingHorizontal: 22, paddingVertical: 8 },
+  bar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+    paddingHorizontal: 22,
+    paddingVertical: 8,
+  },
   barBtn: { height: 44, paddingHorizontal: 16, minWidth: 88 },
   body: { padding: 22, gap: 18, paddingBottom: 48 },
   block: { gap: 10 },

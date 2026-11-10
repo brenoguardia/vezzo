@@ -26,11 +26,17 @@ export const habitPatch = habitFields
   .refine((v) => Object.keys(v).length > 0, "Informe ao menos um campo");
 
 export const habitListQuery = z.object({
-  includeArchived: z.enum(["true", "false"]).optional().transform((v) => v === "true"),
+  includeArchived: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
 });
 
 export const habitDeleteQuery = z.object({
-  hard: z.enum(["true", "false"]).optional().transform((v) => v === "true"),
+  hard: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
 });
 
 export const habitDto = z.object({

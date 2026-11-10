@@ -56,7 +56,9 @@ describe("planReminders", () => {
   });
 
   it("respeita o teto de 8 por dia, mantendo os mais cedo", () => {
-    const many = Array.from({ length: 10 }, (_, i) => habit(`h${i}`, { days: [2], reminders: [`${String(8 + i).padStart(2, "0")}:00`] }));
+    const many = Array.from({ length: 10 }, (_, i) =>
+      habit(`h${i}`, { days: [2], reminders: [`${String(8 + i).padStart(2, "0")}:00`] }),
+    );
     const plans = planReminders(many, NOW);
     expect(plans).toHaveLength(MAX_PER_DAY);
     expect(Math.max(...plans.map((p) => p.hour))).toBe(15);
@@ -108,7 +110,9 @@ describe("adiamentos", () => {
     expect(registerSnooze(counts, "a", "2026-11-11")).toEqual({ a: { date: "2026-11-11", count: 1 } });
   });
   it("pruneSnoozes descarta dias antigos", () => {
-    expect(pruneSnoozes({ a: { date: "2026-11-01", count: 3 }, b: { date: "2026-11-10", count: 1 } }, "2026-11-10")).toEqual({
+    expect(
+      pruneSnoozes({ a: { date: "2026-11-01", count: 3 }, b: { date: "2026-11-10", count: 1 } }, "2026-11-10"),
+    ).toEqual({
       b: { date: "2026-11-10", count: 1 },
     });
   });

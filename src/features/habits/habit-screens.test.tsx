@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import { createHabit, deleteHabit, unarchiveHabit } from "@/api/habits";
-import { hydrateHabits } from "@/features/habits/hydrate";
-import EditHabit from "@/app/habit/[id]/edit";
-import NewHabit from "@/app/habit/new";
 import Habits from "@/app/(tabs)/habits";
 import Today from "@/app/(tabs)/home";
+import EditHabit from "@/app/habit/[id]/edit";
+import NewHabit from "@/app/habit/new";
+import { hydrateHabits } from "@/features/habits/hydrate";
 import { setLocale } from "@/i18n";
 import type { HabitDto, ProfileDto } from "@/shared/schemas";
 import { useHabitsStore } from "@/store/habits";
@@ -13,7 +13,13 @@ import { useHydrationStore } from "@/store/hydration";
 import { useProfileStore } from "@/store/profile";
 import { useSyncStore } from "@/store/sync";
 
-const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true), dismissTo: jest.fn() };
+const mockRouter = {
+  push: jest.fn(),
+  replace: jest.fn(),
+  back: jest.fn(),
+  canGoBack: jest.fn(() => true),
+  dismissTo: jest.fn(),
+};
 let mockParams: Record<string, string> = {};
 jest.mock("expo-router", () => ({
   useRouter: () => mockRouter,
@@ -30,7 +36,12 @@ jest.mock("@/lib/useLayoutMode", () => ({
 jest.mock("@/features/habits/hydrate", () => ({ hydrateHabits: jest.fn() }));
 jest.mock("expo-crypto", () => ({ randomUUID: () => "00000000-0000-4000-8000-000000000001" }));
 jest.mock("@/api/logs", () => ({ postLogBatch: jest.fn(() => new Promise(() => {})), fetchLogs: jest.fn() }));
-jest.mock("@/api/habits", () => ({ createHabit: jest.fn(), patchHabit: jest.fn(), deleteHabit: jest.fn(), unarchiveHabit: jest.fn() }));
+jest.mock("@/api/habits", () => ({
+  createHabit: jest.fn(),
+  patchHabit: jest.fn(),
+  deleteHabit: jest.fn(),
+  unarchiveHabit: jest.fn(),
+}));
 jest.mock("@/api/summary", () => ({ fetchHabits: jest.fn(), fetchStats: jest.fn() }));
 jest.mock("@/auth/client", () => ({ authClient: {} }));
 jest.mock("@react-native-community/datetimepicker", () => ({
@@ -140,10 +151,12 @@ describe("Hoje", () => {
 
 describe("Hábitos", () => {
   it("separa ativos e arquivados", async () => {
-    useHabitsStore.getState().hydrate(
-      [habit("a".repeat(24)), habit("b".repeat(24), { name: "Ler", archivedAt: "2026-11-01T00:00:00.000Z" })],
-      [],
-    );
+    useHabitsStore
+      .getState()
+      .hydrate(
+        [habit("a".repeat(24)), habit("b".repeat(24), { name: "Ler", archivedAt: "2026-11-01T00:00:00.000Z" })],
+        [],
+      );
     await render(<Habits />);
     expect(screen.getByText("Meditar")).toBeTruthy();
     expect(screen.getByText("Arquivado")).toBeTruthy();
@@ -185,7 +198,9 @@ describe("Novo hábito", () => {
     await render(<NewHabit />);
     expect(screen.getByRole("button", { name: "Salvar" }).props.accessibilityState.disabled).toBe(true);
     await fireEvent.changeText(screen.getByPlaceholderText("Ex.: Ler antes de dormir"), "Ler");
-    await waitFor(() => expect(screen.getByRole("button", { name: "Salvar" }).props.accessibilityState.disabled).toBe(false));
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Salvar" }).props.accessibilityState.disabled).toBe(false),
+    );
     await fireEvent.press(screen.getByRole("button", { name: "Salvar" }));
     await waitFor(() => expect(mockCreate).toHaveBeenCalledTimes(1));
     expect(mockCreate.mock.calls[0]?.[0]).toMatchObject({ name: "Ler", emoji: "🎯", goalUnit: "BOOLEAN" });
@@ -197,7 +212,9 @@ describe("Novo hábito", () => {
     mockCreate.mockRejectedValue(new Error("offline"));
     await render(<NewHabit />);
     await fireEvent.changeText(screen.getByPlaceholderText("Ex.: Ler antes de dormir"), "Ler");
-    await waitFor(() => expect(screen.getByRole("button", { name: "Salvar" }).props.accessibilityState.disabled).toBe(false));
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Salvar" }).props.accessibilityState.disabled).toBe(false),
+    );
     await fireEvent.press(screen.getByRole("button", { name: "Salvar" }));
     await waitFor(() => expect(screen.getByText(/Não foi possível salvar/)).toBeTruthy());
     expect(mockRouter.back).not.toHaveBeenCalled();

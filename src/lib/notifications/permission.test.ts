@@ -10,7 +10,6 @@ jest.mock("expo-notifications", () => ({
   AndroidImportance: { DEFAULT: 3 },
 }));
 
-
 const mockN = Notifications as unknown as {
   getPermissionsAsync: jest.Mock<() => Promise<{ granted: boolean; canAskAgain: boolean }>>;
   requestPermissionsAsync: jest.Mock<() => Promise<{ granted: boolean }>>;
@@ -48,7 +47,10 @@ describe("requestReminderPermission", () => {
     mockN.getPermissionsAsync.mockResolvedValue({ granted: false, canAskAgain: true });
     mockN.requestPermissionsAsync.mockResolvedValue({ granted: true });
     await requestReminderPermission();
-    expect(mockN.setNotificationChannelAsync).toHaveBeenCalledWith("habits", expect.objectContaining({ importance: 3 }));
+    expect(mockN.setNotificationChannelAsync).toHaveBeenCalledWith(
+      "habits",
+      expect.objectContaining({ importance: 3 }),
+    );
     expect(mockN.setNotificationChannelAsync.mock.invocationCallOrder[0]).toBeLessThan(
       mockN.requestPermissionsAsync.mock.invocationCallOrder[0] ?? 0,
     );

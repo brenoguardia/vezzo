@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { pruneSnoozes, registerSnooze, type SnoozeCounts } from "@/lib/notifications/schedule";
 import { persistStorage } from "@/lib/storage";
-import { type SnoozeCounts, pruneSnoozes, registerSnooze } from "@/lib/notifications/schedule";
 
 interface SnoozeState {
   counts: SnoozeCounts;
@@ -14,7 +14,8 @@ export const useSnoozeStore = create<SnoozeState>()(
   persist(
     (set) => ({
       counts: {},
-      register: (habitId, date) => set((s) => ({ counts: registerSnooze(pruneSnoozes(s.counts, date), habitId, date) })),
+      register: (habitId, date) =>
+        set((s) => ({ counts: registerSnooze(pruneSnoozes(s.counts, date), habitId, date) })),
       clear: () => set({ counts: {} }),
     }),
     { name: "vezzo-snooze", storage: persistStorage },

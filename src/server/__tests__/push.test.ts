@@ -41,14 +41,12 @@ describe("POST /v1/push/register", () => {
     expect(await db.pushToken.count({ where: { userId: USER_B } })).toBe(1);
   });
 
-  it.each([
-    { token: "qualquer-coisa", platform: "ios" },
-    { token: TOKEN, platform: "web" },
-    { token: TOKEN },
-    {},
-  ])("rejeita corpo inválido %j", async (body) => {
-    expect((await post(USER_A, body)).status).toBe(400);
-  });
+  it.each([{ token: "qualquer-coisa", platform: "ios" }, { token: TOKEN, platform: "web" }, { token: TOKEN }, {}])(
+    "rejeita corpo inválido %j",
+    async (body) => {
+      expect((await post(USER_A, body)).status).toBe(400);
+    },
+  );
 
   it("ignora userId enviado no corpo", async () => {
     await post(USER_A, { token: TOKEN, platform: "ios", userId: USER_B });

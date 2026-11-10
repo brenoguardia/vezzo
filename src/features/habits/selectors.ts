@@ -1,8 +1,8 @@
 import { toStatHabit, toStatLogs } from "@/lib/habit-stats";
 import type { Ymd } from "@/shared/dates";
-import type { HabitDto } from "@/shared/schemas";
-import { dayStats, scheduled, type StatHabit, type StatLog } from "@/shared/stats";
 import { logKey } from "@/shared/logs";
+import type { HabitDto } from "@/shared/schemas";
+import { dayStats, type StatHabit, type StatLog, scheduled } from "@/shared/stats";
 import type { DayLog } from "@/store/habits";
 
 export const activeHabits = (habits: readonly HabitDto[]) =>

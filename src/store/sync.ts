@@ -9,8 +9,7 @@ const BATCH_SIZE = 200;
 const DEBOUNCE_MS = 1000;
 
 /** Atraso do reenvio: 2 s, dobrando até 60 s (docs/09). `failures` começa em 1. */
-export const backoffDelay = (failures: number) =>
-  Math.min(2000 * 2 ** (failures - 1), 60000);
+export const backoffDelay = (failures: number) => Math.min(2000 * 2 ** (failures - 1), 60000);
 
 type AppliedListener = (logs: LogDto[]) => void;
 const listeners = new Set<AppliedListener>();
@@ -49,12 +48,7 @@ export const useSyncStore = create<SyncState>()(
       failed: false,
       enqueue: (item) => {
         set((s) => ({
-          queue: [
-            ...s.queue.filter(
-              (q) => !(q.habitId === item.habitId && q.date === item.date),
-            ),
-            item,
-          ],
+          queue: [...s.queue.filter((q) => !(q.habitId === item.habitId && q.date === item.date)), item],
         }));
         schedule(DEBOUNCE_MS);
       },
@@ -70,8 +64,7 @@ export const useSyncStore = create<SyncState>()(
               set((s) => ({
                 queue: s.queue.filter((q) => !sent.has(q.clientId)),
               }));
-              if (result.applied.length)
-                listeners.forEach((fn) => fn(result.applied));
+              if (result.applied.length) listeners.forEach((fn) => fn(result.applied));
             }
             failures = 0;
             set({ lastSyncAt: new Date().toISOString(), failed: false });

@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { renderEmail, type EmailData, type EmailLocale, type EmailTemplate } from "./templates";
+import { type EmailData, type EmailLocale, type EmailTemplate, renderEmail } from "./templates";
 
 type SendResult = { data: unknown; error: { message: string } | null };
 

@@ -48,10 +48,7 @@ export function HabitRow({ habit, log, subtitle, onOpen, onToggle, selected }: P
         style={styles.checkTarget}
       >
         <View
-          style={[
-            styles.check,
-            done ? { backgroundColor: theme.acc } : { borderWidth: 2, borderColor: theme.line },
-          ]}
+          style={[styles.check, done ? { backgroundColor: theme.acc } : { borderWidth: 2, borderColor: theme.line }]}
         >
           {done ? (
             <Text variant="captionStrong" tone="accInk" style={styles.tick}>
@@ -66,10 +63,23 @@ export function HabitRow({ habit, log, subtitle, onOpen, onToggle, selected }: P
 
 const styles = StyleSheet.create({
   card: { flexDirection: "row", alignItems: "center", minHeight: 66 },
-  main: { flex: 1, flexDirection: "row", alignItems: "center", gap: 14, paddingVertical: 13, paddingLeft: 16, minHeight: layout.minTouch },
+  main: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    paddingVertical: 13,
+    paddingLeft: 16,
+    minHeight: layout.minTouch,
+  },
   text: { flex: 1, gap: 2 },
   name: { fontSize: 15, lineHeight: 20 },
-  checkTarget: { width: layout.minTouch + 8, height: layout.minTouch + 8, alignItems: "center", justifyContent: "center" },
+  checkTarget: {
+    width: layout.minTouch + 8,
+    height: layout.minTouch + 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   check: { width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center" },
   tick: { fontSize: 14, lineHeight: 18 },
 });

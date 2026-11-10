@@ -59,12 +59,7 @@ export function dayStats(habits: readonly StatHabit[], logs: readonly StatLog[],
   return dayStatsIdx(habits, index(logs), date);
 }
 
-export function dailyStats(
-  habits: readonly StatHabit[],
-  logs: readonly StatLog[],
-  from: Ymd,
-  to: Ymd,
-): DayStats[] {
+export function dailyStats(habits: readonly StatHabit[], logs: readonly StatLog[], from: Ymd, to: Ymd): DayStats[] {
   const idx = index(logs);
   return eachDay(from, to).map((date) => dayStatsIdx(habits, idx, date));
 }
@@ -101,8 +96,7 @@ export function streaks(
 
 export const currentStreak = (h: readonly StatHabit[], l: readonly StatLog[], today: Ymd) =>
   streaks(h, l, today).current;
-export const bestStreak = (h: readonly StatHabit[], l: readonly StatLog[], today: Ymd) =>
-  streaks(h, l, today).best;
+export const bestStreak = (h: readonly StatHabit[], l: readonly StatLog[], today: Ymd) => streaks(h, l, today).best;
 
 export type WeekCompletion = { start: Ymd; end: Ymd; done: number; counted: number; completion: number };
 

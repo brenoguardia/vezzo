@@ -49,7 +49,7 @@ export default function OnboardingName() {
         render={({ field, fieldState }) => (
           <View>
             <TextInput
-            maxFontSizeMultiplier={MAX_FONT_SCALE}
+              maxFontSizeMultiplier={MAX_FONT_SCALE}
               ref={field.ref}
               accessibilityLabel={t("onboarding.nameLabel")}
               value={field.value}
@@ -62,7 +62,10 @@ export default function OnboardingName() {
               returnKeyType="next"
               onSubmitEditing={() => void onSubmit()}
               selectionColor={theme.acc}
-              style={[styles.input, { color: theme.ink, borderBottomColor: fieldState.error ? theme.danger : theme.acc }]}
+              style={[
+                styles.input,
+                { color: theme.ink, borderBottomColor: fieldState.error ? theme.danger : theme.acc },
+              ]}
             />
             {fieldState.error && field.value.length > 0 ? (
               <Text variant="caption" tone="danger" accessibilityRole="alert" style={styles.error}>

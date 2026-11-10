@@ -1,7 +1,4 @@
-import {
-  setNotificationCategoryAsync,
-  setNotificationHandler,
-} from "expo-notifications";
+import { setNotificationCategoryAsync, setNotificationHandler } from "expo-notifications";
 import { t } from "@/i18n";
 
 export const HABIT_REMINDER = "HABIT_REMINDER";

@@ -4,9 +4,9 @@ import { Card, Text } from "@/components/ui";
 import { statInputs, todaySummary } from "@/features/habits/selectors";
 import { useToday } from "@/features/habits/useToday";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { useT } from "@/i18n/useT";
 import { dailyPhrase, phraseBand } from "@/i18n/phrases";
 import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { DEFAULT_TIMEZONE, dayOfYear } from "@/lib/habit-stats";
 import { useTheme } from "@/lib/useTheme";
 import { addDays, startOfWeek } from "@/shared/dates";
@@ -65,7 +65,10 @@ export default function StreakScreen() {
               <View key={d.date} style={styles.day}>
                 <View
                   accessibilityLabel={`${t(`onboarding.daysNames.${i}`)}: ${fulfilled ? t("home.completed") : ""}`}
-                  style={[styles.circle, fulfilled ? { backgroundColor: theme.acc } : { borderWidth: 2, borderColor: theme.line }]}
+                  style={[
+                    styles.circle,
+                    fulfilled ? { backgroundColor: theme.acc } : { borderWidth: 2, borderColor: theme.line },
+                  ]}
                 >
                   {fulfilled ? (
                     <Text variant="captionStrong" tone="accInk">

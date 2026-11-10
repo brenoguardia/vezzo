@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
-import { i18n } from "@/i18n";
 import { completeOnboarding } from "@/api/onboarding";
-import { requestReminderPermission } from "@/lib/notifications/permission";
-import { DEFAULT_SELECTION } from "@/shared/onboarding";
-import { useOnboardingStore } from "@/store/onboarding";
-import { useProfileStore } from "@/store/profile";
 import Activities from "@/app/(onboarding)/activities";
 import Goals from "@/app/(onboarding)/goals";
 import Name from "@/app/(onboarding)/name";
 import Reminders from "@/app/(onboarding)/reminders";
+import { i18n } from "@/i18n";
+import { requestReminderPermission } from "@/lib/notifications/permission";
+import { DEFAULT_SELECTION } from "@/shared/onboarding";
+import { useOnboardingStore } from "@/store/onboarding";
+import { useProfileStore } from "@/store/profile";
 
 const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true) };
 jest.mock("expo-router", () => ({ useRouter: () => mockRouter }));

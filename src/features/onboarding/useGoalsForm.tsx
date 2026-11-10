@@ -45,7 +45,7 @@ export function useGoalsForm(): { body: ReactNode; footer: ReactNode } {
 
   const body = (
     <>
-    {fields.map((habit, index) => {
+      {fields.map((habit, index) => {
         const slug = habit.templateSlug ?? "";
         const step = stepSize(habit.goalUnit);
         return (
@@ -106,19 +106,19 @@ export function useGoalsForm(): { body: ReactNode; footer: ReactNode } {
   );
   const footer = (
     <>
-        <>
-          {formState.errors.root?.message ? (
-            <Text variant="caption" tone="danger" accessibilityRole="alert">
-              {formState.errors.root.message}
-            </Text>
-          ) : null}
-          <Button
-            label={t("onboarding.start")}
-            onPress={() => void onSubmit()}
-            disabled={!formState.isValid}
-            loading={formState.isSubmitting}
-          />
-        </>
+      <>
+        {formState.errors.root?.message ? (
+          <Text variant="caption" tone="danger" accessibilityRole="alert">
+            {formState.errors.root.message}
+          </Text>
+        ) : null}
+        <Button
+          label={t("onboarding.start")}
+          onPress={() => void onSubmit()}
+          disabled={!formState.isValid}
+          loading={formState.isSubmitting}
+        />
+      </>
     </>
   );
   return { body, footer };

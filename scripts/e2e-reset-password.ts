@@ -55,14 +55,23 @@ async function main() {
   assert(profile?.language === "en", "Profile criado pelo hook com idioma de Accept-Language");
   step("Profile criado pelo hook após o cadastro");
 
-  assert((await call("/sign-in/email", { body: { email, password: oldPassword } })).status === 403, "login bloqueado sem verificação");
+  assert(
+    (await call("/sign-in/email", { body: { email, password: oldPassword } })).status === 403,
+    "login bloqueado sem verificação",
+  );
   step("login bloqueado antes da verificação");
 
   const verifyLink = linkOf(await waitForEmail(/confirm your email/i, seen));
-  assert((await call(new URL(verifyLink).pathname.replace("/api/auth", "") + new URL(verifyLink).search)).status < 400, "verificação");
+  assert(
+    (await call(new URL(verifyLink).pathname.replace("/api/auth", "") + new URL(verifyLink).search)).status < 400,
+    "verificação",
+  );
   step("e-mail verificado pelo link recebido");
 
-  assert((await call("/request-password-reset", { body: { email, redirectTo: "vezzo://reset-password" } })).ok, "pedido de redefinição");
+  assert(
+    (await call("/request-password-reset", { body: { email, redirectTo: "vezzo://reset-password" } })).ok,
+    "pedido de redefinição",
+  );
   const resetLink = new URL(linkOf(await waitForEmail(/reset your vezzo password/i, seen)));
   step("e-mail de redefinição recebido");
 
@@ -78,10 +87,16 @@ async function main() {
   await waitForEmail(/password was changed/i, seen);
   step("aviso password-changed recebido");
 
-  assert((await call("/reset-password", { body: { newPassword: "outra-senha-789", token } })).status >= 400, "token é de uso único");
+  assert(
+    (await call("/reset-password", { body: { newPassword: "outra-senha-789", token } })).status >= 400,
+    "token é de uso único",
+  );
   step("token reutilizado é rejeitado");
 
-  assert((await call("/sign-in/email", { body: { email, password: oldPassword } })).status === 401, "senha antiga recusada");
+  assert(
+    (await call("/sign-in/email", { body: { email, password: oldPassword } })).status === 401,
+    "senha antiga recusada",
+  );
   assert((await call("/sign-in/email", { body: { email, password: newPassword } })).ok, "senha nova aceita");
   step("login: senha antiga recusada, nova aceita");
 

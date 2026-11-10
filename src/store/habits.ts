@@ -33,7 +33,11 @@ interface HabitsState {
   clear: () => void;
 }
 
-const empty = () => ({ habits: [] as HabitDto[], logs: {} as Record<string, DayLog>, scheduledIds: {} as Record<string, string[]> });
+const empty = () => ({
+  habits: [] as HabitDto[],
+  logs: {} as Record<string, DayLog>,
+  scheduledIds: {} as Record<string, string[]>,
+});
 
 /** Hábitos, logs dos últimos 90 dias e ids de notificações agendadas (docs/09). Persistido. */
 export const useHabitsStore = create<HabitsState>()(
@@ -45,7 +49,12 @@ export const useHabitsStore = create<HabitsState>()(
       hydrate: (habits, logs) =>
         set({
           habits,
-          logs: Object.fromEntries(logs.map((l) => [logKey(l.habitId, l.date), { value: l.value, status: l.status, completedAt: l.completedAt }])),
+          logs: Object.fromEntries(
+            logs.map((l) => [
+              logKey(l.habitId, l.date),
+              { value: l.value, status: l.status, completedAt: l.completedAt },
+            ]),
+          ),
         }),
       applyLog: (habitId, date, change, source = "APP") => {
         const habit = get().habits.find((h) => h.id === habitId);

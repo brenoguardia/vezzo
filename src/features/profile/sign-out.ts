@@ -1,7 +1,7 @@
 import { authClient } from "@/auth/client";
-import { cancelAllReminders } from "@/lib/notifications/reschedule";
-import { unregisterPush } from "@/lib/notifications/push";
 import { clearHabitData } from "@/features/habits/hydrate";
+import { unregisterPush } from "@/lib/notifications/push";
+import { cancelAllReminders } from "@/lib/notifications/reschedule";
 import { useProfileStore } from "@/store/profile";
 
 /** Encerra a sessão local e limpa o perfil; a guarda de rotas leva ao login. */

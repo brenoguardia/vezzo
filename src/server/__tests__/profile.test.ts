@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { db, installFakeSession, req, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 import { GET, PUT } from "@/app/api/v1/profile+api";
+import { db, installFakeSession, req, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 import { profileDto } from "@/shared/schemas";
 
 vi.mock("@/server/db", async () => {
@@ -12,7 +12,6 @@ beforeEach(() => {
   db.$reset();
   installFakeSession();
 });
-
 
 describe("GET /v1/profile", () => {
   it("exige sessão", async () => {
@@ -35,7 +34,11 @@ describe("PUT /v1/profile", () => {
   it("atualiza apenas os campos enviados", async () => {
     await seedProfile(USER_A, { displayName: "Ana" });
     const res = await PUT(
-      req("/api/v1/profile", { user: USER_A, method: "PUT", body: { accent: "#3fbf9f", themeMode: "DARK", timezone: "UTC" } }),
+      req("/api/v1/profile", {
+        user: USER_A,
+        method: "PUT",
+        body: { accent: "#3fbf9f", themeMode: "DARK", timezone: "UTC" },
+      }),
     );
     const body = profileDto.parse(await res.json());
     expect(body).toMatchObject({ displayName: "Ana", accent: "#3fbf9f", themeMode: "DARK", timezone: "UTC" });

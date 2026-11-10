@@ -38,5 +38,9 @@ export function byMonth(days: readonly DayStats[]): MonthBar[] {
   }
   return [...groups.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([month, list]) => ({ month, completion: completionOf(list), counted: list.reduce((n, d) => n + d.counted, 0) }));
+    .map(([month, list]) => ({
+      month,
+      completion: completionOf(list),
+      counted: list.reduce((n, d) => n + d.counted, 0),
+    }));
 }

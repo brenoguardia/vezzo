@@ -1,5 +1,5 @@
 import { type ComponentRef, useRef } from "react";
-import { Pressable, StyleSheet, Text as RNText, TextInput, View } from "react-native";
+import { Pressable, Text as RNText, StyleSheet, TextInput, View } from "react-native";
 import { useTheme } from "@/lib/useTheme";
 import { EMOJI_PRESETS, isSingleEmoji, lastEmoji } from "@/shared/emoji";
 import { radius } from "@/shared/tokens";
@@ -64,7 +64,7 @@ export function EmojiField({ value, onChange, customLabel, error }: Props) {
         </Pressable>
       </View>
       <TextInput
-            maxFontSizeMultiplier={MAX_FONT_SCALE}
+        maxFontSizeMultiplier={MAX_FONT_SCALE}
         ref={input}
         value=""
         accessibilityElementsHidden

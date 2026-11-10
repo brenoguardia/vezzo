@@ -12,9 +12,7 @@ process.env.NODE_ENV = "production";
 const app = express();
 app.disable("x-powered-by");
 app.use(compression());
-app.use(
-  express.static(path.join(process.cwd(), "dist/client"), { maxAge: "1h", extensions: ["html"] }),
-);
+app.use(express.static(path.join(process.cwd(), "dist/client"), { maxAge: "1h", extensions: ["html"] }));
 app.use(morgan("tiny"));
 app.all("/{*all}", createRequestHandler({ build: path.join(process.cwd(), "dist/server") }));
 

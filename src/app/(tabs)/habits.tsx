@@ -5,12 +5,12 @@ import { Button, Card, EmojiTile, Text } from "@/components/ui";
 import { EditHabitPanel } from "@/features/habits/EditHabitPanel";
 import { activeHabits } from "@/features/habits/selectors";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
-import { formatGoal } from "@/shared/onboarding";
 import type { GoalUnit } from "@/shared/categories";
+import { formatGoal } from "@/shared/onboarding";
 import type { HabitDto } from "@/shared/schemas";
 import { useHabitsStore } from "@/store/habits";
 import { useToastStore } from "@/store/toast";
@@ -38,7 +38,8 @@ export default function Habits() {
     }
   }
 
-  const open = (h: HabitDto) => (dual ? selectHabit(h.id) : router.push({ pathname: "/habit/[id]", params: { id: h.id } }));
+  const open = (h: HabitDto) =>
+    dual ? selectHabit(h.id) : router.push({ pathname: "/habit/[id]", params: { id: h.id } });
   const editing = dual ? active.find((h) => h.id === selectedId) : undefined;
   const subtitle = (h: HabitDto) =>
     h.goalUnit === "BOOLEAN" ? t("onboarding.daily") : formatGoal(h.goalValue, h.goalUnit as GoalUnit, locale);
@@ -70,7 +71,14 @@ export default function Habits() {
       ) : (
         <View style={styles.list}>
           {active.map((h) => (
-            <Card key={h.id} radius={20} padding={13} onPress={() => open(h)} accessibilityLabel={`${h.name}. ${subtitle(h)}`} style={[styles.row, dual && selectedId === h.id && { borderWidth: 2, borderColor: theme.acc }]}>
+            <Card
+              key={h.id}
+              radius={20}
+              padding={13}
+              onPress={() => open(h)}
+              accessibilityLabel={`${h.name}. ${subtitle(h)}`}
+              style={[styles.row, dual && selectedId === h.id && { borderWidth: 2, borderColor: theme.acc }]}
+            >
               <EmojiTile emoji={h.emoji} size={40} />
               <View style={styles.flex}>
                 <Text variant="bodyStrong" numberOfLines={1}>

@@ -75,10 +75,18 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
   return (
     <ScrollView
       style={{ backgroundColor: theme.bg }}
-      contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: Math.max(22, insets.bottom) + (tabBar ? layout.tabBarHeight + 24 : 24) }]}
+      contentContainerStyle={[
+        styles.scroll,
+        {
+          paddingTop: insets.top + 16,
+          paddingBottom: Math.max(22, insets.bottom) + (tabBar ? layout.tabBarHeight + 24 : 24),
+        },
+      ]}
       showsVerticalScrollIndicator={false}
     >
-      <View style={{ width: Math.min(width, layout.formMaxWidth), paddingHorizontal: layout.screenMargin, flexGrow: 1 }}>
+      <View
+        style={{ width: Math.min(width, layout.formMaxWidth), paddingHorizontal: layout.screenMargin, flexGrow: 1 }}
+      >
         {header}
         <View style={styles.body}>{children}</View>
         {footer ? <View style={styles.footer}>{footer}</View> : null}

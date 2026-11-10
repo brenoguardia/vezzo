@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
-import type { HabitDto } from "@/shared/schemas";
 import { logKey } from "@/shared/logs";
+import type { HabitDto } from "@/shared/schemas";
 import { useHabitsStore } from "@/store/habits";
 import { useSnoozeStore } from "@/store/snooze";
 import { useSyncStore } from "@/store/sync";
@@ -53,7 +53,10 @@ const response = (actionIdentifier: string, habitId: unknown = ID) =>
     actionIdentifier,
     notification: {
       date: 1_000_000 + ++seq,
-      request: { identifier: `n${seq}`, content: { title: "Hora de ler", body: "corpo", data: { kind: "reminder", habitId } } },
+      request: {
+        identifier: `n${seq}`,
+        content: { title: "Hora de ler", body: "corpo", data: { kind: "reminder", habitId } },
+      },
     },
   }) as unknown as Notifications.NotificationResponse;
 
@@ -71,7 +74,12 @@ describe("COMPLETE", () => {
   it("grava DONE com a meta cheia, origem NOTIFICATION, e enfileira para sincronizar", async () => {
     expect(await handleNotificationResponse(response("COMPLETE"), undefined, NOW)).toBe("completed");
     expect(useHabitsStore.getState().logs[logKey(ID, TODAY)]).toMatchObject({ status: "DONE", value: 15 });
-    expect(useSyncStore.getState().queue[0]).toMatchObject({ habitId: ID, date: TODAY, status: "DONE", source: "NOTIFICATION" });
+    expect(useSyncStore.getState().queue[0]).toMatchObject({
+      habitId: ID,
+      date: TODAY,
+      status: "DONE",
+      source: "NOTIFICATION",
+    });
   });
 
   it("cancela adiamentos pendentes do mesmo hábito, e só deles", async () => {
@@ -121,7 +129,9 @@ describe("SNOOZE_1H", () => {
 describe("toque no corpo", () => {
   it("abre o hábito", async () => {
     const open = jest.fn();
-    expect(await handleNotificationResponse(response("expo.modules.notifications.actions.DEFAULT"), open, NOW)).toBe("open");
+    expect(await handleNotificationResponse(response("expo.modules.notifications.actions.DEFAULT"), open, NOW)).toBe(
+      "open",
+    );
     expect(open).toHaveBeenCalledWith(ID);
   });
 });
@@ -129,7 +139,9 @@ describe("toque no corpo", () => {
 describe("robustez", () => {
   it("ignora payload sem habitId ou hábito desconhecido", async () => {
     expect(await handleNotificationResponse(response("COMPLETE", null), undefined, NOW)).toBe("ignored");
-    expect(await handleNotificationResponse(response("COMPLETE", "ffffffffffffffffffffffff"), undefined, NOW)).toBe("ignored");
+    expect(await handleNotificationResponse(response("COMPLETE", "ffffffffffffffffffffffff"), undefined, NOW)).toBe(
+      "ignored",
+    );
     expect(useSyncStore.getState().queue).toHaveLength(0);
   });
 

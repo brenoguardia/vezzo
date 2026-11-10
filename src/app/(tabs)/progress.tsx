@@ -2,12 +2,12 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { BarChart, Card, SegmentedControl, Text } from "@/components/ui";
 import { useToday } from "@/features/habits/useToday";
+import { SettingsShell } from "@/features/profile/SettingsShell";
 import { byMonth, completionOf, type Period } from "@/features/progress/aggregate";
 import { useRemoteDays } from "@/features/progress/useRemoteDays";
 import { useWeekStats } from "@/features/progress/useWeekStats";
-import { SettingsShell } from "@/features/profile/SettingsShell";
-import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
 import { weekdayIndex } from "@/shared/dates";
@@ -58,86 +58,91 @@ export default function Progress() {
     </Card>
   );
   const chartCard = (
-  <Card radius={28} padding={20} style={styles.gap}>
-            <View style={styles.head}>
-              <View>
-                <Text variant="bodyMedium" tone="mute">
-                  {t("progress.completion")}
-                </Text>
-                <Text variant="display">{pct(completion)}</Text>
-              </View>
-              {period === "week" && week.cmp.delta !== null ? (
-                <View style={[styles.badge, { backgroundColor: theme.line }]}>
-                  <Text variant="captionStrong">{t("progress.vsLastWeek", { delta: signed(week.cmp.delta) })}</Text>
-                </View>
-              ) : null}
-            </View>
+    <Card radius={28} padding={20} style={styles.gap}>
+      <View style={styles.head}>
+        <View>
+          <Text variant="bodyMedium" tone="mute">
+            {t("progress.completion")}
+          </Text>
+          <Text variant="display">{pct(completion)}</Text>
+        </View>
+        {period === "week" && week.cmp.delta !== null ? (
+          <View style={[styles.badge, { backgroundColor: theme.line }]}>
+            <Text variant="captionStrong">{t("progress.vsLastWeek", { delta: signed(week.cmp.delta) })}</Text>
+          </View>
+        ) : null}
+      </View>
 
-            {period === "week" ? (
-              <BarChart
-                accessibilityLabel={t("progress.completion")}
-                data={week.days.map((d) => ({
-                  label: letters(weekdayIndex(d.date)),
-                  value: d.completion,
-                  highlight: d.date === today,
-                }))}
-              />
-            ) : remote.status === "loading" ? (
-              <Text tone="mute" accessibilityLiveRegion="polite">
-                {t("home.loading")}
-              </Text>
-            ) : remote.status === "error" ? (
-              <Text tone="mute">{t("common.loadError")}</Text>
-            ) : period === "year" ? (
-              <BarChart
-                accessibilityLabel={t("progress.completion")}
-                data={byMonth(remote.days).map((m) => ({
-                  label: monthLetter(m.month),
-                  value: m.completion,
-                  highlight: m.month === today.slice(0, 7),
-                }))}
-              />
-            ) : (
-              <View style={styles.cells}>
-                {periodDays.map((d) => (
-                  <View
-                    key={d.date}
-                    accessibilityLabel={`${d.date}: ${pct(d.completion)}`}
-                    style={[
-                      styles.cell,
-                      { backgroundColor: d.counted ? theme.acc : theme.line, opacity: d.counted ? 0.2 + 0.8 * d.completion : 1 },
-                      d.date === today && { borderWidth: 2, borderColor: theme.ink },
-                    ]}
-                  />
-                ))}
-              </View>
-            )}
-          </Card>
+      {period === "week" ? (
+        <BarChart
+          accessibilityLabel={t("progress.completion")}
+          data={week.days.map((d) => ({
+            label: letters(weekdayIndex(d.date)),
+            value: d.completion,
+            highlight: d.date === today,
+          }))}
+        />
+      ) : remote.status === "loading" ? (
+        <Text tone="mute" accessibilityLiveRegion="polite">
+          {t("home.loading")}
+        </Text>
+      ) : remote.status === "error" ? (
+        <Text tone="mute">{t("common.loadError")}</Text>
+      ) : period === "year" ? (
+        <BarChart
+          accessibilityLabel={t("progress.completion")}
+          data={byMonth(remote.days).map((m) => ({
+            label: monthLetter(m.month),
+            value: m.completion,
+            highlight: m.month === today.slice(0, 7),
+          }))}
+        />
+      ) : (
+        <View style={styles.cells}>
+          {periodDays.map((d) => (
+            <View
+              key={d.date}
+              accessibilityLabel={`${d.date}: ${pct(d.completion)}`}
+              style={[
+                styles.cell,
+                {
+                  backgroundColor: d.counted ? theme.acc : theme.line,
+                  opacity: d.counted ? 0.2 + 0.8 * d.completion : 1,
+                },
+                d.date === today && { borderWidth: 2, borderColor: theme.ink },
+              ]}
+            />
+          ))}
+        </View>
+      )}
+    </Card>
   );
   const perHabit = (
     <>
-          {period === "week" ? (
-            <>
-              <Text variant="sectionTitle" accessibilityRole="header">
-                {t("progress.byHabit")}
-              </Text>
-              <View style={styles.list}>
-                {week.perHabit
-                  .filter((h) => h.scheduled > 0)
-                  .map((h) => (
-                    <View key={h.habitId} style={styles.item}>
-                      <View style={styles.row}>
-                        <Text variant="bodyMedium">{names.get(h.habitId)}</Text>
-                        <Text variant="bodyMedium" tone="mute">{`${h.done}/${h.scheduled}`}</Text>
-                      </View>
-                      <View style={[styles.track, { backgroundColor: theme.line }]}>
-                        <View style={[styles.fill, { backgroundColor: theme.acc, width: `${(h.done / h.scheduled) * 100}%` }]} />
-                      </View>
-                    </View>
-                  ))}
-              </View>
-            </>
-          ) : null}
+      {period === "week" ? (
+        <>
+          <Text variant="sectionTitle" accessibilityRole="header">
+            {t("progress.byHabit")}
+          </Text>
+          <View style={styles.list}>
+            {week.perHabit
+              .filter((h) => h.scheduled > 0)
+              .map((h) => (
+                <View key={h.habitId} style={styles.item}>
+                  <View style={styles.row}>
+                    <Text variant="bodyMedium">{names.get(h.habitId)}</Text>
+                    <Text variant="bodyMedium" tone="mute">{`${h.done}/${h.scheduled}`}</Text>
+                  </View>
+                  <View style={[styles.track, { backgroundColor: theme.line }]}>
+                    <View
+                      style={[styles.fill, { backgroundColor: theme.acc, width: `${(h.done / h.scheduled) * 100}%` }]}
+                    />
+                  </View>
+                </View>
+              ))}
+          </View>
+        </>
+      ) : null}
     </>
   );
 

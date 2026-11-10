@@ -2,15 +2,14 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import type { ReactNode } from "react";
 import { Text as MockText } from "react-native";
-import { i18n } from "@/i18n";
-
-import { authClient } from "@/auth/client";
-import CheckEmail from "@/app/(recovery)/check-email";
-import ForgotPassword from "@/app/(recovery)/forgot-password";
-import ResetPassword from "@/app/(recovery)/reset-password";
 import SignIn from "@/app/(auth)/sign-in";
 import SignUp from "@/app/(auth)/sign-up";
 import Welcome from "@/app/(auth)/welcome";
+import CheckEmail from "@/app/(recovery)/check-email";
+import ForgotPassword from "@/app/(recovery)/forgot-password";
+import ResetPassword from "@/app/(recovery)/reset-password";
+import { authClient } from "@/auth/client";
+import { i18n } from "@/i18n";
 
 const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true) };
 let mockParams: Record<string, string> = {};
@@ -135,7 +134,10 @@ describe("sign-in", () => {
     await fillAndSubmit();
     await fireEvent.press(await screen.findByText("Reenviar e-mail de confirmação"));
     await waitFor(() =>
-      expect(mockAuth.sendVerificationEmail).toHaveBeenCalledWith({ email: "ana@exemplo.com", callbackURL: "vezzo://" }),
+      expect(mockAuth.sendVerificationEmail).toHaveBeenCalledWith({
+        email: "ana@exemplo.com",
+        callbackURL: "vezzo://",
+      }),
     );
   });
 });
@@ -198,7 +200,9 @@ describe("reset-password", () => {
 
     await waitFor(() => expect(screen.getByRole("button", { name: "Salvar nova senha" })).toBeEnabled());
     await fireEvent.press(screen.getByRole("button", { name: "Salvar nova senha" }));
-    await waitFor(() => expect(mockAuth.resetPassword).toHaveBeenCalledWith({ newPassword: "senha1234", token: "tok123" }));
+    await waitFor(() =>
+      expect(mockAuth.resetPassword).toHaveBeenCalledWith({ newPassword: "senha1234", token: "tok123" }),
+    );
     await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith("/sign-in"));
   });
 

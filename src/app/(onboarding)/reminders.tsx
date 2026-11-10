@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui";
-import { OnboardingShell } from "@/features/onboarding/OnboardingShell";
 import { currentLocale } from "@/features/onboarding/locale";
+import { OnboardingShell } from "@/features/onboarding/OnboardingShell";
 import { useT } from "@/i18n/useT";
 import { requestReminderPermission } from "@/lib/notifications/permission";
 import { useOnboardingStore } from "@/store/onboarding";
@@ -20,7 +20,10 @@ export default function OnboardingReminders() {
     const name = useOnboardingStore.getState().displayName;
     useOnboardingStore.getState().reset();
     // O perfil nasce em pt-BR; grava o idioma que o usuário viu no onboarding (melhor esforço).
-    void useProfileStore.getState().update({ language: currentLocale() }).catch(() => {});
+    void useProfileStore
+      .getState()
+      .update({ language: currentLocale() })
+      .catch(() => {});
     markDone(name || undefined);
   }
 

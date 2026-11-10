@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Card, Text } from "@/components/ui";
-import { useReminderPermission } from "@/features/profile/useReminderPermission";
 import { SettingsShell } from "@/features/profile/SettingsShell";
+import { useReminderPermission } from "@/features/profile/useReminderPermission";
 import { useT } from "@/i18n/useT";
 import { pendingCount, scheduleTestReminder } from "@/lib/notifications/debug";
 import { rescheduleAll } from "@/lib/notifications/reschedule";
@@ -15,7 +15,13 @@ export default function NotificationsDebug() {
   const showToast = useToastStore((s) => s.show);
   const [pending, setPending] = useState<number | null>(null);
 
-  const refresh = useCallback(() => void pendingCount().then(setPending).catch(() => setPending(null)), []);
+  const refresh = useCallback(
+    () =>
+      void pendingCount()
+        .then(setPending)
+        .catch(() => setPending(null)),
+    [],
+  );
   useEffect(refresh, [refresh]);
 
   if (!__DEV__) return null;

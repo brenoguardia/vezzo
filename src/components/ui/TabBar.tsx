@@ -26,10 +26,7 @@ export function TabBar({ items, activeKey, onSelect }: Props) {
   const insets = useSafeAreaInsets();
   return (
     <View pointerEvents="box-none" style={[styles.wrap, { bottom: Math.max(22, insets.bottom) }]}>
-      <View
-        accessibilityRole="tablist"
-        style={[styles.bar, { backgroundColor: theme.card }, shadow]}
-      >
+      <View accessibilityRole="tablist" style={[styles.bar, { backgroundColor: theme.card }, shadow]}>
         {items.map((item) => {
           const active = item.key === activeKey;
           // `accText`: a cor de destaque crua não tem contraste suficiente no modo claro.
@@ -64,7 +61,9 @@ const shadow: ViewStyle = Platform.select<ViewStyle>({
     shadowOffset: { width: 0, height: tabBarShadow.offsetY },
   },
   android: { elevation: 8 },
-  default: { boxShadow: `0 ${tabBarShadow.offsetY}px ${tabBarShadow.blur}px ${tabBarShadow.color}` },
+  default: {
+    boxShadow: `0 ${tabBarShadow.offsetY}px ${tabBarShadow.blur}px ${tabBarShadow.color}`,
+  },
 })!;
 
 const styles = StyleSheet.create({
@@ -77,6 +76,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 8,
   },
-  item: { flex: 1, alignItems: "center", justifyContent: "center", gap: 5, minHeight: 44 },
+  item: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    minHeight: 44,
+  },
   label: { fontSize: 10, lineHeight: 13 },
 });

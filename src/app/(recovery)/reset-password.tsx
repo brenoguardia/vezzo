@@ -2,15 +2,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { Button, PasswordField, Text } from "@/components/ui";
 import { authClient } from "@/auth/client";
 import { readToken } from "@/auth/errors";
-import { resetPassword } from "@/features/auth/actions";
+import { Button, PasswordField, Text } from "@/components/ui";
 import { AuthScreen } from "@/features/auth/AuthScreen";
+import { resetPassword } from "@/features/auth/actions";
 import { PasswordChecklist } from "@/features/auth/PasswordChecklist";
 import { translateMessage } from "@/i18n";
 import { useT } from "@/i18n/useT";
-import { type ResetPasswordInput, passwordChecks, resetPasswordInput } from "@/shared/schemas";
+import { passwordChecks, type ResetPasswordInput, resetPasswordInput } from "@/shared/schemas";
 import { useToastStore } from "@/store/toast";
 
 /** Abre por `vezzo://reset-password?token=...`. O servidor acrescenta `error=INVALID_TOKEN` se o link venceu. */
@@ -61,7 +61,14 @@ export default function ResetPassword() {
       title={t("auth.newPass")}
       subtitle={t("auth.newPassSub")}
       back
-      footer={<Button label={t("auth.savePass")} onPress={() => void onSubmit()} disabled={!formState.isValid} loading={formState.isSubmitting} />}
+      footer={
+        <Button
+          label={t("auth.savePass")}
+          onPress={() => void onSubmit()}
+          disabled={!formState.isValid}
+          loading={formState.isSubmitting}
+        />
+      }
     >
       <Controller
         control={control}

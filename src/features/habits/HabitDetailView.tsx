@@ -5,8 +5,8 @@ import { Button, Card, EmojiTile, Text } from "@/components/ui";
 import { cellOpacity, lastFourWeeks, quickAmounts } from "@/features/habits/detail";
 import { statInputs } from "@/features/habits/selectors";
 import { useToday } from "@/features/habits/useToday";
-import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { DEFAULT_TIMEZONE } from "@/lib/habit-stats";
 import { useTheme } from "@/lib/useTheme";
 import type { GoalUnit } from "@/shared/categories";
@@ -32,7 +32,11 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
   const streak = useMemo(() => {
     if (!habit) return 0;
     const { statHabits, statLogs } = statInputs([habit], logs, timeZone);
-    return currentStreak(statHabits, statLogs.filter((l) => l.habitId === habit.id), today);
+    return currentStreak(
+      statHabits,
+      statLogs.filter((l) => l.habitId === habit.id),
+      today,
+    );
   }, [habit, logs, today, timeZone]);
 
   if (!habit) {
@@ -73,7 +77,10 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
       <Card radius={28} padding={22} style={styles.progress}>
         {numeric ? (
           <>
-            <Text style={styles.big} accessibilityLabel={`${formatGoal(value, unit, locale)} / ${formatGoal(habit.goalValue, unit, locale)}`}>
+            <Text
+              style={styles.big}
+              accessibilityLabel={`${formatGoal(value, unit, locale)} / ${formatGoal(habit.goalValue, unit, locale)}`}
+            >
               {`${new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value)} / ${formatGoal(habit.goalValue, unit, locale)}`}
             </Text>
             <View
@@ -102,7 +109,12 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
             onPress={() => toggleDone(habit.id, today)}
             style={styles.flex}
           />
-          <Button label={t("habit.skip")} variant="secondary" onPress={() => skip(habit.id, today)} style={styles.flex} />
+          <Button
+            label={t("habit.skip")}
+            variant="secondary"
+            onPress={() => skip(habit.id, today)}
+            style={styles.flex}
+          />
         </View>
       </Card>
 
@@ -117,7 +129,10 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
                 key={date}
                 style={[
                   styles.cell,
-                  { backgroundColor: theme.acc, opacity: cellOpacity(habit.goalValue, unit, logs[logKey(habit.id, date)]) },
+                  {
+                    backgroundColor: theme.acc,
+                    opacity: cellOpacity(habit.goalValue, unit, logs[logKey(habit.id, date)]),
+                  },
                 ]}
               />
             ))}
@@ -136,7 +151,9 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
           <Text variant="caption" tone="mute">
             {t("habit.reminders")}
           </Text>
-          <Text variant="sectionTitle">{habit.reminders.length ? habit.reminders.join(" · ") : t("habit.noReminders")}</Text>
+          <Text variant="sectionTitle">
+            {habit.reminders.length ? habit.reminders.join(" · ") : t("habit.noReminders")}
+          </Text>
         </Card>
       </View>
     </>

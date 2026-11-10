@@ -9,9 +9,9 @@ import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import { type SignInInput, type SignUpInput, signInInput, signUpInput } from "@/shared/schemas";
 import { layout } from "@/shared/tokens";
+import { useToastStore } from "@/store/toast";
 import { resendVerification, signInWithEmail, signUpWithEmail } from "./actions";
 import { SocialButtons } from "./SocialButtons";
-import { useToastStore } from "@/store/toast";
 
 type Values = SignUpInput | SignInInput;
 

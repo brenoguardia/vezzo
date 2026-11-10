@@ -31,7 +31,9 @@ function Row({ ok, label }: { ok: boolean; label: string }) {
       <View
         style={[
           styles.circle,
-          ok ? { backgroundColor: theme.acc, borderColor: theme.acc } : { backgroundColor: theme.card, borderColor: theme.line },
+          ok
+            ? { backgroundColor: theme.acc, borderColor: theme.acc }
+            : { backgroundColor: theme.card, borderColor: theme.line },
         ]}
       >
         {ok ? (

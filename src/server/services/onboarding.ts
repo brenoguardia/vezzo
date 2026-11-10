@@ -1,10 +1,10 @@
 import type { Prisma } from "@prisma/client";
+import type { z } from "zod";
 import type { Db } from "@/server/db";
 import { ApiError } from "@/server/http";
 import { toHabitDto, toProfileDto } from "@/server/mappers";
 import { notArchived } from "@/server/services/habits";
 import type { OnboardingResult, onboardingComplete } from "@/shared/schemas";
-import type { z } from "zod";
 
 /**
  * Grava nome + hábitos escolhidos e marca `onboardingDone` numa transação (docs/03).
@@ -29,7 +29,8 @@ export async function completeOnboarding(
     const templateIds = new Map(templates.map((t) => [t.slug, t.id]));
     const unknown: Record<string, string> = {};
     input.habits.forEach((h, i) => {
-      if (h.templateSlug && !templateIds.has(h.templateSlug)) unknown[`habits.${i}.templateSlug`] = "Atividade desconhecida";
+      if (h.templateSlug && !templateIds.has(h.templateSlug))
+        unknown[`habits.${i}.templateSlug`] = "Atividade desconhecida";
     });
     if (Object.keys(unknown).length > 0) throw new ApiError("VALIDATION_ERROR", "Dados inválidos.", unknown);
 
@@ -38,7 +39,13 @@ export async function completeOnboarding(
     for (const [i, { templateSlug, ...fields }] of input.habits.entries()) {
       habits.push(
         await tx.habit.create({
-          data: { ...fields, userId, templateId: templateSlug ? (templateIds.get(templateSlug) ?? null) : null, order: base + i, archivedAt: null },
+          data: {
+            ...fields,
+            userId,
+            templateId: templateSlug ? (templateIds.get(templateSlug) ?? null) : null,
+            order: base + i,
+            archivedAt: null,
+          },
         }),
       );
     }

@@ -1,4 +1,4 @@
-import { type StyleProp, Text as RNText, View, type ViewStyle } from "react-native";
+import { Text as RNText, type StyleProp, View, type ViewStyle } from "react-native";
 import { useTheme } from "@/lib/useTheme";
 
 interface Props {
