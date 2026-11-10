@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import { i18n } from "@/i18n";
 import { completeOnboarding } from "@/api/onboarding";
-import { requestReminderPermission } from "@/lib/notifications";
+import { requestReminderPermission } from "@/lib/notifications/permission";
 import { DEFAULT_SELECTION } from "@/shared/onboarding";
 import { useOnboardingStore } from "@/store/onboarding";
 import { useProfileStore } from "@/store/profile";
@@ -16,9 +16,13 @@ jest.mock("expo-router", () => ({ useRouter: () => mockRouter }));
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 }));
+// Estas telas são testadas no layout de uma coluna; o modo dual tem o próprio arquivo de testes.
+jest.mock("@/lib/useLayoutMode", () => ({
+  useLayoutMode: () => (jest.requireActual("@/lib/layout-mode") as typeof import("@/lib/layout-mode")).layoutInfo(390),
+}));
 jest.mock("@/auth/client", () => ({ authClient: { getCookie: jest.fn(), signOut: jest.fn() } }));
 jest.mock("@/api/onboarding", () => ({ completeOnboarding: jest.fn() }));
-jest.mock("@/lib/notifications", () => ({ requestReminderPermission: jest.fn() }));
+jest.mock("@/lib/notifications/permission", () => ({ requestReminderPermission: jest.fn() }));
 
 const mockComplete = completeOnboarding as jest.Mock<typeof completeOnboarding>;
 const mockPermission = requestReminderPermission as jest.Mock<typeof requestReminderPermission>;

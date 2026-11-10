@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SplitView } from "@/components/layout";
 import { ProgressSteps, Text } from "@/components/ui";
 import { t } from "@/i18n";
+import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
 import { layout, type TextVariant } from "@/shared/tokens";
 
-const MAX_CONTENT_WIDTH = 480;
 export const ONBOARDING_STEPS = 3;
 
 interface Props {
@@ -18,14 +19,56 @@ interface Props {
   children?: ReactNode;
   /** Botão primário ancorado ao fim (56 do fim, docs/05). */
   footer: ReactNode;
+  /**
+   * Coluna da direita no modo dual (atividades à esquerda, metas à direita, docs/08). Quando
+   * presente e a janela é larga, o `footer` da esquerda não aparece: o botão final vive em `side`.
+   */
+  side?: ReactNode;
 }
 
 /** Casca das etapas do onboarding: margem 28, safe area, teclado, largura máxima em telas largas. */
-export function OnboardingShell({ step, title, titleVariant = "authTitle", subtitle, children, footer }: Props) {
+export function OnboardingShell({ step, title, titleVariant = "authTitle", subtitle, children, footer, side }: Props) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
-  const contentWidth = Math.min(width, MAX_CONTENT_WIDTH);
+  const { dual, width } = useLayoutMode();
+  const contentWidth = Math.min(width, layout.formMaxWidth);
+
+  const heading = (
+    <>
+      {step ? (
+        <ProgressSteps
+          total={ONBOARDING_STEPS}
+          current={step}
+          accessibilityLabel={t("onboarding.step", { current: step, total: ONBOARDING_STEPS })}
+        />
+      ) : null}
+      <Text variant={titleVariant} accessibilityRole="header" style={styles.title}>
+        {title}
+      </Text>
+      {subtitle ? (
+        <Text tone="mute" style={styles.subtitle}>
+          {subtitle}
+        </Text>
+      ) : null}
+    </>
+  );
+
+  if (dual && side) {
+    return (
+      <View style={styles.flex}>
+        <SplitView
+          tabBar={false}
+          left={
+            <>
+              {heading}
+              {children ? <View style={styles.body}>{children}</View> : null}
+            </>
+          }
+          right={side}
+        />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -38,21 +81,7 @@ export function OnboardingShell({ step, title, titleVariant = "authTitle", subti
         showsVerticalScrollIndicator={false}
       >
         <View style={{ width: contentWidth, paddingHorizontal: layout.authMargin, flexGrow: 1 }}>
-          {step ? (
-            <ProgressSteps
-              total={ONBOARDING_STEPS}
-              current={step}
-              accessibilityLabel={t("onboarding.step", { current: step, total: ONBOARDING_STEPS })}
-            />
-          ) : null}
-          <Text variant={titleVariant} accessibilityRole="header" style={styles.title}>
-            {title}
-          </Text>
-          {subtitle ? (
-            <Text tone="mute" style={styles.subtitle}>
-              {subtitle}
-            </Text>
-          ) : null}
+          {heading}
           {children ? <View style={styles.body}>{children}</View> : null}
           <View style={styles.footer}>{footer}</View>
         </View>
