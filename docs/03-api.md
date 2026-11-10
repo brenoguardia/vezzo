@@ -11,9 +11,9 @@ Erro padrão: `{ "error": { "code": "VALIDATION_ERROR" | "UNAUTHORIZED" | "NOT_F
 | GET | `/v1/profile` | perfil do usuário |
 | PUT | `/v1/profile` | atualiza nome, accent, themeMode, language, timezone |
 | POST | `/v1/onboarding/complete` | grava nome + hábitos escolhidos com metas e marca `onboardingDone` (transação) |
-| GET | `/v1/habits` | hábitos ativos |
+| GET | `/v1/habits` | hábitos ativos (`?includeArchived=true` inclui os arquivados) |
 | POST | `/v1/habits` | cria hábito |
-| PATCH | `/v1/habits/:id` | edita |
+| PATCH | `/v1/habits/:id` | edita; `{ "archived": false }` desarquiva (volta ao fim dos ativos) |
 | DELETE | `/v1/habits/:id` | arquiva (`?hard=true` exclui) |
 | GET | `/v1/logs?from=YYYY-MM-DD&to=YYYY-MM-DD` | logs do período |
 | PUT | `/v1/logs` | upsert de log (idempotente por `clientId`) |

@@ -215,6 +215,8 @@ export const en: Catalog<typeof ptBR> = {
     archive: "Archive habit",
     archiveError: "Couldn't archive. Try again.",
     archived: "Archived",
+    unarchive: "Unarchive",
+    unarchiveError: "Couldn't unarchive. Try again.",
     notFound: "Habit not found.",
     addAmount: "+ %{amount}",
     units: {

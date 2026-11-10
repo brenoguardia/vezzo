@@ -211,6 +211,8 @@ export const ptBR = {
     archive: "Arquivar hábito",
     archiveError: "Não foi possível arquivar. Tente de novo.",
     archived: "Arquivado",
+    unarchive: "Desarquivar",
+    unarchiveError: "Não foi possível desarquivar. Tente de novo.",
     notFound: "Hábito não encontrado.",
     addAmount: "+ %{amount}",
     units: {

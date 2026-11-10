@@ -21,7 +21,13 @@ export type HabitInput = z.infer<typeof habitInput>;
 /** PATCH: sem defaults, para não sobrescrever campos ausentes. */
 export const habitPatch = habitFields
   .partial()
+  // `archived: false` desarquiva; `true` arquiva (equivale ao DELETE sem `hard`).
+  .extend({ archived: z.boolean().optional() })
   .refine((v) => Object.keys(v).length > 0, "Informe ao menos um campo");
+
+export const habitListQuery = z.object({
+  includeArchived: z.enum(["true", "false"]).optional().transform((v) => v === "true"),
+});
 
 export const habitDeleteQuery = z.object({
   hard: z.enum(["true", "false"]).optional().transform((v) => v === "true"),

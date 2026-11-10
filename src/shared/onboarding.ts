@@ -36,7 +36,19 @@ const UNIT_SUFFIX: Record<GoalUnit, Record<Locale, string>> = {
   BOOLEAN: { "pt-BR": "", en: "" },
 };
 
+/** "Valor" não tem moeda no modelo: usamos a do idioma (R$ em pt-BR, US$ em en) para não mostrar número solto. */
+const CURRENCY_OF: Record<Locale, string> = { "pt-BR": "BRL", en: "USD" };
+
 export function formatGoal(value: number, unit: GoalUnit, locale: Locale): string {
+  if (unit === "CURRENCY") {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: CURRENCY_OF[locale],
+      // Inteiro sem centavos (R$ 7); fracionário sempre com dois dígitos (R$ 12,50).
+      minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  }
   const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value);
   return `${number}${UNIT_SUFFIX[unit][locale]}`;
 }

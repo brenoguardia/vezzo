@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
-import { createHabit } from "@/api/habits";
+import { createHabit, deleteHabit, unarchiveHabit } from "@/api/habits";
 import { hydrateHabits } from "@/features/habits/hydrate";
+import EditHabit from "@/app/habit/[id]/edit";
 import NewHabit from "@/app/habit/new";
 import Habits from "@/app/(tabs)/habits";
 import Today from "@/app/(tabs)/home";
@@ -12,10 +13,11 @@ import { useHydrationStore } from "@/store/hydration";
 import { useProfileStore } from "@/store/profile";
 import { useSyncStore } from "@/store/sync";
 
-const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true) };
+const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true), dismissTo: jest.fn() };
+let mockParams: Record<string, string> = {};
 jest.mock("expo-router", () => ({
   useRouter: () => mockRouter,
-  useLocalSearchParams: () => ({}),
+  useLocalSearchParams: () => mockParams,
 }));
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
@@ -28,7 +30,7 @@ jest.mock("@/lib/useLayoutMode", () => ({
 jest.mock("@/features/habits/hydrate", () => ({ hydrateHabits: jest.fn() }));
 jest.mock("expo-crypto", () => ({ randomUUID: () => "00000000-0000-4000-8000-000000000001" }));
 jest.mock("@/api/logs", () => ({ postLogBatch: jest.fn(() => new Promise(() => {})), fetchLogs: jest.fn() }));
-jest.mock("@/api/habits", () => ({ createHabit: jest.fn(), patchHabit: jest.fn(), deleteHabit: jest.fn() }));
+jest.mock("@/api/habits", () => ({ createHabit: jest.fn(), patchHabit: jest.fn(), deleteHabit: jest.fn(), unarchiveHabit: jest.fn() }));
 jest.mock("@/api/summary", () => ({ fetchHabits: jest.fn(), fetchStats: jest.fn() }));
 jest.mock("@/auth/client", () => ({ authClient: {} }));
 jest.mock("@react-native-community/datetimepicker", () => ({
@@ -38,6 +40,8 @@ jest.mock("@react-native-community/datetimepicker", () => ({
 }));
 
 const mockCreate = createHabit as jest.Mock<typeof createHabit>;
+const mockDelete = deleteHabit as jest.Mock<typeof deleteHabit>;
+const mockUnarchive = unarchiveHabit as jest.Mock<typeof unarchiveHabit>;
 
 const profile: ProfileDto = {
   displayName: "Ana",
@@ -134,6 +138,34 @@ describe("Hábitos", () => {
     await render(<Habits />);
     expect(screen.getByText("Meditar")).toBeTruthy();
     expect(screen.getByText("Arquivado")).toBeTruthy();
+  });
+});
+
+describe("Editar hábito", () => {
+  it("arquivar volta para a lista de hábitos, não para o detalhe do arquivado", async () => {
+    const id = "e".repeat(24);
+    mockParams = { id };
+    mockDelete.mockResolvedValue(undefined);
+    useHabitsStore.getState().hydrate([habit(id)], []);
+    await render(<EditHabit />);
+    await fireEvent.press(screen.getByRole("button", { name: "Arquivar hábito" }));
+    await waitFor(() => expect(mockDelete).toHaveBeenCalledWith(id));
+    await waitFor(() => expect(mockRouter.dismissTo).toHaveBeenCalledWith("/habits"));
+    expect(useHabitsStore.getState().habits[0]?.archivedAt).toBeTruthy();
+    mockParams = {};
+  });
+});
+
+describe("Hábitos · arquivados", () => {
+  it("Desarquivar devolve o hábito para os ativos", async () => {
+    const id = "f".repeat(24);
+    const archived = habit(id, { name: "Ler", archivedAt: "2026-11-01T00:00:00.000Z" });
+    useHabitsStore.getState().hydrate([archived], []);
+    mockUnarchive.mockResolvedValue({ ...archived, archivedAt: null });
+    await render(<Habits />);
+    await fireEvent.press(screen.getByRole("button", { name: "Desarquivar: Ler" }));
+    await waitFor(() => expect(mockUnarchive).toHaveBeenCalledWith(id));
+    await waitFor(() => expect(useHabitsStore.getState().habits[0]?.archivedAt).toBeNull());
   });
 });
 

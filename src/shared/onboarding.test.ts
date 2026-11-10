@@ -50,6 +50,13 @@ describe("formatGoal", () => {
     expect(formatGoal(3, "COUNT", "pt-BR")).toBe("3×");
     expect(formatGoal(500, "MILLILITERS", "pt-BR")).toBe("500 ml");
   });
+
+  it("Valor mostra a moeda do idioma em vez de um número solto", () => {
+    // O espaço entre o símbolo e o número é um NBSP no Intl.
+    expect(formatGoal(7, "CURRENCY", "pt-BR").replace(/\s/g, " ")).toBe("R$ 7");
+    expect(formatGoal(12.5, "CURRENCY", "pt-BR").replace(/\s/g, " ")).toBe("R$ 12,50");
+    expect(formatGoal(7, "CURRENCY", "en")).toBe("$7");
+  });
 });
 
 describe("seleção inicial", () => {

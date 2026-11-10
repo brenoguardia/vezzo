@@ -19,9 +19,9 @@ export async function findOwnedHabit(db: Db, userId: string, id: string) {
  */
 export const notArchived = { OR: [{ archivedAt: null }, { archivedAt: { isSet: false } }] };
 
-export async function listHabits(db: Db, userId: string): Promise<HabitDto[]> {
+export async function listHabits(db: Db, userId: string, includeArchived = false): Promise<HabitDto[]> {
   const habits = await db.habit.findMany({
-    where: { userId, ...notArchived },
+    where: includeArchived ? { userId } : { userId, ...notArchived },
     orderBy: { order: "asc" },
   });
   return habits.map(toHabitDto);
@@ -48,8 +48,16 @@ export async function updateHabit(
   id: string,
   patch: z.output<typeof habitPatch>,
 ): Promise<HabitDto> {
-  await findOwnedHabit(db, userId, id);
-  const habit = await db.habit.update({ where: { id, userId }, data: patch });
+  const current = await findOwnedHabit(db, userId, id);
+  const { archived, ...fields } = patch;
+  const data: Record<string, unknown> = { ...fields };
+  if (archived === true) data.archivedAt = new Date();
+  if (archived === false) {
+    // Volta ao fim da lista dos ativos.
+    data.archivedAt = null;
+    if (current.archivedAt) data.order = await db.habit.count({ where: { userId, ...notArchived } });
+  }
+  const habit = await db.habit.update({ where: { id, userId }, data });
   return toHabitDto(habit);
 }
 

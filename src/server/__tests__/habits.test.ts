@@ -35,6 +35,40 @@ describe("GET /v1/habits · documentos sem archivedAt", () => {
   });
 });
 
+describe("arquivados", () => {
+  const base = { emoji: "💧", goalValue: 1, goalUnit: "BOOLEAN", days: [0] };
+
+  it("includeArchived=true devolve ativos e arquivados só do próprio usuário", async () => {
+    await db.habit.create({ data: { ...base, userId: USER_A, name: "Ativo", archivedAt: null } });
+    await db.habit.create({ data: { ...base, userId: USER_A, name: "Arquivado", archivedAt: new Date() } });
+    await db.habit.create({ data: { ...base, userId: USER_B, name: "Do B", archivedAt: new Date() } });
+    const get = async (qs: string) =>
+      habitList.parse(await (await GET(req(`/api/v1/habits${qs}`, { user: USER_A }))).json()).habits.map((h) => h.name).sort();
+    expect(await get("")).toEqual(["Ativo"]);
+    expect(await get("?includeArchived=true")).toEqual(["Arquivado", "Ativo"]);
+    expect((await GET(req("/api/v1/habits?includeArchived=talvez", { user: USER_A }))).status).toBe(400);
+  });
+
+  it("PATCH archived:false desarquiva e põe no fim dos ativos; archived:true arquiva", async () => {
+    await db.habit.create({ data: { ...base, userId: USER_A, name: "Ativo", order: 0, archivedAt: null } });
+    const old = await db.habit.create({ data: { ...base, userId: USER_A, name: "Velho", order: 0, archivedAt: new Date() } });
+    const patch = (id: string, user: string, body: unknown) =>
+      PATCH(req(`/api/v1/habits/${id}`, { user, method: "PATCH", body }), { id });
+    const res = await patch(String(old.id), USER_A, { archived: false });
+    expect(res.status).toBe(200);
+    expect(habitDto.parse(await res.json())).toMatchObject({ name: "Velho", archivedAt: null, order: 1 });
+    const again = await patch(String(old.id), USER_A, { archived: true });
+    expect(habitDto.parse(await again.json()).archivedAt).not.toBeNull();
+  });
+
+  it("B não desarquiva o hábito de A", async () => {
+    const mine = await db.habit.create({ data: { ...base, userId: USER_A, name: "Meu", archivedAt: new Date() } });
+    const id = String(mine.id);
+    const res = await PATCH(req(`/api/v1/habits/${id}`, { user: USER_B, method: "PATCH", body: { archived: false } }), { id });
+    expect(res.status).toBe(404);
+  });
+});
+
 describe("POST /v1/habits", () => {
   it("cria com userId da sessão, defaults e ordem sequencial", async () => {
     const first = await POST(req("/api/v1/habits", { user: USER_A, method: "POST", body: { ...valid, userId: USER_B } }));

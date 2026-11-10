@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { unarchiveHabit } from "@/api/habits";
 import { Button, Card, EmojiTile, Text } from "@/components/ui";
 import { EditHabitPanel } from "@/features/habits/EditHabitPanel";
 import { activeHabits } from "@/features/habits/selectors";
@@ -12,6 +13,7 @@ import { formatGoal } from "@/shared/onboarding";
 import type { GoalUnit } from "@/shared/categories";
 import type { HabitDto } from "@/shared/schemas";
 import { useHabitsStore } from "@/store/habits";
+import { useToastStore } from "@/store/toast";
 
 /** Gerenciar hábitos (aba Hábitos): ativos, arquivados e atalho para criar. */
 export default function Habits() {
@@ -23,8 +25,18 @@ export default function Habits() {
   const selectedId = useHabitsStore((s) => s.selectedHabitId);
   const selectHabit = useHabitsStore((s) => s.selectHabit);
   const { dual } = useLayoutMode();
+  const upsert = useHabitsStore((s) => s.upsertHabit);
+  const showToast = useToastStore((s) => s.show);
   const active = activeHabits(habits);
   const archived = habits.filter((h) => h.archivedAt);
+
+  async function unarchive(id: string) {
+    try {
+      upsert(await unarchiveHabit(id));
+    } catch {
+      showToast(t("habit.unarchiveError"));
+    }
+  }
 
   const open = (h: HabitDto) => (dual ? selectHabit(h.id) : router.push({ pathname: "/habit/[id]", params: { id: h.id } }));
   const editing = dual ? active.find((h) => h.id === selectedId) : undefined;
@@ -84,16 +96,28 @@ export default function Habits() {
       ) : (
         <View style={styles.list}>
           {archived.map((h) => (
-            <Card key={h.id} radius={20} padding={13} style={[styles.row, { opacity: 0.6 }]}>
-              <EmojiTile emoji={h.emoji} size={40} />
-              <View style={styles.flex}>
-                <Text variant="bodyStrong" numberOfLines={1}>
-                  {h.name}
-                </Text>
-                <Text variant="caption" tone="mute">
-                  {t("habit.archived")}
-                </Text>
+            <Card key={h.id} radius={20} padding={13} style={styles.row}>
+              <View style={[styles.row, styles.flex, styles.dim]}>
+                <EmojiTile emoji={h.emoji} size={40} />
+                <View style={styles.flex}>
+                  <Text variant="bodyStrong" numberOfLines={1}>
+                    {h.name}
+                  </Text>
+                  <Text variant="caption" tone="mute">
+                    {t("habit.archived")}
+                  </Text>
+                </View>
               </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${t("habit.unarchive")}: ${h.name}`}
+                onPress={() => void unarchive(h.id)}
+                style={styles.unarchive}
+              >
+                <Text variant="bodyStrong" tone="acc">
+                  {t("habit.unarchive")}
+                </Text>
+              </Pressable>
             </Card>
           ))}
         </View>
@@ -107,4 +131,6 @@ const styles = StyleSheet.create({
   list: { gap: 10 },
   row: { flexDirection: "row", alignItems: "center", gap: 14, minHeight: 66 },
   section: { marginTop: 8 },
+  dim: { opacity: 0.6 },
+  unarchive: { minHeight: 44, minWidth: 44, justifyContent: "center", alignItems: "center", paddingHorizontal: 6 },
 });

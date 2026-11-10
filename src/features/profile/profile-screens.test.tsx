@@ -67,7 +67,8 @@ beforeEach(() => {
   useToastStore.setState({ message: null });
   mockSession.mockReturnValue({ data: { user: { email: "ana@exemplo.com" } } });
   mockAccounts.mockResolvedValue({ data: [{ providerId: "credential" }] });
-  mockHabits.mockResolvedValue(new Array(5).fill(null) as never);
+  // 5 ativos + 1 arquivado: o resumo conta só os ativos.
+  mockHabits.mockResolvedValue([...new Array(5).fill({ archivedAt: null }), { archivedAt: "2026-11-01T00:00:00.000Z" }] as never);
   mockStats.mockResolvedValue({ currentStreak: 12, week: { current: { completion: 0.86 } } } as never);
   mockUpdate.mockImplementation(async (patch) => ({ ...profile, ...patch }) as ProfileDto);
 });
