@@ -161,6 +161,7 @@ export const ptBR = {
     nothingTitle: "Nada agendado para hoje",
     nothingSub: "Aproveite o descanso. Seus hábitos voltam no próximo dia agendado.",
     syncPending: "Sem conexão: suas alterações serão enviadas assim que possível.",
+    syncing: "Sincronizando suas alterações…",
     loading: "Carregando seus hábitos",
   },
   progress: {

@@ -74,7 +74,7 @@ beforeEach(() => {
   setLocale("pt-BR");
   useProfileStore.setState({ profile, status: "ready" });
   useHabitsStore.getState().clear();
-  useSyncStore.setState({ queue: [] });
+  useSyncStore.setState({ queue: [], failed: false });
   useHydrationStore.setState({ status: "ready" });
 });
 
@@ -121,9 +121,18 @@ describe("Hoje", () => {
     expect(mockRouter.push).toHaveBeenCalledWith({ pathname: "/habit/[id]", params: { id: "b".repeat(24) } });
   });
 
-  it("avisa quando há alterações pendentes de sincronização", async () => {
+  it("alterações em envio mostram 'Sincronizando', sem dizer que está offline", async () => {
     useHabitsStore.getState().hydrate([habit("c".repeat(24))], []);
     useHabitsStore.getState().toggleDone("c".repeat(24), "2026-11-10");
+    await render(<Today />);
+    expect(screen.getByText("Sincronizando suas alterações…")).toBeTruthy();
+    expect(screen.queryByText(/Sem conexão/)).toBeNull();
+  });
+
+  it("só afirma 'Sem conexão' depois de um envio que falhou", async () => {
+    useHabitsStore.getState().hydrate([habit("c".repeat(24))], []);
+    useHabitsStore.getState().toggleDone("c".repeat(24), "2026-11-10");
+    useSyncStore.setState({ failed: true });
     await render(<Today />);
     expect(screen.getByText(/Sem conexão/)).toBeTruthy();
   });

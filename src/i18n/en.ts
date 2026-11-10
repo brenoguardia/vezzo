@@ -165,6 +165,7 @@ export const en: Catalog<typeof ptBR> = {
     nothingTitle: "Nothing scheduled today",
     nothingSub: "Enjoy the rest. Your habits return on the next scheduled day.",
     syncPending: "Offline: your changes will be sent as soon as possible.",
+    syncing: "Syncing your changes…",
     loading: "Loading your habits",
   },
   progress: {

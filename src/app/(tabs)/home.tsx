@@ -37,6 +37,7 @@ export default function Today() {
   const { dual } = useLayoutMode();
   const hydration = useHydrationStore((s) => s.status);
   const pendingSync = useSyncStore((s) => s.queue.length > 0);
+  const syncFailed = useSyncStore((s) => s.failed);
 
   const items = useMemo(() => todayItems(habits, logs, today, timeZone), [habits, logs, today, timeZone]);
   const summary = useMemo(() => todaySummary(habits, logs, today, timeZone), [habits, logs, today, timeZone]);
@@ -65,7 +66,7 @@ export default function Today() {
 
       {pendingSync ? (
         <Text variant="caption" tone="mute" accessibilityLiveRegion="polite">
-          {t("home.syncPending")}
+          {t(syncFailed ? "home.syncPending" : "home.syncing")}
         </Text>
       ) : null}
 
