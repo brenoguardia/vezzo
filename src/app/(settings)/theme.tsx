@@ -4,8 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { Button, Card, Ring, SegmentedControl, Text } from "@/components/ui";
 import { AccentSwatches } from "@/features/profile/AccentSwatches";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { t } from "@/i18n";
-import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { isAccent, modeFromApi, modeToApi } from "@/lib/theme-sync";
 import { useTheme } from "@/lib/useTheme";
 import { radius } from "@/shared/tokens";
@@ -18,7 +17,7 @@ import { useToastStore } from "@/store/toast";
  * `PUT /v1/profile` ao tocar em "Aplicar". Sair sem aplicar restaura o que estava salvo.
  */
 export default function ThemeScreen() {
-  useLocale();
+  const t = useT();
   const router = useRouter();
   const theme = useTheme();
   const showToast = useToastStore((s) => s.show);
@@ -72,6 +71,7 @@ export default function ThemeScreen() {
 
   return (
     <SettingsShell
+      tabBar={false}
       title={t("theme.title")}
       back
       footer={<Button label={t("theme.apply")} onPress={() => void apply()} disabled={!dirty} loading={saving} />}

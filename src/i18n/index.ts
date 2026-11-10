@@ -24,7 +24,10 @@ export function t(key: string, options?: Record<string, string | number>): strin
 }
 
 /** Mensagens de validação do Zod são chaves `auth.errors.*`; qualquer outra coisa passa direto. */
-export function translateMessage(message: string | undefined): string | undefined {
+export function translateMessage(
+  message: string | undefined,
+  translate: (key: string) => string = t,
+): string | undefined {
   if (!message) return undefined;
-  return message.startsWith("auth.errors.") ? t(message) : message;
+  return message.startsWith("auth.errors.") ? translate(message) : message;
 }

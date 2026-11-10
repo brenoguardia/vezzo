@@ -11,9 +11,9 @@ import type { ProfileDto } from "@/shared/schemas";
 import { useProfileStore } from "@/store/profile";
 import { useThemeStore } from "@/store/theme";
 import { useToastStore } from "@/store/toast";
-import DeleteAccount from "@/app/(tabs)/delete-account";
+import DeleteAccount from "@/app/(settings)/delete-account";
 import Profile from "@/app/(tabs)/profile";
-import ThemeScreen from "@/app/(tabs)/theme";
+import ThemeScreen from "@/app/(settings)/theme";
 
 const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true) };
 jest.mock("expo-router", () => ({

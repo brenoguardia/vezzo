@@ -6,8 +6,9 @@ import { StyleSheet, View } from "react-native";
 import type { z } from "zod";
 import { completeOnboarding } from "@/api/onboarding";
 import { Button, Card, DayPills, EmojiTile, Stepper, Text } from "@/components/ui";
-import { currentLocale, dayLetters, dayNames } from "@/features/onboarding/locale";
-import { t } from "@/i18n";
+import { dayLetters, dayNames } from "@/features/onboarding/locale";
+import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { buildOnboardingHabits, formatGoal, stepGoal, stepSize } from "@/shared/onboarding";
 import { onboardingGoalsInput } from "@/shared/schemas";
 import { useOnboardingStore } from "@/store/onboarding";
@@ -20,8 +21,9 @@ type GoalsOutput = z.output<typeof onboardingGoalsInput>;
  * única (`goals`) e para o painel direito do modo dual montá-los onde precisam.
  */
 export function useGoalsForm(): { body: ReactNode; footer: ReactNode } {
+  const t = useT();
   const router = useRouter();
-  const locale = currentLocale();
+  const locale = useLocale();
   const setGoal = useOnboardingStore((s) => s.setGoal);
   const setDays = useOnboardingStore((s) => s.setDays);
   const form = useForm<GoalsValues, unknown, GoalsOutput>({
@@ -87,8 +89,8 @@ export function useGoalsForm(): { body: ReactNode; footer: ReactNode } {
               name={`habits.${index}.days`}
               render={({ field }) => (
                 <DayPills
-                  labels={dayLetters()}
-                  accessibilityLabels={dayNames()}
+                  labels={dayLetters(t)}
+                  accessibilityLabels={dayNames(t)}
                   value={field.value}
                   onChange={(days) => {
                     field.onChange(days);

@@ -8,12 +8,14 @@ import { readToken } from "@/auth/errors";
 import { resetPassword } from "@/features/auth/actions";
 import { AuthScreen } from "@/features/auth/AuthScreen";
 import { PasswordChecklist } from "@/features/auth/PasswordChecklist";
-import { t, translateMessage } from "@/i18n";
+import { translateMessage } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { type ResetPasswordInput, passwordChecks, resetPasswordInput } from "@/shared/schemas";
 import { useToastStore } from "@/store/toast";
 
 /** Abre por `vezzo://reset-password?token=...`. O servidor acrescenta `error=INVALID_TOKEN` se o link venceu. */
 export default function ResetPassword() {
+  const t = useT();
   const router = useRouter();
   const params = useLocalSearchParams<{ token?: string | string[]; error?: string | string[] }>();
   const showToast = useToastStore((s) => s.show);
@@ -74,7 +76,7 @@ export default function ResetPassword() {
             onChangeText={field.onChange}
             onBlur={field.onBlur}
             // O checklist já explica as regras ao vivo; mostramos erro só depois de sair do campo.
-            error={fieldState.isTouched ? translateMessage(fieldState.error?.message) : undefined}
+            error={fieldState.isTouched ? translateMessage(fieldState.error?.message, t) : undefined}
             autoComplete="new-password"
             textContentType="newPassword"
             returnKeyType="next"
@@ -93,7 +95,7 @@ export default function ResetPassword() {
             value={field.value}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
-            error={fieldState.isTouched ? translateMessage(fieldState.error?.message) : undefined}
+            error={fieldState.isTouched ? translateMessage(fieldState.error?.message, t) : undefined}
             autoComplete="new-password"
             textContentType="newPassword"
             returnKeyType="done"

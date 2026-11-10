@@ -14,11 +14,12 @@ import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { authClient } from "@/auth/client";
 import { resolveGate } from "@/auth/guard";
+import { useInitialSessionPending } from "@/auth/useInitialSessionPending";
 import { Button, Text, ToastHost } from "@/components/ui";
 import { clearHabitData } from "@/features/habits/hydrate";
 import { useNotificationRuntime } from "@/features/habits/useNotificationRuntime";
 import { useHabitsSync } from "@/features/habits/useHabitsSync";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { cancelAllReminders } from "@/lib/notifications/reschedule";
 import { DEFAULT_TIMEZONE } from "@/lib/habit-stats";
 import { initMonitoring, withMonitoring } from "@/lib/monitoring";
@@ -29,6 +30,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 initMonitoring();
 
 function RootLayout() {
+  const t = useT();
   const theme = useTheme();
   const [fontsLoaded, fontError] = useFonts({
     Manrope_400Regular,
@@ -40,7 +42,8 @@ function RootLayout() {
   });
   const fontsReady = fontsLoaded || !!fontError;
 
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending: sessionRefetching } = authClient.useSession();
+  const isPending = useInitialSessionPending(sessionRefetching);
   const userId = session?.user.id;
   const profileStatus = useProfileStore((s) => s.status);
   const onboardingDone = useProfileStore((s) => s.profile?.onboardingDone ?? false);
@@ -90,6 +93,7 @@ function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="habit" />
             <Stack.Screen name="streak" />
+            <Stack.Screen name="(settings)" />
           </Stack.Protected>
           {/* Recuperação de senha é acessível com ou sem sessão (Perfil → Redefinir senha e deep link). */}
           <Stack.Screen name="(recovery)" />

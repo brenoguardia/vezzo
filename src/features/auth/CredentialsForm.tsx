@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Button, Field, PasswordField, Text } from "@/components/ui";
-import { t, translateMessage } from "@/i18n";
+import { translateMessage } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import { type SignInInput, type SignUpInput, signInInput, signUpInput } from "@/shared/schemas";
 import { layout } from "@/shared/tokens";
@@ -16,6 +17,7 @@ type Values = SignUpInput | SignInInput;
 
 /** Formulário de e-mail e senha das telas de criar conta e entrar (React Hook Form + Zod). */
 export function CredentialsForm({ mode }: { mode: "sign-up" | "sign-in" }) {
+  const t = useT();
   const theme = useTheme();
   const router = useRouter();
   const showToast = useToastStore((s) => s.show);
@@ -69,7 +71,7 @@ export function CredentialsForm({ mode }: { mode: "sign-up" | "sign-in" }) {
             value={field.value}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
-            error={translateMessage(fieldState.error?.message)}
+            error={translateMessage(fieldState.error?.message, t)}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
@@ -91,7 +93,7 @@ export function CredentialsForm({ mode }: { mode: "sign-up" | "sign-in" }) {
             value={field.value}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
-            error={translateMessage(fieldState.error?.message)}
+            error={translateMessage(fieldState.error?.message, t)}
             autoComplete={signUp ? "new-password" : "current-password"}
             textContentType={signUp ? "newPassword" : "password"}
             returnKeyType="go"

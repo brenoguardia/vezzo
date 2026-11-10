@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "@/components/ui";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 
 /** Checklist ao vivo da nova senha: círculo 20, marcado = `acc` com ✓ (docs/05). */
 export function PasswordChecklist({ checks }: Props) {
+  const t = useT();
   const items = [
     { ok: checks.length, label: t("auth.ruleLength") },
     { ok: checks.charset, label: t("auth.ruleCharset") },

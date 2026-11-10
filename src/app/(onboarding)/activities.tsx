@@ -2,9 +2,9 @@ import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Button, Chip, Text } from "@/components/ui";
 import { useGoalsForm } from "@/features/onboarding/useGoalsForm";
-import { currentLocale } from "@/features/onboarding/locale";
 import { OnboardingShell } from "@/features/onboarding/OnboardingShell";
-import { t } from "@/i18n";
+import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { CATEGORIES } from "@/shared/categories";
 import { templateName } from "@/shared/onboarding";
@@ -12,6 +12,7 @@ import { useOnboardingStore } from "@/store/onboarding";
 
 /** Onboarding 2/3 · atividades do catálogo local, por categoria. */
 function GoalsSide() {
+  const t = useT();
   const { body, footer } = useGoalsForm();
   return (
     <>
@@ -26,11 +27,12 @@ function GoalsSide() {
 }
 
 export default function OnboardingActivities() {
+  const t = useT();
   const { dual } = useLayoutMode();
   const router = useRouter();
   const selected = useOnboardingStore((s) => s.selected);
   const toggle = useOnboardingStore((s) => s.toggle);
-  const locale = currentLocale();
+  const locale = useLocale();
   const count = Object.keys(selected).length;
   // As metas refletem a seleção: remonta o formulário quando os hábitos escolhidos mudam.
   const selectionKey = Object.keys(selected).sort().join(",");

@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, TextInput, View } from "react-native";
 import { Button, MAX_FONT_SCALE, Text } from "@/components/ui";
 import { OnboardingShell } from "@/features/onboarding/OnboardingShell";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import { type OnboardingNameInput, onboardingNameInput } from "@/shared/schemas";
 import { fontFamily } from "@/shared/tokens";
@@ -12,6 +12,7 @@ import { useOnboardingStore } from "@/store/onboarding";
 
 /** Onboarding 1/3 · nome (mín. 1, máx. 30 caracteres). */
 export default function OnboardingName() {
+  const t = useT();
   const theme = useTheme();
   const router = useRouter();
   const setName = useOnboardingStore((s) => s.setName);

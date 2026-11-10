@@ -2,7 +2,7 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { Text } from "@/components/ui";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import { layout, radius } from "@/shared/tokens";
 import { type AuthResult, signInWithApple, signInWithGoogle } from "./actions";
@@ -15,6 +15,7 @@ interface Props {
 
 /** "ou" + Apple (botão oficial, só iOS) + Google. O redirecionamento pós-login vem da guarda de rotas. */
 export function SocialButtons({ onError }: Props) {
+  const t = useT();
   const theme = useTheme();
   const [busy, setBusy] = useState(false);
   const [appleAvailable, setAppleAvailable] = useState(false);

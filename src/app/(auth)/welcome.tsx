@@ -3,10 +3,11 @@ import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Text } from "@/components/ui";
 import { BrandMark } from "@/features/auth/BrandMark";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 
 export default function Welcome() {
+  const t = useT();
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();

@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SplitView } from "@/components/layout";
 import { Text } from "@/components/ui";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
 import { layout } from "@/shared/tokens";
@@ -20,10 +20,13 @@ interface Props {
   aside?: ReactNode;
   /** `false` quando o painel já rola sozinho (formulário). */
   asideScrolls?: boolean;
+  /** `false` nas telas fora das abas (sem barra flutuante): não reserva espaço embaixo. */
+  tabBar?: boolean;
 }
 
 /** Casca das telas de tema/perfil/excluir conta: margem 22, safe area e largura máxima em telas largas. */
-export function SettingsShell({ title, back, children, footer, aside, asideScrolls }: Props) {
+export function SettingsShell({ title, back, children, footer, aside, asideScrolls, tabBar = true }: Props) {
+  const t = useT();
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -63,6 +66,7 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
           </>
         }
         right={aside}
+        tabBar={tabBar}
         rightScrolls={asideScrolls}
       />
     );
@@ -71,7 +75,7 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
   return (
     <ScrollView
       style={{ backgroundColor: theme.bg }}
-      contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: Math.max(22, insets.bottom) + layout.tabBarHeight + 24 }]}
+      contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 16, paddingBottom: Math.max(22, insets.bottom) + (tabBar ? layout.tabBarHeight + 24 : 24) }]}
       showsVerticalScrollIndicator={false}
     >
       <View style={{ width: Math.min(width, layout.formMaxWidth), paddingHorizontal: layout.screenMargin, flexGrow: 1 }}>

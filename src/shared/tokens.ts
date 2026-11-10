@@ -53,8 +53,15 @@ export interface ThemeTokens extends Palette {
 
 export function buildTheme(scheme: ThemeScheme, acc: Accent): ThemeTokens {
   const palette = palettes[scheme];
-  const accText = scheme === "dark" ? acc : readableOn(acc, palette.bg, palette.ink);
-  return { ...palette, scheme, acc, accText, tint: `${acc}${palette.tintAlpha}` };
+  const accText =
+    scheme === "dark" ? acc : readableOn(acc, palette.bg, palette.ink);
+  return {
+    ...palette,
+    scheme,
+    acc,
+    accText,
+    tint: `${acc}${palette.tintAlpha}`,
+  };
 }
 
 /** Pesos da Manrope (nomes de `@expo-google-fonts/manrope`). */
@@ -183,5 +190,10 @@ export function contrastRatio(a: string, b: string): number {
 export const googleButton = {
   dark: { bg: "#131314", border: "#8e918f", text: "#e3e3e3" },
   light: { bg: "#ffffff", border: "#747775", text: "#1f1f1f" },
-  logo: { blue: "#4285f4", green: "#34a853", yellow: "#fbbc05", red: "#ea4335" },
+  logo: {
+    blue: "#4285f4",
+    green: "#34a853",
+    yellow: "#fbbc05",
+    red: "#ea4335",
+  },
 } as const;

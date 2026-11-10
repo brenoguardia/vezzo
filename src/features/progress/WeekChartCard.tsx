@@ -2,11 +2,12 @@ import { View } from "react-native";
 import { BarChart, Card, Text } from "@/components/ui";
 import { useToday } from "@/features/habits/useToday";
 import { useWeekStats } from "@/features/progress/useWeekStats";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { weekdayIndex } from "@/shared/dates";
 
 /** Gráfico semanal: painel direito de Hoje no modo dual quando nenhum hábito está selecionado. */
 export function WeekChartCard() {
+  const t = useT();
   const today = useToday();
   const week = useWeekStats();
   return (

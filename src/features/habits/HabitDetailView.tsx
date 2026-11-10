@@ -5,7 +5,7 @@ import { Button, Card, EmojiTile, Text } from "@/components/ui";
 import { cellOpacity, lastFourWeeks, quickAmounts } from "@/features/habits/detail";
 import { statInputs } from "@/features/habits/selectors";
 import { useToday } from "@/features/habits/useToday";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
 import { DEFAULT_TIMEZONE } from "@/lib/habit-stats";
 import { useTheme } from "@/lib/useTheme";
@@ -19,6 +19,7 @@ import { useProfileStore } from "@/store/profile";
 
 /** Detalhe do hábito (docs/05, tela 7): progresso do dia, adição rápida, 4 semanas, sequência e lembretes. */
 export function HabitDetailView({ id }: { id: string | undefined }) {
+  const t = useT();
   const router = useRouter();
   const theme = useTheme();
   const locale = useLocale();

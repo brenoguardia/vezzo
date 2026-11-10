@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui";
 import { OnboardingShell } from "@/features/onboarding/OnboardingShell";
 import { currentLocale } from "@/features/onboarding/locale";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { requestReminderPermission } from "@/lib/notifications/permission";
 import { useOnboardingStore } from "@/store/onboarding";
 import { useProfileStore } from "@/store/profile";
@@ -12,6 +12,7 @@ import { useProfileStore } from "@/store/profile";
  * O perfil só é marcado como concluído aqui, para a guarda de rotas não pular esta tela.
  */
 export default function OnboardingReminders() {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const markDone = useProfileStore((s) => s.markOnboardingDone);
 

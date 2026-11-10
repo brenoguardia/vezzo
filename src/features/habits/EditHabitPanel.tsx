@@ -2,7 +2,7 @@ import { useState } from "react";
 import { deleteHabit, patchHabit } from "@/api/habits";
 import { Button, Text } from "@/components/ui";
 import { HabitForm } from "@/features/habits/HabitForm";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import type { GoalUnit } from "@/shared/categories";
 import { useHabitsStore } from "@/store/habits";
 
@@ -17,6 +17,7 @@ interface Props {
 
 /** Edição de hábito: tela cheia em `habit/[id]/edit` e painel direito da aba Hábitos no modo dual. */
 export function EditHabitPanel({ id, onSaved, onCancel, onArchived }: Props) {
+  const t = useT();
   const habit = useHabitsStore((s) => s.habits.find((h) => h.id === id));
   const upsert = useHabitsStore((s) => s.upsertHabit);
   const archive = useHabitsStore((s) => s.archiveHabit);

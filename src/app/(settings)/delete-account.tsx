@@ -11,9 +11,9 @@ import { signInWithEmail } from "@/features/auth/actions";
 import { SettingsShell } from "@/features/profile/SettingsShell";
 import { signOutAndClear } from "@/features/profile/sign-out";
 import { useHasPassword } from "@/features/profile/useHasPassword";
-import { t, translateMessage } from "@/i18n";
+import { translateMessage } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
-import { useLocale } from "@/i18n/useLocale";
 import { type DeleteAccountInput, deleteAccountInput } from "@/shared/schemas";
 
 /**
@@ -21,7 +21,7 @@ import { type DeleteAccountInput, deleteAccountInput } from "@/shared/schemas";
  * contas Apple/Google dependem de um login recente e, se a sessão for antiga, são orientadas a entrar de novo.
  */
 export default function DeleteAccountScreen() {
-  useLocale();
+  const t = useT();
   const theme = useTheme();
   const router = useRouter();
   const { data: session } = authClient.useSession();
@@ -67,6 +67,7 @@ export default function DeleteAccountScreen() {
 
   return (
     <SettingsShell
+      tabBar={false}
       title={t("profile.deleteTitle")}
       back
       footer={
@@ -100,7 +101,7 @@ export default function DeleteAccountScreen() {
                 value={field.value}
                 onChangeText={field.onChange}
                 onBlur={field.onBlur}
-                error={translateMessage(fieldState.error?.message)}
+                error={translateMessage(fieldState.error?.message, t)}
                 showLabel={t("common.show")}
                 hideLabel={t("common.hide")}
                 autoComplete="current-password"

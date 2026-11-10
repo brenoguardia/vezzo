@@ -4,7 +4,7 @@ import { Card, Text } from "@/components/ui";
 import { statInputs, todaySummary } from "@/features/habits/selectors";
 import { useToday } from "@/features/habits/useToday";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { dailyPhrase, phraseBand } from "@/i18n/phrases";
 import { useLocale } from "@/i18n/useLocale";
 import { DEFAULT_TIMEZONE, dayOfYear } from "@/lib/habit-stats";
@@ -16,6 +16,7 @@ import { useProfileStore } from "@/store/profile";
 
 /** Sequência e frases (docs/05, tela 9). */
 export default function StreakScreen() {
+  const t = useT();
   const theme = useTheme();
   const locale = useLocale();
   const today = useToday();

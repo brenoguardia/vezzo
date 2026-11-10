@@ -9,7 +9,7 @@ import { habitSubtitle } from "@/features/habits/subtitle";
 import { useToday } from "@/features/habits/useToday";
 import { WeekChartCard } from "@/features/progress/WeekChartCard";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
 import { dailyPhrase, phraseBand } from "@/i18n/phrases";
 import { DEFAULT_TIMEZONE, dayOfYear } from "@/lib/habit-stats";
@@ -23,6 +23,7 @@ import { useSyncStore } from "@/store/sync";
 
 /** Aba Hoje (docs/05, tela 5): resumo do dia, frase motivacional e lista de hábitos agendados. */
 export default function Today() {
+  const t = useT();
   const router = useRouter();
   const locale = useLocale();
   const today = useToday();

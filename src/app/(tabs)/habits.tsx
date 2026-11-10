@@ -4,7 +4,7 @@ import { Button, Card, EmojiTile, Text } from "@/components/ui";
 import { EditHabitPanel } from "@/features/habits/EditHabitPanel";
 import { activeHabits } from "@/features/habits/selectors";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
@@ -15,6 +15,7 @@ import { useHabitsStore } from "@/store/habits";
 
 /** Gerenciar hábitos (aba Hábitos): ativos, arquivados e atalho para criar. */
 export default function Habits() {
+  const t = useT();
   const router = useRouter();
   const theme = useTheme();
   const locale = useLocale();

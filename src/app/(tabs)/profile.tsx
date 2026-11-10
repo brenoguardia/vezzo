@@ -11,7 +11,8 @@ import { signOutAndClear } from "@/features/profile/sign-out";
 import { useHasPassword } from "@/features/profile/useHasPassword";
 import { useReminderPermission } from "@/features/profile/useReminderPermission";
 import { useProfileSummary } from "@/features/profile/useProfileSummary";
-import { setLocale, t } from "@/i18n";
+import { setLocale } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
 import { formatMonthYear } from "@/lib/format";
 import { useTheme } from "@/lib/useTheme";
@@ -23,6 +24,7 @@ import { useToastStore } from "@/store/toast";
 const LOCALES = ["pt-BR", "en"] as const;
 
 export default function ProfileScreen() {
+  const t = useT();
   const locale = useLocale();
   const theme = useTheme();
   const router = useRouter();
@@ -58,40 +60,74 @@ export default function ProfileScreen() {
     setSendingReset(true);
     const result = await requestPasswordReset({ email });
     setSendingReset(false);
-    if (!result.ok && (result.key === "network" || result.key === "tooManyRequests")) {
+    if (
+      !result.ok &&
+      (result.key === "network" || result.key === "tooManyRequests")
+    ) {
       showToast(t(`auth.errors.${result.key}`));
       return;
     }
-    router.push({ pathname: "/check-email", params: { email, purpose: "reset" } });
+    router.push({
+      pathname: "/check-email",
+      params: { email, purpose: "reset" },
+    });
   }
 
   const dash = "–";
   const metrics = [
-    { label: t("profile.streak"), value: summary ? String(summary.streak) : dash },
-    { label: t("profile.habits"), value: summary ? String(summary.habits) : dash },
-    { label: t("profile.completion"), value: summary ? `${Math.round(summary.completion * 100)}%` : dash },
+    {
+      label: t("profile.streak"),
+      value: summary ? String(summary.streak) : dash,
+    },
+    {
+      label: t("profile.habits"),
+      value: summary ? String(summary.habits) : dash,
+    },
+    {
+      label: t("profile.completion"),
+      value: summary ? `${Math.round(summary.completion * 100)}%` : dash,
+    },
   ];
 
   return (
     <SettingsShell>
       <View style={styles.header}>
         <View style={[styles.avatar, { backgroundColor: theme.acc }]}>
-          <Text variant="display" tone="accInk" accessibilityElementsHidden importantForAccessibility="no">
+          <Text
+            variant="display"
+            tone="accInk"
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+          >
             {profile.displayName.trim().charAt(0).toUpperCase()}
           </Text>
         </View>
-        <Text variant="sectionTitle" accessibilityRole="header" style={styles.name}>
+        <Text
+          variant="sectionTitle"
+          accessibilityRole="header"
+          style={styles.name}
+        >
           {profile.displayName}
         </Text>
         <Text variant="caption" tone="mute">
-          {t("profile.since", { date: formatMonthYear(profile.createdAt, locale) })}
+          {t("profile.since", {
+            date: formatMonthYear(profile.createdAt, locale),
+          })}
         </Text>
       </View>
 
       <View style={styles.metrics}>
         {metrics.map((metric) => (
-          <Card key={metric.label} radius={radius.card} padding={14} style={styles.metric}>
-            <Text variant="sectionTitle" accessibilityLabel={`${metric.label}: ${metric.value}`}>
+          <Card
+            key={metric.label}
+            radius={radius.card}
+            padding={14}
+            style={styles.metric}
+          >
+            <Text
+              variant="sectionTitle"
+              accessibilityLabel={`${metric.label}: ${metric.value}`}
+            >
               {metric.value}
             </Text>
             <Text variant="caption" tone="mute">
@@ -105,7 +141,12 @@ export default function ProfileScreen() {
         {t("profile.preferences")}
       </Text>
       <Card radius={radius.cardLarge} padding={0}>
-        <SettingsRow label={t("profile.theme")} value={accentName(accent)} chevron onPress={() => router.push("/theme")} />
+        <SettingsRow
+          label={t("profile.theme")}
+          value={accentName(accent, t)}
+          chevron
+          onPress={() => router.push("/theme")}
+        />
         <SettingsRow
           label={t("profile.language")}
           value={t(`profile.languages.${locale}`)}
@@ -126,7 +167,11 @@ export default function ProfileScreen() {
           : null}
         <SettingsRow
           label={t("profile.reminders")}
-          value={reminderPermission === "granted" ? t("profile.remindersOn") : undefined}
+          value={
+            reminderPermission === "granted"
+              ? t("profile.remindersOn")
+              : undefined
+          }
           last={!__DEV__ && reminderPermission !== "denied"}
         />
         {__DEV__ ? (
@@ -143,7 +188,11 @@ export default function ProfileScreen() {
         <Card radius={radius.card} padding={16} style={styles.denied}>
           <Text variant="bodyStrong">{t("profile.remindersDenied")}</Text>
           <Text tone="mute">{t("profile.remindersDeniedSub")}</Text>
-          <Button label={t("profile.openSettings")} variant="secondary" onPress={() => void Linking.openSettings()} />
+          <Button
+            label={t("profile.openSettings")}
+            variant="secondary"
+            onPress={() => void Linking.openSettings()}
+          />
         </Card>
       ) : null}
 
@@ -161,7 +210,12 @@ export default function ProfileScreen() {
             onPress={() => void resetPassword()}
           />
         ) : null}
-        <SettingsRow label={t("profile.signOut")} tone="danger" last onPress={() => void signOutAndClear()} />
+        <SettingsRow
+          label={t("profile.signOut")}
+          tone="danger"
+          last
+          onPress={() => void signOutAndClear()}
+        />
       </Card>
 
       <Card radius={radius.cardLarge} padding={0} style={styles.danger}>
@@ -178,7 +232,14 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   header: { alignItems: "center", gap: 4 },
-  avatar: { width: 84, height: 84, borderRadius: 42, alignItems: "center", justifyContent: "center", marginBottom: 8 },
+  avatar: {
+    width: 84,
+    height: 84,
+    borderRadius: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
   name: { fontSize: 24, lineHeight: 30 },
   metrics: { flexDirection: "row", gap: 10 },
   metric: { flex: 1, alignItems: "center", gap: 2 },

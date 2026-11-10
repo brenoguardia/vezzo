@@ -5,7 +5,7 @@ import { Button, Text } from "@/components/ui";
 import { requestPasswordReset, resendVerification } from "@/features/auth/actions";
 import { AuthScreen } from "@/features/auth/AuthScreen";
 import { useCountdown } from "@/features/auth/useCountdown";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import { layout } from "@/shared/tokens";
 import { useToastStore } from "@/store/toast";
@@ -14,6 +14,7 @@ const RESEND_SECONDS = 60;
 
 /** Serve a "Verifique seu e-mail" da redefinição de senha e da confirmação de cadastro. */
 export default function CheckEmail() {
+  const t = useT();
   const theme = useTheme();
   const params = useLocalSearchParams<{ email?: string; purpose?: string }>();
   const showToast = useToastStore((s) => s.show);

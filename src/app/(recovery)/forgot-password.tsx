@@ -5,11 +5,13 @@ import { Pressable } from "react-native";
 import { Button, Field, Text } from "@/components/ui";
 import { requestPasswordReset } from "@/features/auth/actions";
 import { AuthScreen } from "@/features/auth/AuthScreen";
-import { t, translateMessage } from "@/i18n";
+import { translateMessage } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { type ForgotPasswordInput, forgotPasswordInput } from "@/shared/schemas";
 import { layout } from "@/shared/tokens";
 
 export default function ForgotPassword() {
+  const t = useT();
   const router = useRouter();
   const { control, handleSubmit, setError, formState } = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordInput),
@@ -58,7 +60,7 @@ export default function ForgotPassword() {
             value={field.value}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
-            error={translateMessage(fieldState.error?.message)}
+            error={translateMessage(fieldState.error?.message, t)}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}

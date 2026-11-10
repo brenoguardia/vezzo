@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Card, EmojiTile, Text } from "@/components/ui";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import type { HabitDto } from "@/shared/schemas";
 import { layout } from "@/shared/tokens";
@@ -18,6 +18,7 @@ interface Props {
 
 /** Cartão de hábito da home: emoji, nome, progresso e círculo de check (≥ 44 pt de toque). */
 export function HabitRow({ habit, log, subtitle, onOpen, onToggle, selected }: Props) {
+  const t = useT();
   const theme = useTheme();
   const done = log?.status === "DONE";
   return (

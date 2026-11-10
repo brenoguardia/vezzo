@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "re
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SplitView } from "@/components/layout";
 import { ProgressSteps, Text } from "@/components/ui";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
 import { layout, type TextVariant } from "@/shared/tokens";
@@ -28,6 +28,7 @@ interface Props {
 
 /** Casca das etapas do onboarding: margem 28, safe area, teclado, largura máxima em telas largas. */
 export function OnboardingShell({ step, title, titleVariant = "authTitle", subtitle, children, footer, side }: Props) {
+  const t = useT();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { dual, width } = useLayoutMode();

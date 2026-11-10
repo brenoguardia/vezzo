@@ -6,7 +6,7 @@ import { byMonth, completionOf, type Period } from "@/features/progress/aggregat
 import { useRemoteDays } from "@/features/progress/useRemoteDays";
 import { useWeekStats } from "@/features/progress/useWeekStats";
 import { SettingsShell } from "@/features/profile/SettingsShell";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useLocale } from "@/i18n/useLocale";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
@@ -18,6 +18,7 @@ const signed = (v: number) => `${v >= 0 ? "+" : "−"}${Math.abs(Math.round(v * 
 
 /** Aba Progresso (docs/05, tela 6). Semana é calculada no cliente; mês e ano vêm da API de estatísticas. */
 export default function Progress() {
+  const t = useT();
   const theme = useTheme();
   const locale = useLocale();
   const today = useToday();

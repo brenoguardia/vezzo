@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/ui";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import { layout } from "@/shared/tokens";
 
@@ -21,6 +21,7 @@ interface Props {
 
 /** Casca das telas de autenticação: margem 28, safe area, teclado e largura máxima em telas largas. */
 export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
+  const t = useT();
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();

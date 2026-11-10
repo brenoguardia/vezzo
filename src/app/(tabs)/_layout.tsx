@@ -1,26 +1,23 @@
 import { Tabs } from "expo-router";
 import type { ComponentProps } from "react";
 import { TabBar, type TabItem } from "@/components/ui";
-import { t } from "@/i18n";
-import { useLocale } from "@/i18n/useLocale";
+import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 
 type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
 
-const ROUTES = ["home", "progress", "habits", "profile"] as const;
-type TabKey = (typeof ROUTES)[number];
+
+type TabKey = "home" | "progress" | "habits" | "profile";
 
 function FloatingTabBar({ state, navigateToTab }: BottomTabBarProps) {
-  useLocale();
+  const t = useT();
   const items: TabItem[] = [
-    { key: "home", label: t("tabs.today"), icon: "circle" },
-    { key: "progress", label: t("tabs.progress"), icon: "square" },
-    { key: "habits", label: t("tabs.habits"), icon: "rounded" },
-    { key: "profile", label: t("tabs.profile"), icon: "tab" },
+    { key: "home", label: t("tabs.today"), icon: "today" },
+    { key: "progress", label: t("tabs.progress"), icon: "progress" },
+    { key: "habits", label: t("tabs.habits"), icon: "habits" },
+    { key: "profile", label: t("tabs.profile"), icon: "profile" },
   ];
-  const current = state.routes[state.index]?.name ?? "home";
-  // Telas auxiliares (tema, excluir conta) pertencem ao Perfil.
-  const activeKey: TabKey = (ROUTES as readonly string[]).includes(current) ? (current as TabKey) : "profile";
+  const activeKey: TabKey = (state.routes[state.index]?.name as TabKey | undefined) ?? "home";
   return <TabBar items={items} activeKey={activeKey} onSelect={(key) => navigateToTab(state.routes.find((r) => r.name === key)?.key ?? key)} />;
 }
 
@@ -35,9 +32,6 @@ export default function TabsLayout() {
       <Tabs.Screen name="progress" />
       <Tabs.Screen name="habits" />
       <Tabs.Screen name="profile" />
-      <Tabs.Screen name="theme" options={{ href: null }} />
-      <Tabs.Screen name="delete-account" options={{ href: null }} />
-      <Tabs.Screen name="notifications-debug" options={{ href: null }} />
     </Tabs>
   );
 }

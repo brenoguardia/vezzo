@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui";
 import { authClient } from "@/auth/client";
-import { t } from "@/i18n";
+import { useT } from "@/i18n/useT";
 import { useProfileStore } from "@/store/profile";
 
 export function SignOutButton() {
+  const t = useT();
   const clear = useProfileStore((s) => s.clear);
   return (
     <Button
