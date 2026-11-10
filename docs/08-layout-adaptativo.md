@@ -34,3 +34,29 @@ mode = width >= 600 ? "dual" : "single";   // 600 pt: iPad, iPhone Max em paisag
 - Rotação e mudança de largura (dobrar e abrir) devem preservar estado (sem remontar telas): manter o estado de seleção no store, não no componente.
 - Suporte a iPad: habilitar `supportsTablet: true` em `app.json`, orientações `default`.
 - Testar em: iPhone SE, iPhone 15/16, Pro Max (retrato e paisagem), iPad, emulador de dobrável Android (Pixel Fold).
+
+## iPhone Duo (medido no simulador, Xcode 27.2 / iOS 27.2)
+Referência: <https://expo.dev/blog/supporting-iphone-duo>. O Duo é tratado como iPhone: fechado = largura compacta, aberto = largura regular, e o layout se expande em vez de trocar de design.
+
+| Pose | Janela (pt, 3×) | Safe area (T · R · B · L) | Rail (`useVerticalBarEdgeIOS`) | Modo do app |
+|---|---|---|---|---|
+| Fechado (tela externa, retrato) | 466 × 678 | 0 · **84** · 34 · 0 | `trailing` | `single` (util. 382) |
+| Aberto, retrato | 669 × 951 | 82 · 0 · 34 · 0 | `null` | `dual` (colunas de 321) |
+| Aberto, paisagem | 951 × 669 | 0 · **84** · 34 · 0 | `trailing` | `dual` (colunas de ~420) |
+| Notebook (parcialmente aberto) | 669 × 951 (igual ao aberto retrato) | 82 · 0 · 34 · 0 | `null` | `dual` (colunas de 321) |
+
+Regras adotadas:
+- **Rail = inset horizontal.** Fechado e em paisagem o sistema reserva 84 pt à direita (borda da câmera). Nada que se leia ou toque pode ficar sob ele. `useLayoutMode()` expõe `usableWidth` e `sides`; `SettingsShell`, `OnboardingShell`, `AuthScreen` e `SplitView` somam os insets ao **conteúdo** (o fundo continua de borda a borda), e `TabBar` e `ToastHost` somam o inset às margens. O modo (`single`/`dual`) continua pela largura da janela; as colunas do dual dividem só a largura útil.
+- **Ler a janela no render** (`useWindowDimensions`/`useSafeAreaInsets`): ao dobrar ou abrir, janela e insets mudam; valores em cache ficam velhos.
+- **Notebook:** o app recebe a mesma janela do aberto retrato; a dobra horizontal no meio **não** aparece como janela nem como inset. Só `expo-hinge` (módulo nativo, `useHinge()`: `closed`/`partiallyOpen`/`fullyOpen` e ângulo) ou as reserved regions a revelam. Hoje o conteúdo rola por cima da dobra; ver "Pendências".
+- **Nada foi trocado por `NativeTabs`/`ArrangementView`:** a barra de abas segue a do design (docs/05) e o dual é o `SplitView` do doc.
+
+### Testar no Duo
+- `bun run ios` já instala o app; use o UDID do simulador (`xcrun simctl list devices | grep Duo`).
+- Fechado: `maestro --device <UDID> test -e POSE=closed e2e/duo/pose.yaml`.
+- Aberto/notebook: `e2e/duo/capture.sh <UDID> <pose>` (deep link + capturas das duas telas físicas). Com o Duo aberto o XCUITest mede as coordenadas no espaço da tela externa e perde parte da janela interna, então o Maestro não serve nessas poses.
+- A tela dev-only **Perfil → Layout e dobrável** mostra janela, safe area, rail e modo.
+
+### Pendências
+- Conteúdo que cruza a dobra no notebook (linhas de lista, cartões): aceitável para listas roláveis, mas alvos de toque exatamente sobre a dobra pedem `expo-hinge`.
+- Split View (duas janelas do app), StandBy e extensões: só em aparelho.
