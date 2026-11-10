@@ -29,6 +29,11 @@ prisma/              schema.prisma e seed
 12. Funcionalidade nova vem com testes de unidade das regras de negócio (sequência, resumo semanal, agendamento de lembretes) e, para rotas, testes de autorização.
 13. Toda rota de API usa o helper `withSession` + validação Zod (`src/server/http.ts`). O `userId` vem sempre da sessão.
 
+## Formatação e lint
+- **Biome** (`biome.json`) formata (2 espaços, aspas duplas, 120 colunas) e organiza imports. Não use Prettier. O linter do Biome fica desligado: regras de lint são do **ESLint** (`eslint-config-expo`, React Compiler e a fronteira cliente/servidor, regra 5).
+- `bun run format` aplica; `bun run lint` roda ESLint e `biome ci` (falha se algo estiver fora do padrão). Markdown, `docs/`, `assets/` e `design/` ficam fora do Biome.
+- No VS Code, instale a extensão `biomejs.biome` (já recomendada em `.vscode/extensions.json`).
+
 ## Gerenciador de pacotes: Bun
 Use **somente Bun** (`bun.lock` é o lockfile; não gerar `package-lock.json`, `yarn.lock` nem `pnpm-lock.yaml`).
 - Instalar: `bun install`. Adicionar: `bun add <pkg>` / `bun add -d <pkg>`. Dependências nativas do Expo: `bunx expo install <pkg>` (escolhe a versão compatível com o SDK).
@@ -47,7 +52,8 @@ bunx expo start            # app + rotas de API em desenvolvimento
 bunx expo start --dev-client
 bun run typecheck
 bun run test
-bun run lint
+bun run lint               # ESLint (expo lint) + checagem do Biome
+bun run format             # Biome: formata e organiza imports (rode antes de commitar)
 ```
 
 ## Variáveis de ambiente (nunca commitar; `.env` local, segredos no host)
