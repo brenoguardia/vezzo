@@ -19,9 +19,9 @@ Erro padrão: `{ "error": { "code": "VALIDATION_ERROR" | "UNAUTHORIZED" | "NOT_F
 | PUT | `/v1/logs` | upsert de log (idempotente por `clientId`) |
 | POST | `/v1/logs/batch` | envia fila offline (até 200 itens) |
 | GET | `/v1/stats?from=&to=` | completude por dia, sequência atual e recorde, melhor dia |
-| POST | `/v1/push/register` | salva token Expo |
-| DELETE | `/v1/push/register` | remove token (logout) |
-| DELETE | `/v1/account` | exclui conta e dados (exigência das lojas) |
+| POST | `/v1/push/register` | salva token Expo. Corpo `{ token, platform: "ios"\|"android" }` (`pushRegister`); upsert por `token`: se o aparelho trocou de conta, o token passa ao usuário logado |
+| DELETE | `/v1/push/register` | remove o token do próprio usuário (logout). Corpo `{ token }` (`pushUnregister`); nunca toca token de outro usuário |
+| DELETE | `/v1/account` | exclui conta e dados (exigência das lojas). Exige login há no máx. 10 min (`REAUTH_WINDOW_MINUTES`); senão 403 `REAUTH_REQUIRED` |
 
 Rate limit: 60 req/min por usuário; 10 req/min em `/api/auth/*` por IP. Persistir contadores em MongoDB (o servidor pode não manter estado entre requisições).
 

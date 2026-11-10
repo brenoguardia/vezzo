@@ -6,6 +6,14 @@ import {
 } from "expo-notifications";
 import { Platform } from "react-native";
 
+export const HABITS_CHANNEL = "habits";
+
+/** Android: o canal precisa existir antes de pedir permissão (13+) e antes de agendar. */
+export async function ensureChannel(): Promise<void> {
+  if (Platform.OS !== "android") return;
+  await setNotificationChannelAsync(HABITS_CHANNEL, { name: HABITS_CHANNEL, importance: AndroidImportance.DEFAULT });
+}
+
 export type ReminderPermission = "granted" | "denied";
 
 /**
@@ -14,17 +22,21 @@ export type ReminderPermission = "granted" | "denied";
  */
 export async function requestReminderPermission(): Promise<ReminderPermission> {
   try {
-    if (Platform.OS === "android") {
-      await setNotificationChannelAsync("habits", {
-        name: "habits",
-        importance: AndroidImportance.DEFAULT,
-      });
-    }
+    await ensureChannel();
     const current = await getPermissionsAsync();
     if (current.granted) return "granted";
     if (!current.canAskAgain) return "denied";
     const result = await requestPermissionsAsync();
     return result.granted ? "granted" : "denied";
+  } catch {
+    return "denied";
+  }
+}
+
+/** Estado atual da permissão sem perguntar nada (Perfil → Lembretes). */
+export async function getReminderPermission(): Promise<ReminderPermission> {
+  try {
+    return (await getPermissionsAsync()).granted ? "granted" : "denied";
   } catch {
     return "denied";
   }

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
-import { requestReminderPermission } from "./notifications";
+import { requestReminderPermission } from "./permission";
 
 jest.mock("expo-notifications", () => ({
   getPermissionsAsync: jest.fn(),
