@@ -6,13 +6,16 @@ import { prisma } from "./db";
 import { sendEmail } from "./email/send";
 
 const callbacks = createAuthCallbacks({ db: prisma, sendEmail });
+const betterAuthUrl = process.env.BETTER_AUTH_URL;
+const betterAuthSecret = process.env.BETTER_AUTH_SECRET;
+const allowedOrigins =
+  process.env.NODE_ENV === "production" ? ["vezzo://"] : ["vezzo://", "exp://"];
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "mongodb" }),
-  baseURL: process.env.BETTER_AUTH_URL,
-  secret: process.env.BETTER_AUTH_SECRET,
-  // Esquema do app; Expo Go (exp://) só fora de produção.
-  trustedOrigins: process.env.NODE_ENV === "production" ? ["vezzo://"] : ["vezzo://", "exp://"],
+  baseURL: betterAuthUrl,
+  secret: betterAuthSecret,
+  trustedOrigins: allowedOrigins,
   plugins: [expo()],
   emailAndPassword: {
     enabled: true,
@@ -42,9 +45,17 @@ export const auth = betterAuth({
     storage: "database",
     window: 60,
     max: 60,
-    customRules: { "/sign-in/email": { window: 60, max: 5 }, "/request-password-reset": { window: 60, max: 3 } },
+    customRules: {
+      "/sign-in/email": { window: 60, max: 5 },
+      "/request-password-reset": { window: 60, max: 3 },
+    },
   },
   databaseHooks: {
-    user: { create: { after: async (user, context) => callbacks.afterUserCreate(user, context?.request) } },
+    user: {
+      create: {
+        after: async (user, context) =>
+          callbacks.afterUserCreate(user, context?.request),
+      },
+    },
   },
 });

@@ -7,7 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const origin = process.env.EXPO_PUBLIC_API_URL;
 
   if (!logged) {
-    console.log(`🔥 Build app with environment => ${ambient} ${origin}`);
+    console.log(`🔥 Build app with environment => ${ambient}`);
     logged = true;
   }
 
