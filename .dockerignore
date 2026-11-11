@@ -5,3 +5,10 @@ dist
 .git
 design
 screenshots
+android
+ios
+e2e
+docs
+.claude
+.playwright-mcp
+.vscode
