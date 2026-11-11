@@ -49,3 +49,9 @@ Título: "Hora de {hábito}" / "Time for {habit}". Corpo conforme situação: ma
 
 ## Testes
 Ferramenta de debug em Perfil (somente dev) que dispara um lembrete em 5 s. Cobrir com testes de unidade: conversão de dias, geração de gatilhos, limite de adiamentos.
+
+## Testado no simulador iOS (iPhone Duo, iOS 27.2)
+- **Aberto, segundo plano e encerrado:** Concluir, Adiar 1h (limite de 3 por dia) e Pular funcionam e gravam `source = NOTIFICATION`. Com o app encerrado, a ação chega ao servidor em segundos porque o listener de resposta é registrado no **escopo do módulo** (`useNotificationRuntime.ts`), não depois do login. Validado com um lembrete semanal real, em build **Release**.
+- **Dev client:** com o app encerrado o JavaScript não roda (o bundle vem do Metro), então essa ação não dá para testar nele.
+- **Rodar o Release no simulador:** compile com assinatura ad hoc (`CODE_SIGN_IDENTITY="-"`); sem ela o `SecureStore` falha ("direito exigido não está presente") e o app mostra "Sem conexão". A API precisa ser o servidor de produção (`bun run build:server` e `node server.js`): o `expo start` recusa o cabeçalho `Origin: vezzo://` (CORS). `EXPO_PUBLIC_API_URL` entra no bundle por `.env.production.local`.
+- A tela "Testar lembrete" existe só em `__DEV__`.
