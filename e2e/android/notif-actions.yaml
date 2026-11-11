@@ -1,0 +1,38 @@
+# Android: dispara o lembrete de teste e age pela barra de notificações. -e MODE=foreground|background|closed -e ACTION=Concluir|Pular|Adiar
+appId: com.itbuilder.vezzo
+---
+- launchApp
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Testar lembrete.*"
+- tapOn:
+    text: "Testar lembrete.*"
+    index: 1
+- runFlow:
+    when:
+      true: ${MODE == 'background'}
+    commands:
+      - pressKey: home
+- runFlow:
+    when:
+      true: ${MODE == 'closed'}
+    commands:
+      - stopApp
+- extendedWaitUntil:
+    visible: "__espera__"
+    timeout: 5500
+    optional: true
+- swipe:
+    start: "50%, 1%"
+    end: "50%, 70%"
+- extendedWaitUntil:
+    visible: ".*dormir cedo.*|.*Dormir cedo.*|.*Hora de.*"
+    timeout: 6000
+    optional: true
+- takeScreenshot: and-${MODE}-shade
+- tapOn: "${ACTION}.*"
+- extendedWaitUntil:
+    visible: "__espera__"
+    timeout: 2500
+    optional: true
+- takeScreenshot: and-${MODE}-after

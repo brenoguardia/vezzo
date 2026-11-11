@@ -1,0 +1,17 @@
+appId: com.itbuilder.vezzo
+---
+- launchApp
+- tapOn:
+    id: "tab-profile"
+- tapOn: "Testar lembrete.*"
+- tapOn: "requestReminderPermission.*"
+- takeScreenshot: and-perm-dialog
+- runFlow:
+    when:
+      visible: "Permitir|Allow"
+    commands:
+      - tapOn: "Permitir|Allow"
+- extendedWaitUntil:
+    visible: "granted"
+    timeout: 8000
+- takeScreenshot: and-perm-after

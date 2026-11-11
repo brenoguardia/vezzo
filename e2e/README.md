@@ -37,3 +37,9 @@ Os fluxos rodam contra a conta logada e o banco de desenvolvimento. `habit-lifec
 - Os cartões da lista expõem um único rótulo "Nome. Subtítulo": use `"Nome.*"` nos seletores.
 - Abas: use `id: tab-home|tab-progress|tab-habits|tab-profile` (o texto repete em títulos de seção).
 - A barra de abas flutuante cobre o fim das listas: use `centerElement: true` em `scrollUntilVisible` antes de tocar.
+
+## Android (emulador)
+- Conecte ao Metro com `adb reverse tcp:8081 tcp:8081` e rode com `maestro --device emulator-5554 test ...`.
+- `android/notif-permission.yaml` pede a permissão de notificação (Android 13+) e aceita o diálogo.
+- `android/notif-actions.yaml -e MODE=foreground|background -e ACTION=Concluir|Pular|Adiar` dispara o lembrete de teste e age pela barra de notificações (no Android o Maestro enxerga a interface do sistema, ao contrário do iOS). **Não** toque no corpo da notificação antes: abre o detalhe do hábito e o próximo "Concluir" cairia no botão do app.
+- Com o app **encerrado**: `stopApp` faz *force-stop* e o Android cancela os alarmes agendados; use `adb shell am kill com.itbuilder.vezzo` com o app em segundo plano. No dev client a ação acorda o app mas o JS não carrega (sem Metro), então esse caso só se valida em build Release.
