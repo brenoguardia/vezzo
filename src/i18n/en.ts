@@ -1,6 +1,8 @@
 import type { ptBR } from "./pt-BR";
 
-type Catalog<T> = { [K in keyof T]: T[K] extends string ? string : Catalog<T[K]> };
+type Catalog<T> = {
+  [K in keyof T]: T[K] extends string ? string : Catalog<T[K]>;
+};
 
 export const en: Catalog<typeof ptBR> = {
   common: {
@@ -30,7 +32,8 @@ export const en: Catalog<typeof ptBR> = {
     continueApple: "Continue with Apple",
     continueGoogle: "Continue with Google",
     resetTitle: "Reset password",
-    resetSub: "Enter your account email. We'll send a link to create a new password.",
+    resetSub:
+      "Enter your account email. We'll send a link to create a new password.",
     sendLink: "Send link",
     backLogin: "Back to login",
     checkMail: "Check your email",
@@ -83,18 +86,27 @@ export const en: Catalog<typeof ptBR> = {
     nameTooLong: "Use up to 30 characters.",
     activitiesTitle: "Which habits do you want to build?",
     activitiesSub: "Pick at least one. You can change this later.",
-    continueCount: "Continue · %{count}",
+    continueCount: "Continue",
     goalsTitle: "Set your goals",
     goalsSub: "Adjust the goal and days for each habit.",
     start: "Get started",
     decrease: "Decrease goal for %{habit}",
     increase: "Increase goal for %{habit}",
     daysLetters: ["M", "T", "W", "T", "F", "S", "S"],
-    daysNames: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    daysNames: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ],
     daily: "Yes or no",
     saveError: "Couldn't save. Check your connection and try again.",
     remindersTitle: "Want reminders for your habits?",
-    remindersSub: "We'll nudge you at the time you choose, with quick actions to finish without opening the app.",
+    remindersSub:
+      "We'll nudge you at the time you choose, with quick actions to finish without opening the app.",
     remindersEnable: "Turn on reminders",
     remindersSkip: "Not now",
   },
@@ -133,7 +145,8 @@ export const en: Catalog<typeof ptBR> = {
     reminders: "Reminders",
     remindersOn: "On",
     remindersDenied: "Reminders are off",
-    remindersDeniedSub: "Turn on notifications in Settings to get reminders for your habits.",
+    remindersDeniedSub:
+      "Turn on notifications in Settings to get reminders for your habits.",
     openSettings: "Open Settings",
     debugReminder: "Test reminder (dev)",
     debugReminderSent: "Reminder in 5 seconds.",
@@ -146,9 +159,11 @@ export const en: Catalog<typeof ptBR> = {
     signOut: "Sign out",
     deleteAccount: "Delete account",
     deleteTitle: "Delete account",
-    deleteBody: "This permanently erases your account, your habits and all your history. This can't be undone.",
+    deleteBody:
+      "This permanently erases your account, your habits and all your history. This can't be undone.",
     deletePassword: "Confirm your password to continue.",
-    deleteReauth: "For your security, sign out and sign in again before deleting the account.",
+    deleteReauth:
+      "For your security, sign out and sign in again before deleting the account.",
     deleteConfirm: "Delete permanently",
     deleteCancel: "Cancel",
     deleteError: "Couldn't delete the account. Try again.",
@@ -160,7 +175,12 @@ export const en: Catalog<typeof ptBR> = {
     rail: "Vertical rail",
     mode: "Layout mode",
   },
-  tabs: { today: "Today", progress: "Progress", habits: "Habits", profile: "Profile" },
+  tabs: {
+    today: "Today",
+    progress: "Progress",
+    habits: "Habits",
+    profile: "Profile",
+  },
   home: {
     offline: "Couldn't refresh. Showing the data saved on this device.",
     selectHint: "Tap a habit to see its details.",
@@ -270,7 +290,8 @@ export const en: Catalog<typeof ptBR> = {
     title: "Time for %{habit}",
     bodyStreak: "%{name}, %{goal} today keeps your %{count}-day streak going.",
     bodyStart: "%{name}, %{goal} today starts your streak.",
-    bodyBooleanStreak: "%{name}, finish today to keep your %{count}-day streak.",
+    bodyBooleanStreak:
+      "%{name}, finish today to keep your %{count}-day streak.",
     bodyBooleanStart: "%{name}, finish today to start your streak.",
     complete: "Done",
     snooze: "Snooze 1h",

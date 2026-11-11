@@ -45,7 +45,7 @@ export default function OnboardingActivities() {
       subtitle={t("onboarding.activitiesSub")}
       footer={
         <Button
-          label={t("onboarding.continueCount", { count })}
+          label={t("onboarding.continueCount")}
           disabled={count < 1}
           onPress={() => router.push("/goals")}
         />
