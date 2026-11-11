@@ -4,7 +4,7 @@ let logged = false;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const ambient = process.env.NODE_ENV;
-  const origin = process.env.EXPO_PUBLIC_API_URL;
+  const appOrigin = process.env.EXPO_PUBLIC_API_URL;
 
   if (!logged) {
     console.log(`🔥 Build app with environment => ${ambient}`);
@@ -44,7 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         "expo-router",
         {
-          origin,
+          origin: appOrigin,
         },
       ],
       [
