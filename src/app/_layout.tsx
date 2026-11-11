@@ -7,7 +7,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/manrope";
 import { Roboto_500Medium } from "@expo-google-fonts/roboto";
-import { Stack } from "expo-router";
+import { Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -61,6 +61,8 @@ function RootLayout() {
     }
   }, [isPending, userId, loadProfile, clearProfile]);
 
+  // Termos e Privacidade são públicos: abrem sem esperar sessão/perfil (visitante na web, lojas).
+  const isLegalRoute = useSegments()[0] === "(legal)";
   const gate = resolveGate({ sessionPending: isPending, hasSession: !!userId, profileStatus, onboardingDone });
   const timezone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
   useHabitsSync(gate === "tabs", timezone);
@@ -73,7 +75,7 @@ function RootLayout() {
   }, [fontsReady]);
 
   if (!fontsReady) return null;
-  if (gate === "loading") {
+  if (gate === "loading" && !isLegalRoute) {
     return (
       <>
         <StatusBar style={theme.scheme === "dark" ? "light" : "dark"} />
@@ -85,7 +87,7 @@ function RootLayout() {
   return (
     <>
       <StatusBar style={theme.scheme === "dark" ? "light" : "dark"} />
-      {gate === "error" ? (
+      {gate === "error" && !isLegalRoute ? (
         <View style={[styles.error, { backgroundColor: theme.bg }]}>
           <Text tone="mute">{t("common.loadError")}</Text>
           <Button label={t("common.retry")} onPress={() => void loadProfile()} />
@@ -106,6 +108,8 @@ function RootLayout() {
           </Stack.Protected>
           {/* Recuperação de senha é acessível com ou sem sessão (Perfil → Redefinir senha e deep link). */}
           <Stack.Screen name="(recovery)" />
+          {/* Termos de Uso e Política de Privacidade: públicos, links no cadastro e no Perfil. */}
+          <Stack.Screen name="(legal)" />
         </Stack>
       )}
       <ToastHost />

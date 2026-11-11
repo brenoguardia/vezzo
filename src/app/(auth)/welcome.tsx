@@ -3,6 +3,7 @@ import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Text } from "@/components/ui";
 import { BrandMark } from "@/features/auth/BrandMark";
+import { LegalLinks } from "@/features/auth/LegalLinks";
 import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 
@@ -27,6 +28,7 @@ export default function Welcome() {
       <View style={[styles.footer, { width: Math.min(width, 480), paddingBottom: Math.max(insets.bottom, 0) + 56 }]}>
         <Button label={t("auth.createAccount")} onPress={() => router.push("/sign-up")} />
         <Button label={t("auth.haveAccount")} variant="secondary" onPress={() => router.push("/sign-in")} />
+        <LegalLinks />
       </View>
     </View>
   );

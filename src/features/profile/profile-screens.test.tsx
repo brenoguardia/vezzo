@@ -202,6 +202,15 @@ describe("tela de perfil", () => {
     expect(authClient.signOut).toHaveBeenCalled();
   });
 
+  it("seção Sobre abre os Termos de Uso e a Política de Privacidade", async () => {
+    await render(<Profile />);
+    expect(screen.getByText("Sobre")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Termos de Uso" }));
+    expect(mockRouter.push).toHaveBeenCalledWith("/terms");
+    await fireEvent.press(screen.getByRole("button", { name: "Política de Privacidade" }));
+    expect(mockRouter.push).toHaveBeenCalledWith("/privacy");
+  });
+
   it("Excluir conta fica em área separada e abre a confirmação", async () => {
     await render(<Profile />);
     await fireEvent.press(screen.getByRole("button", { name: "Excluir conta" }));

@@ -19,7 +19,7 @@ Lista do que falta fazer fora do código. O que depende de conta, domínio ou de
 5. **Sign in with Apple**: habilitar a capability no App ID, criar o Services ID e a chave `.p8`, preencher `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET` (JWT, expira em até 6 meses: agendar a renovação) e `APPLE_APP_BUNDLE_IDENTIFIER`. `usesAppleSignIn` já está em `app.json`.
 6. **Google**: tela de consentimento OAuth publicada; client IDs de iOS/Android/Web.
 7. **Push**: credencial APNs/FCM configurada no projeto EAS (`eas credentials`); `EXPO_ACCESS_TOKEN` no servidor.
-8. **Política de privacidade e Termos**: revisar os rascunhos em `docs/legal/` com assessoria jurídica, preencher os campos entre colchetes, publicar numa URL pública e informar a URL nas lojas. As lojas exigem a URL da política; a Apple também exige o questionário "Privacidade do app" e o Google a seção "Segurança dos dados" (ver tabela abaixo).
+8. **Política de privacidade e Termos**: as páginas já existem no app e na web (`/privacy` e `/terms`, textos em `src/i18n/legal/`). Falta: preencher razão social, CNPJ, e-mail de contato e comarca em `src/shared/legal/config.ts` (conferir com `bun scripts/check-legal.ts`, que falha enquanto houver pendência), revisar os textos com assessoria jurídica, publicar o servidor (a URL pública será `https://<domínio>/privacy`) e informar essa URL nas lojas. Os textos citam "Expo" como hospedagem (`hostingProvider`): ajustar se o host real for Railway/Fly.io/Render (ver `docs/11`). As lojas exigem a URL da política; a Apple também exige o questionário "Privacidade do app" e o Google a seção "Segurança dos dados" (ver tabela abaixo).
 9. **Ícones e splash**: o `app.json` ainda usa o splash `#208AEF` do template e o fundo adaptativo `#E6F4FE` do Android. Trocar pela arte de `docs/06` (fundo `bg`, marca Vezzo) antes do build de produção.
 10. **Textos das lojas**: `docs/loja/pt-BR.md` e `docs/loja/en.md` (rascunhos). Capturas: usar `screenshots/` como base e refazer em 6,9" e 6,5" (iPhone) e iPad 13" (o app declara `supportsTablet`).
 
@@ -34,6 +34,7 @@ Lista do que falta fazer fora do código. O que depende de conta, domínio ou de
 | Rastreamento entre apps / publicidade | Não | n/a | n/a |
 
 ## Checklist de teste manual antes de publicar
+- `/privacy` e `/terms` abrem sem login na web, em pt-BR e en; links em boas-vindas, Criar conta, Entrar e Perfil → Sobre.
 - Development build em iPhone, iPad e emulador de dobrável (Pixel Fold): modo dual, rotação sem perder seleção.
 - VoiceOver/TalkBack nos check circles e na tab bar; Dynamic Type em 130%.
 - Notificações: ações Concluir/Adiar/Pular com o app aberto, em segundo plano e fechado; 4º adiamento recusado.

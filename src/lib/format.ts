@@ -9,3 +9,8 @@ export function formatClock(iso: string, timeZone: string, locale: string): stri
     new Date(iso),
   );
 }
+
+/** "11 de novembro de 2026" / "November 11, 2026" a partir de uma data `YYYY-MM-DD` fixa (sem fuso). */
+export function formatLongDate(date: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
+}

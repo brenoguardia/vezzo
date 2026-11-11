@@ -11,6 +11,7 @@ import { type SignInInput, type SignUpInput, signInInput, signUpInput } from "@/
 import { layout } from "@/shared/tokens";
 import { useToastStore } from "@/store/toast";
 import { resendVerification, signInWithEmail, signUpWithEmail } from "./actions";
+import { LegalLinks } from "./LegalLinks";
 import { SocialButtons } from "./SocialButtons";
 
 type Values = SignUpInput | SignInInput;
@@ -136,6 +137,7 @@ export function CredentialsForm({ mode }: { mode: "sign-up" | "sign-in" }) {
           </Text>
         </Pressable>
       </Link>
+      <LegalLinks />
     </View>
   );
 }

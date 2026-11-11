@@ -201,6 +201,14 @@ export default function ProfileScreen() {
         <SettingsRow label={t("profile.signOut")} tone="danger" last onPress={() => void signOutAndClear()} />
       </Card>
 
+      <Text variant="label" tone="mute" style={styles.section}>
+        {t("profile.about")}
+      </Text>
+      <Card radius={radius.cardLarge} padding={0}>
+        <SettingsRow label={t("legal.terms")} chevron onPress={() => router.push("/terms")} />
+        <SettingsRow label={t("legal.privacy")} chevron last onPress={() => router.push("/privacy")} />
+      </Card>
+
       <Card radius={radius.cardLarge} padding={0} style={styles.danger}>
         <SettingsRow
           label={t("profile.deleteAccount")}

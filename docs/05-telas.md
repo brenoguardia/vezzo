@@ -13,10 +13,10 @@ Componentes recorrentes:
 - **Barra de abas flutuante**: left/right 16, bottom 22, altura 68, raio 34, fundo `card`, sombra `0 8 24 rgba(0,0,0,.18)`. 4 itens: ícone 18×18 + rótulo 700/10. Ativo `acc`, inativo `mute`. Ícones: formas simples (círculo, quadrado, quadrado raio 9, círculo com topo arredondado); substituir por ícones de uma lib (ex.: Phosphor) mantendo o tamanho.
 
 ## 1. Splash e boas-vindas
-Centro: marca 112 (quadrado raio 0,26·112, fundo `acc`, V-check em `accInk`), "Vezzo" 800/44 letter-spacing -1,5, tagline 500/16 `mute` ("Pequenos passos, todos os dias."). Rodapé (bottom 56, laterais 32): botão "Criar conta" e secundário "Já tenho conta".
+Centro: marca 112 (quadrado raio 0,26·112, fundo `acc`, V-check em `accInk`), "Vezzo" 800/44 letter-spacing -1,5, tagline 500/16 `mute` ("Pequenos passos, todos os dias."). Rodapé (bottom 56, laterais 32): botão "Criar conta" e secundário "Já tenho conta", com a frase "Ao continuar, você concorda com os Termos de Uso e a Política de Privacidade" (caption `mute`, links em `acc`) logo abaixo.
 
 ## 2. Criar conta
-Título 800/32 "Crie sua conta". Campos E-mail e Senha (gap 14), link "Esqueci minha senha" à direita 700/13 `acc`, botão "Continuar", divisor "ou", botões Apple e Google (secundários com logo oficial à esquerda). Validação: e-mail válido; senha com regras de `passwordRule`. Erro: texto 12 `#ee6f6f` abaixo do campo.
+Título 800/32 "Crie sua conta". Campos E-mail e Senha (gap 14), link "Esqueci minha senha" à direita 700/13 `acc`, botão "Continuar", divisor "ou", botões Apple e Google (secundários com logo oficial à esquerda). Validação: e-mail válido; senha com regras de `passwordRule`. Erro: texto 12 `#ee6f6f` abaixo do campo. Rodapé com a mesma frase de aceite dos Termos e da Política (também em Entrar).
 
 ## 3. Redefinir senha (3 telas)
 Detalhadas em `04-autenticacao.md`. Layout: seta "‹ Voltar" 700/14 `mute`; título 800/32 (margem topo 28); subtítulo 500/15 `mute`.
@@ -53,7 +53,10 @@ Cabeçalho "‹ Voltar". Número 800/96 letter-spacing -4, "dias seguidos" 700/1
 Título "Tema". Cartão de prévia (anel 72 e botão). Rótulo "Cor de destaque": 7 círculos de 50, gap 14, selecionado com contorno 2 `ink` offset 3. Rótulo "Aparência": segmentado Escuro/Claro (futuramente Sistema). Botão "Aplicar". A cor muda tudo ao vivo (prévia) e é salva em `PUT /v1/profile`.
 
 ## 11. Perfil e configurações
-Avatar 84 (inicial, fundo `acc`), nome 800/24, "Usando desde ...". Três cartões de métrica (sequência, hábitos, conclusão). Seção "Preferências": Tema, Idioma, Lembretes, Ações rápidas, Gerenciar hábitos. Seção "Conta e segurança": E-mail, Redefinir senha (›), Sair (texto `#ee6f6f`). Incluir também "Excluir conta" em área separada no fim.
+Avatar 84 (inicial, fundo `acc`), nome 800/24, "Usando desde ...". Três cartões de métrica (sequência, hábitos, conclusão). Seção "Preferências": Tema, Idioma, Lembretes, Ações rápidas, Gerenciar hábitos. Seção "Conta e segurança": E-mail, Redefinir senha (›), Sair (texto `#ee6f6f`). Seção "Sobre" (entre Conta e Excluir conta): Termos de Uso (›) e Política de Privacidade (›). Incluir também "Excluir conta" em área separada no fim.
+
+## 11b. Termos de Uso e Política de Privacidade (páginas públicas)
+Rotas `/terms` e `/privacy` (grupo `src/app/(legal)`), fora de `Stack.Protected`: abrem com ou sem sessão, no app e na web (`https://<domínio>/privacy` é a URL informada nas lojas). Usam `SettingsShell` (voltar, título 28, data de atualização em caption `mute`, seções com título 18 e corpo `mute`; e-mail de contato tocável). Idioma pelo `useLocale` (pt-BR e en). Textos em `src/i18n/legal/`, dados do controlador em `src/shared/legal/config.ts`. Entradas: boas-vindas, Criar conta, Entrar e Perfil → Sobre.
 
 ## 12. Notificação (lock screen)
 Especificação em `07-notificacoes.md`. O design mostra o banner expandido com os botões "Concluir", "Adiar 1h", "Pular".

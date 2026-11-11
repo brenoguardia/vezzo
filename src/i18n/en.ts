@@ -112,6 +112,13 @@ export const en: Catalog<typeof ptBR> = {
     saveError: "Couldn't save the theme. Check your connection and try again.",
     accentNames: ["Lime", "Teal", "Blue", "Purple", "Pink", "Orange", "Yellow"],
   },
+  legal: {
+    agree: "By continuing, you agree to the",
+    terms: "Terms of Use",
+    and: "and",
+    privacy: "Privacy Policy",
+    updated: "Updated on %{date}",
+  },
   profile: {
     title: "Profile",
     since: "Using since %{date}",
@@ -131,6 +138,7 @@ export const en: Catalog<typeof ptBR> = {
     debugReminder: "Test reminder (dev)",
     debugReminderSent: "Reminder in 5 seconds.",
     debugLayout: "Layout and foldable (dev)",
+    about: "About",
     account: "Account and security",
     email: "Email",
     resetPassword: "Reset password",

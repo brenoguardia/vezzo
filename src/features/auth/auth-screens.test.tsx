@@ -69,6 +69,20 @@ describe("welcome", () => {
   });
 });
 
+describe("links legais", () => {
+  it.each([
+    ["welcome", <Welcome key="w" />],
+    ["sign-up", <SignUp key="u" />],
+    ["sign-in", <SignIn key="i" />],
+  ])("%s leva aos Termos e à Política", async (_name, screenElement) => {
+    await render(screenElement);
+    await fireEvent.press(screen.getByText("Termos de Uso"));
+    expect(mockRouter.push).toHaveBeenCalledWith("/terms");
+    await fireEvent.press(screen.getByText("Política de Privacidade"));
+    expect(mockRouter.push).toHaveBeenCalledWith("/privacy");
+  });
+});
+
 describe("sign-up", () => {
   it("mantém Continuar desabilitado até o formulário ser válido e mostra erro i18n", async () => {
     await render(<SignUp />);

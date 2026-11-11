@@ -108,6 +108,13 @@ export const ptBR = {
     saveError: "Não foi possível salvar o tema. Verifique a conexão e tente de novo.",
     accentNames: ["Verde-limão", "Verde-água", "Azul", "Roxo", "Rosa", "Laranja", "Amarelo"],
   },
+  legal: {
+    agree: "Ao continuar, você concorda com os",
+    terms: "Termos de Uso",
+    and: "e a",
+    privacy: "Política de Privacidade",
+    updated: "Atualizado em %{date}",
+  },
   profile: {
     title: "Perfil",
     since: "Usando desde %{date}",
@@ -127,6 +134,7 @@ export const ptBR = {
     debugReminder: "Testar lembrete (dev)",
     debugReminderSent: "Lembrete em 5 segundos.",
     debugLayout: "Layout e dobrável (dev)",
+    about: "Sobre",
     account: "Conta e segurança",
     email: "E-mail",
     resetPassword: "Redefinir senha",
