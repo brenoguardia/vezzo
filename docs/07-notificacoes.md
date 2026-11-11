@@ -55,3 +55,10 @@ Ferramenta de debug em Perfil (somente dev) que dispara um lembrete em 5 s. Cobr
 - **Dev client:** com o app encerrado o JavaScript não roda (o bundle vem do Metro), então essa ação não dá para testar nele.
 - **Rodar o Release no simulador:** compile com assinatura ad hoc (`CODE_SIGN_IDENTITY="-"`); sem ela o `SecureStore` falha ("direito exigido não está presente") e o app mostra "Sem conexão". A API precisa ser o servidor de produção (`bun run build:server` e `node server.js`): o `expo start` recusa o cabeçalho `Origin: vezzo://` (CORS). `EXPO_PUBLIC_API_URL` entra no bundle por `.env.production.local`.
 - A tela "Testar lembrete" existe só em `__DEV__`.
+
+## Android (emulador Android 17, build Release)
+- **Aberto e em segundo plano (dev client):** Concluir, Pular e Adiar 1h (limite de 3 por dia) funcionam, com `source = NOTIFICATION`.
+- **Encerrado:** só funciona com o **listener registrado no ponto de entrada** (`index.ts` importa `src/lib/notifications/background.ts`). No Android, o toque numa ação sem abrir o app inicia o processo e entrega a resposta ao listener de JS que existir; o `expo-router` só carrega as rotas (`_layout`, hooks) ao renderizar, o que não acontece nesse início. Sem isso o JS registra "No task registered for key expo-task-manager" e a ação se perde. Depois de gravar, o listener envia a fila na hora (`flush`): o debounce de 1 s não cabe porque o processo é congelado em seguida. `registerTaskAsync` é para push remoto, não para toques em ações.
+- **Alarmes inexatos:** os lembretes semanais usam janela de 1 h; no emulador dispararam com ~1 a 2 min de atraso.
+- **Rodar o Release no emulador:** `usesCleartextTraffic="true"` no manifest (o Release bloqueia HTTP), servidor de produção local (`node server.js`), `adb reverse tcp:3000 tcp:3000` e `EXPO_PUBLIC_API_URL=http://localhost:3000` em `.env.production.local`. O Release não é depurável (`run-as` negado).
+- **Simular "encerrado":** `adb shell am kill com.itbuilder.vezzo` com o app em segundo plano. `force-stop` cancela os alarmes agendados.

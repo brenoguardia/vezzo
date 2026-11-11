@@ -1,7 +1,7 @@
 {
   "name": "vezzo",
   "version": "1.0.0",
-  "main": "expo-router/entry",
+  "main": "index.ts",
   "dependencies": {
     "@better-auth/expo": "^1.7.20",
     "@expo-google-fonts/manrope": "^0.4.3",

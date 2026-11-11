@@ -1,9 +1,6 @@
-import { addNotificationResponseReceivedListener, getLastNotificationResponse } from "expo-notifications";
-import { router } from "expo-router";
 import { useEffect } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState } from "react-native";
 import { useLocale } from "@/i18n/useLocale";
-import { handleNotificationResponse } from "@/lib/notifications/actions";
 import { registerBackgroundActions } from "@/lib/notifications/background";
 import { registerForPush } from "@/lib/notifications/push";
 import { rescheduleAll } from "@/lib/notifications/reschedule";
@@ -12,18 +9,6 @@ import { useHabitsStore } from "@/store/habits";
 import { useProfileStore } from "@/store/profile";
 
 configureNotificationHandler();
-
-const openHabit = (habitId: string) => router.push({ pathname: "/habit/[id]", params: { id: habitId } });
-
-// Escopo de módulo, não de efeito: com o app encerrado o iOS o inicia em segundo plano só para entregar a
-// ação (Concluir/Adiar/Pular). Se o listener esperasse a sessão e o perfil (gate "tabs"), o evento chegaria
-// antes dele e a ação se perderia. Os stores persistidos bastam para gravá-la; a fila envia depois.
-// Só no app nativo: este módulo também é avaliado no servidor/web (`expo export`), sem `expo-notifications`.
-if (Platform.OS !== "web") {
-  addNotificationResponseReceivedListener((response) => void handleNotificationResponse(response, openHabit));
-  const initialResponse = getLastNotificationResponse();
-  if (initialResponse) void handleNotificationResponse(initialResponse, openHabit);
-}
 
 /** Só o que muda lembretes: nome, meta, dias, horários, ações rápidas e arquivamento. */
 const scheduleFingerprint = (habits: ReturnType<typeof useHabitsStore.getState>["habits"]) =>
