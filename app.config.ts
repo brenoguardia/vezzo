@@ -1,50 +1,49 @@
-import { ConfigContext, ExpoConfig } from "expo/config";
+import type { ConfigContext, ExpoConfig } from "expo/config";
+
+type ProfileKey = "development" | "preview" | "production";
+
+const APP_CONFIG = {
+  name: "Vezzo",
+  slug: "vezzo",
+  scheme: "vezzo",
+  version: "1.0.0",
+  identifier: "com.itbuilder.vezzo",
+  ambient: process.env.APP_ENV || "development",
+  appOrigin: process.env.EXPO_PUBLIC_API_URL || "http://localhost:8081",
+} as const;
 
 let logged = false;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const ambient = process.env.NODE_ENV;
-  const appOrigin = process.env.EXPO_PUBLIC_API_URL;
-
   if (!logged) {
-    console.log(`🔥 Build app with environment => ${ambient}`);
+    console.log(`🔥 Build app with environment => ${APP_CONFIG.ambient}`);
     logged = true;
   }
 
+  const { name, slug, scheme, icon, ios, android, origin } = getDynamicConfig();
+
   return {
     ...config,
-    name: "Vezzo",
-    slug: "vezzo",
-    scheme: "vezzo",
+    name,
+    slug,
+    scheme,
+    icon,
     version: "1.0.0",
     orientation: "default",
-    icon: "./assets/images/icon.png",
     userInterfaceStyle: "automatic",
-    ios: {
-      supportsTablet: true,
-      icon: "./assets/expo.icon",
-      bundleIdentifier: "com.itbuilder.vezzo",
-      usesAppleSignIn: false,
-    },
-    android: {
-      adaptiveIcon: {
-        backgroundColor: "#E6F4FE",
-        foregroundImage: "./assets/images/android-icon-foreground.png",
-        backgroundImage: "./assets/images/android-icon-background.png",
-        monochromeImage: "./assets/images/android-icon-monochrome.png",
-      },
-      predictiveBackGestureEnabled: false,
-      package: "com.itbuilder.vezzo",
-    },
+    ios,
+    android,
     web: {
       output: "server",
       favicon: "./assets/images/favicon.png",
     },
     plugins: [
+      "expo-secure-store",
+      "expo-localization",
       [
         "expo-router",
         {
-          origin: appOrigin,
+          origin,
         },
       ],
       [
@@ -59,8 +58,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           imageWidth: 228,
         },
       ],
-      "expo-secure-store",
-      "expo-localization",
       [
         "expo-notifications",
         {
@@ -90,3 +87,79 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
   };
 };
+
+function getDynamicConfig() {
+  const useCaseProfile: Record<ProfileKey, ExpoConfig & { origin: string }> = {
+    development: {
+      name: `${APP_CONFIG.name} (Dev)`,
+      slug: `${APP_CONFIG.slug}-${APP_CONFIG.ambient}`,
+      scheme: `${APP_CONFIG.scheme}-${APP_CONFIG.ambient}`,
+      icon: "./assets/images/icon.png",
+      ios: {
+        bundleIdentifier: `${APP_CONFIG.identifier}.${APP_CONFIG.ambient}`,
+        icon: "./assets/expo.icon",
+        supportsTablet: false,
+        usesAppleSignIn: false,
+      },
+      android: {
+        adaptiveIcon: {
+          backgroundColor: "#E6F4FE",
+          foregroundImage: "./assets/images/android-icon-foreground.png",
+          backgroundImage: "./assets/images/android-icon-background.png",
+          monochromeImage: "./assets/images/android-icon-monochrome.png",
+        },
+        predictiveBackGestureEnabled: false,
+        package: `${APP_CONFIG.identifier}.${APP_CONFIG.ambient}`,
+      },
+      origin: `https://${APP_CONFIG.scheme}-${APP_CONFIG.ambient}.itbuilder.com`,
+    },
+    preview: {
+      name: `${APP_CONFIG.name} (Prev)`,
+      slug: `${APP_CONFIG.slug}-${APP_CONFIG.ambient}`,
+      scheme: `${APP_CONFIG.scheme}-${APP_CONFIG.ambient}`,
+      icon: "./assets/images/icon.png",
+      ios: {
+        bundleIdentifier: `${APP_CONFIG.identifier}.${APP_CONFIG.ambient}`,
+        icon: "./assets/expo.icon",
+        supportsTablet: false,
+        usesAppleSignIn: false,
+      },
+      android: {
+        adaptiveIcon: {
+          backgroundColor: "#E6F4FE",
+          foregroundImage: "./assets/images/android-icon-foreground.png",
+          backgroundImage: "./assets/images/android-icon-background.png",
+          monochromeImage: "./assets/images/android-icon-monochrome.png",
+        },
+        predictiveBackGestureEnabled: false,
+        package: `${APP_CONFIG.identifier}.${APP_CONFIG.ambient}`,
+      },
+      origin: `https://${APP_CONFIG.scheme}-${APP_CONFIG.ambient}.itbuilder.com`,
+    },
+    production: {
+      name: APP_CONFIG.name,
+      slug: APP_CONFIG.slug,
+      scheme: APP_CONFIG.scheme,
+      icon: "./assets/images/icon.png",
+      ios: {
+        bundleIdentifier: APP_CONFIG.identifier,
+        icon: "./assets/expo.icon",
+        supportsTablet: false,
+        usesAppleSignIn: false,
+      },
+      android: {
+        adaptiveIcon: {
+          backgroundColor: "#E6F4FE",
+          foregroundImage: "./assets/images/android-icon-foreground.png",
+          backgroundImage: "./assets/images/android-icon-background.png",
+          monochromeImage: "./assets/images/android-icon-monochrome.png",
+        },
+        predictiveBackGestureEnabled: false,
+        package: APP_CONFIG.identifier,
+      },
+      origin: `https://${APP_CONFIG.scheme}.itbuilder.com`,
+    },
+  };
+
+  return useCaseProfile[APP_CONFIG.ambient as ProfileKey];
+}
