@@ -1,13 +1,21 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
 
-type ProfileKey = "development" | "preview" | "production";
+const PROFILE_KEYS = ["development", "preview", "production"] as const;
+
+type ProfileKey = (typeof PROFILE_KEYS)[number];
+
+const APP_NAME = "Vezzo" as const;
+const APP_SLUG = "vezzo" as const;
+const APP_SCHEMA = "vezzo" as const;
+const APP_VERSION = "1.0.0" as const;
+const APP_IDENTIFIER = "com.itbuilder.vezzo" as const;
 
 const APP_CONFIG = {
-  name: "Vezzo",
-  slug: "vezzo",
-  scheme: "vezzo",
-  version: "1.0.0",
-  identifier: "com.itbuilder.vezzo",
+  name: APP_NAME,
+  slug: APP_SLUG,
+  scheme: APP_SCHEMA,
+  version: APP_VERSION,
+  identifier: APP_IDENTIFIER,
   ambient: process.env.APP_ENV || "development",
   appOrigin: process.env.EXPO_PUBLIC_API_URL || "http://localhost:8081",
 } as const;
@@ -161,5 +169,15 @@ function getDynamicConfig() {
     },
   };
 
-  return useCaseProfile[APP_CONFIG.ambient as ProfileKey];
+  if (!isProfileKey(APP_CONFIG.ambient)) {
+    throw new Error(
+      `APP_ENV inválido: "${APP_CONFIG.ambient}". Valores aceitos: ${PROFILE_KEYS.join(", ")}.`,
+    );
+  }
+
+  return useCaseProfile[APP_CONFIG.ambient];
+}
+
+function isProfileKey(value: string): value is ProfileKey {
+  return (PROFILE_KEYS as readonly string[]).includes(value);
 }
