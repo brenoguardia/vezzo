@@ -15,10 +15,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name: "Vezzo",
     slug: "vezzo",
+    scheme: "vezzo",
     version: "1.0.0",
     orientation: "default",
     icon: "./assets/images/icon.png",
-    scheme: "vezzo",
     userInterfaceStyle: "automatic",
     ios: {
       supportsTablet: true,
