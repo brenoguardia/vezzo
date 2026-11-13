@@ -14,7 +14,7 @@ export interface LegalDocument {
   sections: LegalSection[];
 }
 
-export type LegalKind = "terms" | "privacy";
+export type LegalKind = "terms" | "privacy" | "account-deletion";
 
 export type LegalBuilder = (config: LegalConfig) => Record<LegalKind, LegalDocument>;
 

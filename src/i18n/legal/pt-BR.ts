@@ -207,5 +207,51 @@ export const legalPtBR: LegalBuilder = (c) => {
         },
       ],
     },
+    "account-deletion": {
+      title: "Excluir conta e dados",
+      intro: `Esta página explica como excluir sua conta e seus dados no aplicativo Vezzo, oferecido por ${controller}, CNPJ ${document}.`,
+      sections: [
+        {
+          heading: "1. Pelo aplicativo",
+          paragraphs: ["Você pode excluir a conta a qualquer momento, sem falar com ninguém:"],
+          items: [
+            "Abra o Vezzo e entre na sua conta.",
+            "Toque na aba Perfil.",
+            "Toque em Excluir conta.",
+            "Se o app pedir, confirme sua senha e toque em Excluir definitivamente.",
+          ],
+          outro: [
+            "Por segurança, se o seu login não for recente, o app pede que você saia e entre de novo antes de excluir. A exclusão é definitiva e não pode ser desfeita.",
+          ],
+        },
+        {
+          heading: "2. Sem acesso ao aplicativo",
+          paragraphs: [
+            `Se você não consegue entrar ou já desinstalou o app, escreva para ${email} a partir do e-mail cadastrado na conta, pedindo a exclusão. Confirmamos que a conta é sua e respondemos em até ${c.responseDays} dias.`,
+          ],
+        },
+        {
+          heading: "3. O que é excluído",
+          paragraphs: ["Ao excluir a conta, apagamos do serviço, imediatamente:"],
+          items: [
+            "seu nome, seu e-mail e sua senha (guardada apenas como hash);",
+            "seu perfil e suas preferências (cor de destaque, tema, idioma e fuso horário);",
+            "todos os seus hábitos, registros e o histórico de sequência;",
+            "os tokens de notificações push dos seus aparelhos;",
+            "suas sessões e os logins vinculados (Apple e Google).",
+          ],
+        },
+        {
+          heading: "4. O que pode ser mantido",
+          paragraphs: [
+            `Cópias de segurança do banco de dados podem conter seus dados por até ${c.deletionDays} dias depois da exclusão, até serem sobrescritas. Os relatórios de falhas não têm dados pessoais e não são ligados à sua conta. Só guardamos por mais tempo o que a lei exigir.`,
+          ],
+        },
+        {
+          heading: "5. Contato",
+          paragraphs: [`Dúvidas sobre a exclusão: ${email}.`],
+        },
+      ],
+    },
   };
 };

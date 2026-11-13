@@ -206,5 +206,51 @@ export const legalEn: LegalBuilder = (c) => {
         },
       ],
     },
+    "account-deletion": {
+      title: "Delete account and data",
+      intro: `This page explains how to delete your account and data in the Vezzo app, offered by ${controller}, CNPJ ${document}.`,
+      sections: [
+        {
+          heading: "1. In the app",
+          paragraphs: ["You can delete your account at any time, without contacting anyone:"],
+          items: [
+            "Open Vezzo and sign in to your account.",
+            "Tap the Profile tab.",
+            "Tap Delete account.",
+            "If the app asks, confirm your password and tap Delete permanently.",
+          ],
+          outro: [
+            "For your security, if your sign-in is not recent, the app asks you to sign out and back in before deleting. Deletion is permanent and cannot be undone.",
+          ],
+        },
+        {
+          heading: "2. Without access to the app",
+          paragraphs: [
+            `If you cannot sign in or have already uninstalled the app, write to ${email} from the email registered on the account, asking for deletion. We confirm the account is yours and reply within ${c.responseDays} days.`,
+          ],
+        },
+        {
+          heading: "3. What is deleted",
+          paragraphs: ["When you delete your account, we erase from the service, immediately:"],
+          items: [
+            "your name, your email and your password (stored only as a hash);",
+            "your profile and preferences (accent color, theme, language and time zone);",
+            "all your habits, entries and streak history;",
+            "the push notification tokens of your devices;",
+            "your sessions and linked sign-ins (Apple and Google).",
+          ],
+        },
+        {
+          heading: "4. What may be kept",
+          paragraphs: [
+            `Database backups may contain your data for up to ${c.deletionDays} days after deletion, until they are overwritten. Crash reports contain no personal data and are not linked to your account. We only keep anything longer when the law requires it.`,
+          ],
+        },
+        {
+          heading: "5. Contact",
+          paragraphs: [`Questions about deletion: ${email}.`],
+        },
+      ],
+    },
   };
 };

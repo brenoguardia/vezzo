@@ -9,7 +9,7 @@ const FILLED: LegalConfig = {
   contactEmail: "privacidade@vezzo.example",
   forumCity: "São Paulo/SP",
 };
-const kinds: LegalKind[] = ["terms", "privacy"];
+const kinds: LegalKind[] = ["terms", "privacy", "account-deletion"];
 const locales = ["pt-BR", "en"] as const;
 const combos = kinds.flatMap((kind) => locales.map((locale) => [kind, locale] as const));
 
@@ -51,6 +51,19 @@ describe("textos legais", () => {
     expect(flatten("privacy", "pt-BR")).toContain(`${FILLED.minAge} anos`);
     expect(flatten("privacy", "pt-BR")).toContain(`${FILLED.deletionDays} dias`);
     expect(flatten("privacy", "en")).toContain(`within ${FILLED.deletionDays} days`);
+  });
+
+  it("exclusão de conta: passos no app, contato sem acesso e prazo das cópias de segurança", () => {
+    const pt = flatten("account-deletion", "pt-BR");
+    expect(pt).toContain("Perfil");
+    expect(pt).toContain("Excluir conta");
+    expect(pt).toContain(`${FILLED.deletionDays} dias`);
+    expect(pt).toContain(`${FILLED.responseDays} dias`);
+    const en = flatten("account-deletion", "en");
+    expect(en).toContain("Profile");
+    expect(en).toContain("Delete account");
+    expect(en).toContain(`${FILLED.deletionDays} days`);
+    expect(en).toContain(`${FILLED.responseDays} days`);
   });
 
   it("mostra marcador entre colchetes enquanto o dado está pendente", () => {
