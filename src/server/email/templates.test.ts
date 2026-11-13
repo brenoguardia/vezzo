@@ -16,7 +16,7 @@ describe("resolveLocale", () => {
 });
 
 describe("renderEmail", () => {
-  const url = "https://api.vezzo.app/api/auth/reset-password/tok?callbackURL=vezzo%3A%2F%2Freset-password";
+  const url = "https://api.vezzo.cloud/api/auth/reset-password/tok?callbackURL=vezzo%3A%2F%2Freset-password";
 
   it.each(["verify-email", "reset-password"] as const)(
     "%s inclui o link em html e texto, nos dois idiomas",

@@ -22,6 +22,6 @@ Vezzo is a habit app built to be quick: pick what you want to keep, set the day'
 • Your entries are saved on the device and sync when the connection returns.
 
 **Privacy**
-No ads and no cross-app tracking. You can delete your account and data inside the app, under Profile. Privacy Policy: https://vezzo.app/privacy · Terms of Use: https://vezzo.app/terms
+No ads and no cross-app tracking. You can delete your account and data inside the app, under Profile. Privacy Policy: https://vezzo.cloud/privacy · Terms of Use: https://vezzo.cloud/terms
 
 Available in Portuguese and English.
