@@ -16,3 +16,11 @@
 
 ## Limpeza
 A rota e o modelo de spike foram removidos; `prisma/schema.prisma` mantém só generator e datasource até a Fase 1.
+
+## Web: landing e rotas expostas
+
+Na web só ficam acessíveis a landing (`/`), `/privacy`, `/terms`, `/account-deletion` e a API (`/api/**`). O app (login, onboarding, abas, hábitos, ajustes) só roda instalado: `src/app/_layout.web.tsx` fecha esses grupos com `Stack.Protected guard={false}` e `src/app/+not-found.tsx` devolve para `/`. O layout nativo (`_layout.tsx`) não é carregado na web.
+
+- A landing fica em `src/features/landing`, com textos em `src/i18n/landing`. Todas as seções são demos interativas feitas com os componentes reais do app (`Ring`, `EmojiTile`, `DayPills`, `Stepper`, `SegmentedControl`); não há capturas de tela.
+- Os selos de loja mostram "Em breve" até `STORE_LINKS` (`src/shared/landing.ts`) receber as URLs da App Store e do Google Play.
+- `src/app/+html.tsx` define os metadados e precisa renderizar `headNodes` e `bodyNodes` (sem isso os scripts do bundle somem e a página fica em branco). `public/` entrega `og.png` e `robots.txt`.
