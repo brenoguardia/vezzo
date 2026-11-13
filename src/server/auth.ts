@@ -1,21 +1,34 @@
 import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import * as Constants from "expo-constants";
+
 import { createAuthCallbacks } from "./auth-callbacks";
 import { prisma } from "./db";
 import { sendEmail } from "./email/send";
 
+const APP_SCHEME = Constants.default.expoConfig?.scheme;
+
 const callbacks = createAuthCallbacks({ db: prisma, sendEmail });
 const betterAuthUrl = process.env.BETTER_AUTH_URL;
 const betterAuthSecret = process.env.BETTER_AUTH_SECRET;
-const allowedOrigins =
-  process.env.NODE_ENV === "production" ? ["vezzo://"] : ["vezzo://", "exp://"];
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "mongodb" }),
   baseURL: betterAuthUrl,
   secret: betterAuthSecret,
-  trustedOrigins: allowedOrigins,
+  trustedOrigins: [
+    `${APP_SCHEME}://`,
+
+    // Development mode - Expo's exp:// scheme with local IP ranges
+    ...(process.env.NODE_ENV === "development"
+      ? [
+          "exp://", // Trust all Expo URLs (prefix matching)
+          "exp://**", // Trust all Expo URLs (wildcard matching)
+          "exp://192.168.*.*:*/**", // Trust 192.168.x.x IP range with any port and path
+        ]
+      : []),
+  ],
   plugins: [expo()],
   emailAndPassword: {
     enabled: true,
