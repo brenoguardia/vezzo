@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug,
     scheme,
     icon,
-    version: "1.0.0",
+    version: APP_CONFIG.version,
     orientation: "default",
     userInterfaceStyle: "automatic",
     ios,
