@@ -5,6 +5,7 @@ export type AuthErrorKey =
   | "tooManyRequests"
   | "invalidToken"
   | "network"
+  | "server"
   | "social"
   | "generic";
 
@@ -33,7 +34,16 @@ export function authErrorKey(error: AuthErrorLike | null | undefined): AuthError
   if (error.status === 429) return "tooManyRequests";
   if (error.status === 403) return "emailNotVerified";
   if (error.status === 0 || error.status === undefined) return "network";
+  if (error.status === 502 || error.status === 503 || error.status === 504) return "server";
   return "generic";
+}
+
+/**
+ * Falha de conexão sem resposta do servidor: `network` (aparelho sem rede) ou `server` (rede ok, servidor inacessível).
+ * `isConnected` vem do NetInfo; `null` (desconhecido) é tratado como conectado.
+ */
+export function refineNetworkKey(key: AuthErrorKey, isConnected: boolean | null): AuthErrorKey {
+  return key === "network" && isConnected !== false ? "server" : key;
 }
 
 /** Extrai o token de `vezzo://reset-password?token=...` ou de um parâmetro de rota (pode vir como array). */

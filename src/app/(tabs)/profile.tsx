@@ -66,7 +66,7 @@ export default function ProfileScreen() {
     setSendingReset(true);
     const result = await requestPasswordReset({ email });
     setSendingReset(false);
-    if (!result.ok && (result.key === "network" || result.key === "tooManyRequests")) {
+    if (!result.ok && (result.key === "network" || result.key === "server" || result.key === "tooManyRequests")) {
       showToast(t(`auth.errors.${result.key}`));
       return;
     }

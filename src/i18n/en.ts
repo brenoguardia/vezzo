@@ -71,6 +71,7 @@ export const en: Catalog<typeof ptBR> = {
       emailTaken: "An account with this email already exists.",
       tooManyRequests: "Too many attempts. Wait a minute and try again.",
       network: "No connection. Check your internet and try again.",
+      server: "Can't reach the server. Try again in a moment.",
       social: "Couldn't sign in. Try again.",
       generic: "Something went wrong. Try again.",
     },
