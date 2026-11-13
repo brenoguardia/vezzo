@@ -65,6 +65,7 @@ export const ptBR = {
       emailTaken: "Já existe uma conta com este e-mail.",
       tooManyRequests: "Muitas tentativas. Aguarde um minuto e tente de novo.",
       network: "Sem conexão. Verifique a internet e tente de novo.",
+      server: "Não foi possível acessar o servidor. Tente de novo em instantes.",
       social: "Não foi possível entrar. Tente de novo.",
       generic: "Algo deu errado. Tente de novo.",
     },

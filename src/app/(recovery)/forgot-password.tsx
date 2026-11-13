@@ -22,7 +22,7 @@ export default function ForgotPassword() {
   const onSubmit = handleSubmit(async (values) => {
     const result = await requestPasswordReset(values);
     // Resposta igual exista ou não a conta (docs/04): só falhas de rede/limite viram erro.
-    if (!result.ok && (result.key === "network" || result.key === "tooManyRequests")) {
+    if (!result.ok && (result.key === "network" || result.key === "server" || result.key === "tooManyRequests")) {
       setError("root", { message: t(`auth.errors.${result.key}`) });
       return;
     }

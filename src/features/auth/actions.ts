@@ -1,6 +1,7 @@
+import NetInfo from "@react-native-community/netinfo";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { authClient } from "@/auth/client";
-import { type AuthErrorKey, type AuthErrorLike, authErrorKey } from "@/auth/errors";
+import { type AuthErrorKey, type AuthErrorLike, authErrorKey, refineNetworkKey } from "@/auth/errors";
 import { appUrl } from "@/auth/scheme";
 import type { ForgotPasswordInput, SignInInput, SignUpInput } from "@/shared/schemas";
 
@@ -10,12 +11,22 @@ export const RESET_REDIRECT = appUrl("reset-password");
 /** Depois de verificar o e-mail, o servidor redireciona para o app (esquema já está em `trustedOrigins`). */
 export const VERIFY_REDIRECT = appUrl();
 
+async function resolveKey(key: AuthErrorKey): Promise<AuthErrorKey> {
+  if (key !== "network") return key;
+  try {
+    const state = await NetInfo.fetch();
+    return refineNetworkKey(key, state.isConnected);
+  } catch {
+    return refineNetworkKey(key, null);
+  }
+}
+
 async function run(call: () => Promise<{ error: AuthErrorLike | null }>): Promise<AuthResult> {
   try {
     const { error } = await call();
-    return error ? { ok: false, key: authErrorKey(error) } : { ok: true };
+    return error ? { ok: false, key: await resolveKey(authErrorKey(error)) } : { ok: true };
   } catch {
-    return { ok: false, key: "network" };
+    return { ok: false, key: await resolveKey("network") };
   }
 }
 
