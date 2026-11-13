@@ -25,15 +25,15 @@ export interface LegalConfig {
 }
 
 export const LEGAL_CONFIG: LegalConfig = {
-  controllerName: null,
-  controllerDocument: null,
-  contactEmail: null,
-  forumCity: null,
-  hostingProvider: "Expo",
+  controllerName: "IT Builder",
+  controllerDocument: "48.256.389/0001-67",
+  contactEmail: "itbuilders.dev@gmail.com",
+  forumCity: "São Paulo/SP",
+  hostingProvider: "Hostinger",
   minAge: 13,
   deletionDays: 30,
   responseDays: 15,
-  updatedAt: "2026-11-11",
+  updatedAt: "2026-11-13",
 };
 
 /** Campos obrigatórios ainda sem valor. */
