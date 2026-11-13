@@ -8,4 +8,4 @@ export const STORE_LINKS: {
 };
 
 /** URL pública do site (landing, Termos e Privacidade). */
-export const SITE_URL = process.env.EXPO_PUBLIC_API_URL || "https://api.vezzo.cloud";
+export const SITE_URL = process.env.EXPO_PUBLIC_API_URL || "https://app.vezzo.cloud";

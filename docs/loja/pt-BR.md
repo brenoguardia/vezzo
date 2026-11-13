@@ -22,6 +22,6 @@ Vezzo é um app de hábitos feito para ser rápido: você escolhe o que quer man
 • Seus registros ficam salvos no aparelho e sincronizam quando a conexão volta.
 
 **Privacidade**
-Sem anúncios e sem rastreamento entre apps. Você pode excluir sua conta e seus dados dentro do app, em Perfil. Política de Privacidade: https://api.vezzo.cloud/privacy · Termos de Uso: https://api.vezzo.cloud/terms
+Sem anúncios e sem rastreamento entre apps. Você pode excluir sua conta e seus dados dentro do app, em Perfil. Política de Privacidade: https://app.vezzo.cloud/privacy · Termos de Uso: https://app.vezzo.cloud/terms
 
 Disponível em português e inglês.
