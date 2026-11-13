@@ -42,6 +42,12 @@ Lista do que falta fazer fora do código. O que depende de conta, domínio ou de
 | Diagnóstico de falhas (Sentry) | Sim, sem PII | Não | Estabilidade |
 | Rastreamento entre apps / publicidade | Não | n/a | n/a |
 
+## Classificação de conteúdo (IARC)
+- Google Play: questionário IARC enviado em 13/11/2026; classificações ativas.
+- **Global Rating ID**: `def12f18-1ed7-88e8-8300-3fc1d9f4685e` (produto "Vezzo: Daily Habits", empresa IT Builder). Use em outras lojas que licenciam o IARC (ex.: Samsung Galaxy Store, Microsoft Store) quando pedirem o Global Rating ID ou o certificado IARC.
+- A App Store (Apple) não usa esse ID; tem questionário próprio no App Store Connect.
+- Refazer o questionário só se uma atualização mudar as respostas (chat entre usuários, conteúdo gerado por usuários, compras, localização). Pedido de revisão (rating check) leva de 1 a 3 dias úteis.
+
 ## Checklist de teste manual antes de publicar
 - `/privacy` e `/terms` abrem sem login na web, em pt-BR e en; links em boas-vindas, Criar conta, Entrar e Perfil → Sobre.
 - Development build em iPhone, iPad e emulador de dobrável (Pixel Fold): modo dual, rotação sem perder seleção.
