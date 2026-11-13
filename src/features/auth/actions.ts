@@ -1,13 +1,14 @@
 import * as AppleAuthentication from "expo-apple-authentication";
 import { authClient } from "@/auth/client";
 import { type AuthErrorKey, type AuthErrorLike, authErrorKey } from "@/auth/errors";
+import { appUrl } from "@/auth/scheme";
 import type { ForgotPasswordInput, SignInInput, SignUpInput } from "@/shared/schemas";
 
 export type AuthResult = { ok: true } | { ok: false; key: AuthErrorKey };
 
-export const RESET_REDIRECT = "vezzo://reset-password";
+export const RESET_REDIRECT = appUrl("reset-password");
 /** Depois de verificar o e-mail, o servidor redireciona para o app (esquema já está em `trustedOrigins`). */
-export const VERIFY_REDIRECT = "vezzo://";
+export const VERIFY_REDIRECT = appUrl();
 
 async function run(call: () => Promise<{ error: AuthErrorLike | null }>): Promise<AuthResult> {
   try {
