@@ -4,7 +4,7 @@ export const STORE_LINKS: {
   playStore: string | null;
 } = {
   appStore: null,
-  playStore: null,
+  playStore: "https://play.google.com/apps/testing/com.itbuilder.vezzo",
 };
 
 /** URL pública do site (landing, Termos e Privacidade). */

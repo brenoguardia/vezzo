@@ -34,6 +34,7 @@ export function Stores({ copy, center }: { copy: LandingCopy["stores"]; center?:
     <View style={[styles.stores, center && styles.center]}>
       <StoreBadge
         testID="badge-app-store"
+        icon="apple"
         caption={copy.appStoreLabel}
         store={copy.appStore}
         url={STORE_LINKS.appStore}
@@ -41,6 +42,7 @@ export function Stores({ copy, center }: { copy: LandingCopy["stores"]; center?:
       />
       <StoreBadge
         testID="badge-play-store"
+        icon="play"
         caption={copy.playStoreLabel}
         store={copy.playStore}
         url={STORE_LINKS.playStore}

@@ -13,7 +13,7 @@
       "channel": "development",
       "env": {
         "APP_ENV": "development",
-        "EXPO_PUBLIC_API_URL": "https://api-dev.vezzo.cloud"
+        "EXPO_PUBLIC_API_URL": "https://dev.vezzo.cloud"
       }
     },
     "preview": {
@@ -21,7 +21,7 @@
       "channel": "preview",
       "env": {
         "APP_ENV": "preview",
-        "EXPO_PUBLIC_API_URL": "https://api-hml.vezzo.cloud"
+        "EXPO_PUBLIC_API_URL": "https://hml.vezzo.cloud"
       }
     },
     "production": {
@@ -29,7 +29,7 @@
       "channel": "production",
       "env": {
         "APP_ENV": "production",
-        "EXPO_PUBLIC_API_URL": "https://api.vezzo.cloud"
+        "EXPO_PUBLIC_API_URL": "https://app.vezzo.cloud"
       }
     }
   },
