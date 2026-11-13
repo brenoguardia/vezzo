@@ -44,11 +44,7 @@ export default function OnboardingActivities() {
       title={t("onboarding.activitiesTitle")}
       subtitle={t("onboarding.activitiesSub")}
       footer={
-        <Button
-          label={t("onboarding.continueCount")}
-          disabled={count < 1}
-          onPress={() => router.push("/goals")}
-        />
+        <Button label={t("onboarding.continueCount")} disabled={count < 1} onPress={() => router.push("/goals")} />
       }
     >
       <View style={styles.sections}>
