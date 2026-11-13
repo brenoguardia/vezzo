@@ -100,7 +100,7 @@ function getDynamicConfig() {
   const useCaseProfile: Record<ProfileKey, ExpoConfig & { origin: string }> = {
     development: {
       name: `${APP_CONFIG.name} (Dev)`,
-      slug: `${APP_CONFIG.slug}-${APP_CONFIG.ambient}`,
+      slug: APP_CONFIG.slug,
       scheme: `${APP_CONFIG.scheme}-${APP_CONFIG.ambient}`,
       icon: "./assets/images/icon.png",
       ios: {
@@ -119,11 +119,11 @@ function getDynamicConfig() {
         predictiveBackGestureEnabled: false,
         package: `${APP_CONFIG.identifier}.${APP_CONFIG.ambient}`,
       },
-      origin: `https://${APP_CONFIG.scheme}-${APP_CONFIG.ambient}.itbuilder.com`,
+      origin: APP_CONFIG.appOrigin,
     },
     preview: {
       name: `${APP_CONFIG.name} (Prev)`,
-      slug: `${APP_CONFIG.slug}-${APP_CONFIG.ambient}`,
+      slug: APP_CONFIG.slug,
       scheme: `${APP_CONFIG.scheme}-${APP_CONFIG.ambient}`,
       icon: "./assets/images/icon.png",
       ios: {
@@ -142,7 +142,7 @@ function getDynamicConfig() {
         predictiveBackGestureEnabled: false,
         package: `${APP_CONFIG.identifier}.${APP_CONFIG.ambient}`,
       },
-      origin: `https://${APP_CONFIG.scheme}-${APP_CONFIG.ambient}.itbuilder.com`,
+      origin: APP_CONFIG.appOrigin,
     },
     production: {
       name: APP_CONFIG.name,
@@ -165,7 +165,7 @@ function getDynamicConfig() {
         predictiveBackGestureEnabled: false,
         package: APP_CONFIG.identifier,
       },
-      origin: `https://${APP_CONFIG.scheme}.itbuilder.com`,
+      origin: APP_CONFIG.appOrigin,
     },
   };
 
