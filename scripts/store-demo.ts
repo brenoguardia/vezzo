@@ -3,7 +3,8 @@
 //   DEMO_PASSWORD=... bun --env-file=.env scripts/store-demo.ts seed pt-BR|en [DARK|LIGHT]
 //   bun --env-file=.env scripts/store-demo.ts cleanup
 // `seed` é idempotente: cria o usuário se faltar, marca o e-mail como verificado, recria os hábitos
-// e o histórico (sequência de 12 dias, hoje 3/5) no idioma pedido.
+// e o histórico (sequência de 12 dias, hoje 3/5) no idioma pedido. "Meditar" ganha um presente por meta
+// (30 dias sem falhar, 13 cumpridos) e anotações, para as capturas do presente e da timeline.
 import { prisma } from "@/server/db";
 import { addDays, localDate } from "@/shared/dates";
 
@@ -23,6 +24,10 @@ type Seed = {
   reminders: string[];
   /** Valor/horário de hoje; `null` = pendente. */
   today: { value: number; at: string } | { value: number; at: null };
+  /** Presente por meta: o desafio começa 12 dias atrás (a sequência do seed), então hoje é o 13º dia. */
+  reward?: { pt: string; en: string; emoji: string; days: number };
+  /** Anotações de exemplo: `back` = quantos dias atrás (0 = hoje). */
+  notes?: { back: number; pt: string; en: string }[];
 };
 
 const HABITS: Seed[] = [
@@ -43,6 +48,25 @@ const HABITS: Seed[] = [
     unit: "MINUTES",
     reminders: ["07:30"],
     today: { value: 10, at: "07:30" },
+    reward: { pt: "Viagem de fim de semana", en: "Weekend trip", emoji: "✈️", days: 30 },
+    notes: [
+      {
+        back: 0,
+        pt: "Acordei cedo e meditei antes do café. Mente leve.",
+        en: "Woke up early and meditated before breakfast. Light mind.",
+      },
+      { back: 1, pt: "Dia corrido, mas fiz os 10 minutos.", en: "Busy day, but I got my 10 minutes in." },
+      {
+        back: 4,
+        pt: "Primeira vez que consegui focar sem olhar o relógio.",
+        en: "First time I focused without checking the clock.",
+      },
+      {
+        back: 9,
+        pt: "Comecei com 5 minutos. Já parece mais fácil.",
+        en: "Started with 5 minutes. Already feels easier.",
+      },
+    ],
   },
   {
     pt: "Treinar",
@@ -91,6 +115,7 @@ async function ensureUser(): Promise<string> {
 async function resetData(userId: string) {
   const habits = await prisma.habit.findMany({ where: { userId }, select: { id: true } });
   const ids = habits.map((h) => h.id);
+  await prisma.habitNote.deleteMany({ where: { habitId: { in: ids } } });
   await prisma.habitLog.deleteMany({ where: { habitId: { in: ids } } });
   await prisma.habit.deleteMany({ where: { id: { in: ids } } });
 }
@@ -120,8 +145,28 @@ async function seed(lang: Lang, themeMode: "DARK" | "LIGHT") {
         reminders: h.reminders,
         order,
         createdAt: created,
+        ...(h.reward
+          ? {
+              rewardTitle: lang === "en" ? h.reward.en : h.reward.pt,
+              rewardEmoji: h.reward.emoji,
+              rewardDays: h.reward.days,
+              rewardStartDate: addDays(today, -12),
+            }
+          : {}),
       },
     });
+    for (const note of h.notes ?? []) {
+      const date = addDays(today, -note.back);
+      await prisma.habitNote.create({
+        data: {
+          habitId: habit.id,
+          userId,
+          date,
+          text: lang === "en" ? note.en : note.pt,
+          createdAt: new Date(`${date}T0${8 + (note.back % 3)}:15:00-03:00`),
+        },
+      });
+    }
     const logs = [];
     // Sequência de 12 dias (ontem até 12 dias atrás) e histórico de 4 semanas com algumas falhas.
     for (let back = 1; back <= 35; back++) {
@@ -148,7 +193,9 @@ async function seed(lang: Lang, themeMode: "DARK" | "LIGHT") {
     });
     await prisma.habitLog.createMany({ data: logs });
   }
-  console.log(`Seed ok: ${EMAIL} (${lang}, ${themeMode}), ${HABITS.length} hábitos, hoje ${today}.`);
+  console.log(
+    `Seed ok: ${EMAIL} (${lang}, ${themeMode}), ${HABITS.length} hábitos (Meditar com presente e anotações), hoje ${today}.`,
+  );
 }
 
 async function cleanup() {
