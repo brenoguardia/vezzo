@@ -1,5 +1,5 @@
 # Trocar o idioma atualiza o app inteiro sem reabrir (regressão do i18n não reativo).
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 # Normaliza para português (o idioma fica salvo no perfil entre execuções).

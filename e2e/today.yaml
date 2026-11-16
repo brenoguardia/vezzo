@@ -1,6 +1,6 @@
 # Hoje: marcar/desmarcar, detalhe do hábito, concluir/desfazer e tela de sequência.
 # Depende do hábito "Dormir cedo" (criado no onboarding) e desfaz tudo o que marca.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

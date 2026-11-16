@@ -1,5 +1,5 @@
 # As quatro abas abrem e mostram o conteúdo esperado.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { AppState } from "react-native";
 import { useLocale } from "@/i18n/useLocale";
 import { registerBackgroundActions } from "@/lib/notifications/background";
+import { dismissStaleFeedback } from "@/lib/notifications/feedback";
 import { registerForPush } from "@/lib/notifications/push";
 import { rescheduleAll } from "@/lib/notifications/reschedule";
 import { configureNotificationHandler, registerCategory } from "@/lib/notifications/setup";
@@ -31,6 +32,7 @@ export function useNotificationRuntime(enabled: boolean) {
     void registerForPush();
     const app = AppState.addEventListener("change", (s) => {
       if (s !== "active") return;
+      void dismissStaleFeedback();
       void rescheduleAll();
       void registerForPush(); // permissão pode ter sido concedida nos Ajustes
     });

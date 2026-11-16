@@ -1,5 +1,5 @@
 # Lembrete com o app em segundo plano ou fechado. Uso: -e MODE=background|closed -e Y=28
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

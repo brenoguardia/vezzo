@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { Button, Card, Ring, Text, TodaySkeleton } from "@/components/ui";
 import { HabitDetailView } from "@/features/habits/HabitDetailView";
 import { HabitRow } from "@/features/habits/HabitRow";
-import { SyncStatus, useLoadingFirst } from "@/features/habits/SyncStatus";
+import { SyncStatus, useLoadingFirst, usePendingSyncMessage } from "@/features/habits/SyncStatus";
 import { statInputs, todayItems, todaySummary } from "@/features/habits/selectors";
 import { habitSubtitle } from "@/features/habits/subtitle";
 import { useToday } from "@/features/habits/useToday";
@@ -22,6 +22,7 @@ import { useProfileStore } from "@/store/profile";
 /** Aba Hoje (docs/05, tela 5): resumo do dia, frase motivacional e lista de hábitos agendados. */
 export default function Today() {
   const t = useT();
+  const pendingSync = usePendingSyncMessage();
   const router = useRouter();
   const locale = useLocale();
   const today = useToday();
@@ -51,15 +52,15 @@ export default function Today() {
   return (
     <SettingsShell aside={selected ? <HabitDetailView id={selected.id} /> : <WeekChartCard />}>
       <View style={styles.header}>
-        <Text variant="bodyMedium" tone="mute">
-          {t("home.today")}
+        <Text variant="bodyMedium" tone="mute" numberOfLines={1} accessibilityLiveRegion="polite">
+          {pendingSync ?? t("home.today")}
         </Text>
         <Text variant="screenTitle" accessibilityRole="header">
           {t("home.hello", { name })}
         </Text>
       </View>
 
-      <SyncStatus />
+      <SyncStatus inlinePending />
 
       {loadingFirst ? (
         <TodaySkeleton />

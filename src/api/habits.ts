@@ -1,10 +1,13 @@
 import { z } from "zod";
 import { apiFetch } from "@/api/client";
-import { type HabitDto, type HabitInput, habitDto } from "@/shared/schemas";
+import { type HabitCreate, type HabitDto, habitDto, type RewardInput } from "@/shared/schemas";
 
-export type HabitPatchInput = Partial<Omit<HabitInput, "templateSlug">> & { archived?: boolean };
+export type HabitPatchInput = Partial<Omit<HabitCreate, "templateSlug" | "reward">> & {
+  archived?: boolean;
+  reward?: RewardInput | null;
+};
 
-export function createHabit(input: HabitInput): Promise<HabitDto> {
+export function createHabit(input: HabitCreate): Promise<HabitDto> {
   return apiFetch("/v1/habits", habitDto, { method: "POST", body: JSON.stringify(input) });
 }
 

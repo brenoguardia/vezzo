@@ -1,5 +1,5 @@
 # Abre o app e passa pelo Dev Launcher (development build) se ele aparecer.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - launchApp:
     stopApp: true

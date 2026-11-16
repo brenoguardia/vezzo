@@ -25,21 +25,32 @@ export function useHydrating(): boolean {
 }
 
 /**
+ * Mensagem de alterações em envio ("Sincronizando…", ou "Sem conexão" depois de uma falha); `null` quando
+ * não há nada pendente. Quem tem uma linha própria para ela (Hoje) a usa no lugar dessa linha, em vez de
+ * inserir outra: uma linha que aparece e some a cada toque empurra a lista e desloca o alvo do próximo toque.
+ */
+export function usePendingSyncMessage(): string | null {
+  const t = useT();
+  const pending = useSyncStore((s) => s.queue.length > 0);
+  const failed = useSyncStore((s) => s.failed);
+  return pending ? t(failed ? "home.syncPending" : "home.syncing") : null;
+}
+
+/**
  * Avisos de sincronização das abas: alterações em envio ("Sincronizando…", ou "Sem conexão" depois
  * de uma falha) e a faixa de erro da última hidratação, com "Tentar de novo".
  */
-export function SyncStatus() {
+export function SyncStatus({ inlinePending = false }: { inlinePending?: boolean }) {
   const t = useT();
+  const pendingMessage = usePendingSyncMessage();
   const timeZone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
   const hydration = useHydrationStore((s) => s.status);
-  const pendingSync = useSyncStore((s) => s.queue.length > 0);
-  const syncFailed = useSyncStore((s) => s.failed);
 
   return (
     <>
-      {pendingSync ? (
+      {pendingMessage && !inlinePending ? (
         <Text variant="caption" tone="mute" accessibilityLiveRegion="polite">
-          {t(syncFailed ? "home.syncPending" : "home.syncing")}
+          {pendingMessage}
         </Text>
       ) : null}
       {hydration === "error" ? (

@@ -1,6 +1,6 @@
 # Layout dual (>= 600 pt de largura): o iPhone em paisagem já passa de 600 pt.
 # Lista + detalhe em Hoje, duas colunas em Progresso e lista + edição em Hábitos.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - setOrientation: LANDSCAPE_LEFT

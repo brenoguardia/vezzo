@@ -65,6 +65,21 @@ export const defaultsOf = (template: TemplateSeed): Selection[string] => ({
   days: [...template.defaultDays],
 });
 
+/** A atividade escolhida segue "aplicada" só enquanto nome, emoji e meta continuam os dela. */
+export function isTemplateApplied(
+  template: TemplateSeed,
+  values: { templateSlug?: string; name?: string; emoji?: string; goalUnit?: string; goalValue?: number },
+  locale: Locale,
+): boolean {
+  return (
+    values.templateSlug === template.slug &&
+    values.name === templateName(template, locale) &&
+    values.emoji === template.emoji &&
+    values.goalUnit === template.goalUnit &&
+    values.goalValue === template.defaultGoalValue
+  );
+}
+
 /** Chips pré-selecionados no design (docs/05, tela 4.2). */
 export const DEFAULT_SLUGS = ["beber-agua", "meditar", "ler", "treinar"] as const;
 

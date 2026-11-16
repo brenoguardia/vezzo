@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { buildOnboardingHabits, DEFAULT_SELECTION, findTemplate, formatGoal, stepGoal, stepSize } from "./onboarding";
+import {
+  buildOnboardingHabits,
+  DEFAULT_SELECTION,
+  findTemplate,
+  formatGoal,
+  isTemplateApplied,
+  stepGoal,
+  stepSize,
+} from "./onboarding";
 import { onboardingComplete } from "./schemas";
 
 describe("stepSize (docs/05: água 0,25 L; minutos 5; páginas 5; contagem 1)", () => {
@@ -81,5 +89,32 @@ describe("buildOnboardingHabits", () => {
   it("gera algo aceito pelo schema do servidor", () => {
     const habits = buildOnboardingHabits(DEFAULT_SELECTION, "pt-BR");
     expect(onboardingComplete.safeParse({ displayName: "Ana", habits }).success).toBe(true);
+  });
+});
+
+describe("isTemplateApplied", () => {
+  const water = findTemplate("beber-agua");
+  if (!water) throw new Error("template beber-agua ausente");
+  const applied = {
+    templateSlug: "beber-agua",
+    name: "Beber água",
+    emoji: water.emoji,
+    goalUnit: water.goalUnit,
+    goalValue: water.defaultGoalValue,
+  };
+
+  it("vale enquanto nome, emoji e meta são os da atividade", () => {
+    expect(isTemplateApplied(water, applied, "pt-BR")).toBe(true);
+    expect(isTemplateApplied(water, { ...applied, name: water.nameEn }, "en")).toBe(true);
+  });
+  it.each([
+    ["nome", { name: "Beber água 2" }],
+    ["emoji", { emoji: "🎯" }],
+    ["unidade", { goalUnit: "COUNT" }],
+    ["meta", { goalValue: 99 }],
+    ["outra atividade", { templateSlug: "meditar" }],
+    ["sem atividade", { templateSlug: undefined }],
+  ])("deixa de valer ao mudar %s", (_name, change) => {
+    expect(isTemplateApplied(water, { ...applied, ...change }, "pt-BR")).toBe(false);
   });
 });

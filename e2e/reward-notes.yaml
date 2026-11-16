@@ -1,0 +1,70 @@
+# Presente por meta e anotações em timeline: criar hábito com presente, ver o card no detalhe,
+# registrar uma anotação e abri-la na timeline. Cria o hábito "E2E Presente" (limpe com scripts/e2e-cleanup.ts).
+appId: ${APP_ID}
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-habits"
+- tapOn: "Novo hábito"
+- tapOn: "Ex.: Ler antes de dormir"
+- inputText: "E2E Presente"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Definir um presente"
+    centerElement: true
+# O interruptor é o segundo elemento com esse rótulo (o primeiro é o texto do cartão).
+- tapOn:
+    text: "Definir um presente"
+    index: 1
+- tapOn: "Ex.: Um iPhone novo"
+- inputText: "Viagem"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "30 dias"
+    centerElement: true
+- tapOn: "30 dias"
+- takeScreenshot: reward-form
+- scrollUntilVisible:
+    element: "Cancelar"
+    direction: UP
+- tapOn:
+    text: "Salvar"
+    point: "25%,50%" # o botão flutuante "Tools" do dev client cobre a ponta direita
+- extendedWaitUntil:
+    visible: "E2E Presente.*"
+    timeout: 10000
+# Detalhe: card do presente e anotações.
+- tapOn: "E2E Presente.*"
+- scrollUntilVisible:
+    element: "Faltam 30 dias"
+    centerElement: true
+- assertVisible: ".*Viagem"
+- takeScreenshot: reward-card
+- scrollUntilVisible:
+    element: "Nova anotação"
+    centerElement: true
+- assertVisible: "Nenhuma anotação ainda"
+- tapOn: "Nova anotação"
+- inputText: "Primeira anotação do E2E"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Salvar"
+    centerElement: true
+- tapOn: "Salvar"
+- extendedWaitUntil:
+    visible: "Primeira anotação do E2E"
+    timeout: 10000
+- takeScreenshot: notes-preview
+# Timeline completa.
+- scrollUntilVisible:
+    element: "Ver tudo"
+    centerElement: true
+- tapOn: "Ver tudo"
+- assertVisible: "Primeira anotação do E2E"
+- assertVisible: "Hoje"
+- takeScreenshot: notes-timeline
+- tapOn: "Excluir"
+- tapOn: "Confirmar exclusão"
+- extendedWaitUntil:
+    visible: "Nenhuma anotação ainda"
+    timeout: 10000

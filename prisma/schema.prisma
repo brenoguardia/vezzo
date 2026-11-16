@@ -89,6 +89,14 @@ model Habit {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   logs         HabitLog[]
+  notes        HabitNote[]
+
+  // Presente por meta (sequência sem falhas). Progresso é derivado dos logs; só o resgate é gravado.
+  rewardTitle     String?
+  rewardEmoji     String?
+  rewardDays      Int?
+  rewardStartDate String?
+  rewardClaimedAt DateTime?
 
   @@index([userId, archivedAt])
 }
@@ -110,6 +118,21 @@ model HabitLog {
 
   @@unique([habitId, date])
   @@index([userId, date])
+}
+
+model HabitNote {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  habitId   String   @db.ObjectId
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId    String
+  // Dia (YYYY-MM-DD, fuso do perfil) a que a anotação se refere; não é a hora em que foi escrita.
+  date      String
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([habitId, date, createdAt])
+  @@index([userId])
 }
 
 model PushToken {

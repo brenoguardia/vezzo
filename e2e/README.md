@@ -1,11 +1,11 @@
 # E2E (Maestro)
 
-Fluxos que rodam no simulador iOS com o development build (`com.itbuilder.vezzo`).
+Fluxos que rodam no simulador iOS ou no emulador Android com o development build. O identificador do app vem de `-e APP_ID=...` (build de dev: `com.itbuilder.vezzo.development`; produção: `com.itbuilder.vezzo`).
 
 ## Pré-requisitos
 - Maestro (`brew tap mobile-dev-inc/tap && brew install mobile-dev-inc/tap/maestro`) e Java.
 - Servidor de desenvolvimento no ar (`bunx expo start --dev-client`) e o simulador aberto.
-- Sessão iniciada no app (os fluxos de `auth` partem de deslogado e fazem o próprio login).
+- Sessão iniciada no app (e, em `today.yaml`, o hábito "Dormir cedo" criado no onboarding) (os fluxos de `auth` partem de deslogado e fazem o próprio login).
 
 ## Fluxos
 | Arquivo | Cobre |
@@ -13,6 +13,7 @@ Fluxos que rodam no simulador iOS com o development build (`com.itbuilder.vezzo`
 | `tabs.yaml` | as 4 abas |
 | `today.yaml` | marcar/desmarcar, detalhe, concluir/desfazer, sequência |
 | `habit-lifecycle.yaml` | criar, persistir após reabrir, editar, arquivar, desarquivar |
+| `reward-notes.yaml` | hábito com presente por meta (card de progresso) e anotações (criar, timeline, excluir) |
 | `progress.yaml` | semana, mês e ano |
 | `profile-language.yaml` | idioma muda no app inteiro sem reabrir |
 | `profile-screens.yaml` | Tema, Testar lembrete e Excluir conta abrem |
@@ -24,8 +25,8 @@ Não cobertos: cadastro, login, Apple/Google e recuperação de senha (exigem cr
 
 ## Rodar
 ```
-maestro test e2e/tabs.yaml
-maestro test e2e            # todos (os arquivos que começam com _ são auxiliares)
+maestro test -e APP_ID=com.itbuilder.vezzo.development e2e/tabs.yaml
+maestro test -e APP_ID=com.itbuilder.vezzo.development e2e   # todos (os arquivos que começam com _ são auxiliares)
 ```
 As capturas vão para `e2e/.shots/` (ignoradas pelo git).
 
@@ -39,7 +40,7 @@ Os fluxos rodam contra a conta logada e o banco de desenvolvimento. `habit-lifec
 - A barra de abas flutuante cobre o fim das listas: use `centerElement: true` em `scrollUntilVisible` antes de tocar.
 
 ## Android (emulador)
-- Conecte ao Metro com `adb reverse tcp:8081 tcp:8081` e rode com `maestro --device emulator-5554 test ...`.
+- Conecte ao Metro com `adb reverse tcp:8081 tcp:8081` e rode com `maestro --device emulator-5554 test -e APP_ID=com.itbuilder.vezzo.development ...`.
 - `android/notif-permission.yaml` pede a permissão de notificação (Android 13+) e aceita o diálogo.
 - `android/notif-actions.yaml -e MODE=foreground|background -e ACTION=Concluir|Pular|Adiar` dispara o lembrete de teste e age pela barra de notificações (no Android o Maestro enxerga a interface do sistema, ao contrário do iOS). **Não** toque no corpo da notificação antes: abre o detalhe do hábito e o próximo "Concluir" cairia no botão do app.
-- Com o app **encerrado**: `stopApp` faz *force-stop* e o Android cancela os alarmes agendados; use `adb shell am kill com.itbuilder.vezzo` com o app em segundo plano. No dev client a ação acorda o app mas o JS não carrega (sem Metro), então esse caso só se valida em build Release.
+- Com o app **encerrado**: `stopApp` faz *force-stop* e o Android cancela os alarmes agendados; use `adb shell am kill com.itbuilder.vezzo.development` com o app em segundo plano. No dev client a ação acorda o app mas o JS não carrega (sem Metro), então esse caso só se valida em build Release.

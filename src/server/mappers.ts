@@ -1,5 +1,5 @@
-import type { Habit, HabitLog, Profile } from "@prisma/client";
-import type { HabitDto, LogDto, ProfileDto } from "@/shared/schemas";
+import type { Habit, HabitLog, HabitNote, Profile } from "@prisma/client";
+import { DEFAULT_REWARD_EMOJI, type HabitDto, type LogDto, type NoteDto, type ProfileDto } from "@/shared/schemas";
 
 export const toProfileDto = (p: Profile): ProfileDto => ({
   displayName: p.displayName,
@@ -24,6 +24,16 @@ export const toHabitDto = (h: Habit): HabitDto => ({
   order: h.order,
   archivedAt: h.archivedAt ? h.archivedAt.toISOString() : null,
   createdAt: h.createdAt.toISOString(),
+  reward:
+    h.rewardTitle && h.rewardDays && h.rewardStartDate
+      ? {
+          title: h.rewardTitle,
+          emoji: h.rewardEmoji ?? DEFAULT_REWARD_EMOJI,
+          days: h.rewardDays,
+          startDate: h.rewardStartDate,
+          claimedAt: h.rewardClaimedAt ? h.rewardClaimedAt.toISOString() : null,
+        }
+      : null,
 });
 
 export const toLogDto = (l: HabitLog): LogDto => ({
@@ -35,4 +45,13 @@ export const toLogDto = (l: HabitLog): LogDto => ({
   source: l.source,
   completedAt: l.completedAt ? l.completedAt.toISOString() : null,
   clientId: l.clientId,
+});
+
+export const toNoteDto = (n: HabitNote): NoteDto => ({
+  id: n.id,
+  habitId: n.habitId,
+  date: n.date,
+  text: n.text,
+  createdAt: n.createdAt.toISOString(),
+  updatedAt: n.updatedAt.toISOString(),
 });

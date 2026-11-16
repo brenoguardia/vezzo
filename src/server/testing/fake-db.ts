@@ -97,11 +97,22 @@ class FakeModel {
   async create({ data }: { data: Row }) {
     return this.insert(data);
   }
-  async findMany({ where, orderBy }: { where?: Where; orderBy?: OrderBy } = {}) {
-    return sortRows(
+  async findMany({
+    where,
+    orderBy,
+    skip = 0,
+    take,
+  }: {
+    where?: Where;
+    orderBy?: OrderBy;
+    skip?: number;
+    take?: number;
+  } = {}) {
+    const sorted = sortRows(
       this.rows.filter((r) => matches(r, where)),
       orderBy,
-    ).map((r) => ({ ...r }));
+    );
+    return sorted.slice(skip, take === undefined ? undefined : skip + take).map((r) => ({ ...r }));
   }
   async findFirst({ where, orderBy }: { where?: Where; orderBy?: OrderBy } = {}) {
     return (await this.findMany({ where, orderBy }))[0] ?? null;
@@ -147,6 +158,7 @@ export type FakeDb = {
   habitTemplate: FakeModel;
   habit: FakeModel;
   habitLog: FakeModel;
+  habitNote: FakeModel;
   pushToken: FakeModel;
   user: FakeModel;
   session: FakeModel;
@@ -191,6 +203,7 @@ export function createFakeDb(): FakeDb {
         appliedClientIds: [],
       }),
     }),
+    habitNote: new FakeModel({ defaults: () => ({ createdAt: new Date() }) }),
     pushToken: new FakeModel({ unique: [["token"]] }),
     user: new FakeModel({ unique: [["email"]] }),
     session: new FakeModel(),

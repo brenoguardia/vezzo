@@ -1,5 +1,5 @@
 # Lembretes: tela de debug agenda um lembrete de teste e mostra o aviso (app em primeiro plano).
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

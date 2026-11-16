@@ -39,6 +39,7 @@ export function EditHabitPanel({ id, onSaved, onCancel, onArchived }: Props) {
         days: habit.days,
         reminders: habit.reminders,
         quickActions: habit.quickActions,
+        reward: habit.reward ? { title: habit.reward.title, emoji: habit.reward.emoji, days: habit.reward.days } : null,
       }}
       onCancel={onCancel}
       onSubmit={async (values) => {

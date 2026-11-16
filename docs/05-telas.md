@@ -26,7 +26,7 @@ Detalhadas em `04-autenticacao.md`. Layout: seta "‹ Voltar" 700/14 `mute`; tí
 
 ## 4. Onboarding
 **4.1 Nome** (barra 1/3): título 800/36 "Como você quer ser chamado?", subtítulo, campo de texto grande 700/34 com sublinhado 2 `acc` e cursor. Botão "Continuar". Mín. 1, máx. 30 caracteres.
-**4.2 Atividades** (2/3): título 800/32 "Quais hábitos você quer construir?". Seções por categoria (rótulo 700/11 maiúsculas, letter-spacing 1, `mute`) com chips. Botão "Continuar · N" (N = selecionados; mínimo 1). Chips pré-selecionados no design: água, meditar, ler, treinar.
+**4.2 Atividades** (2/3): título 800/32 "Quais hábitos você quer construir?". Seções por categoria (rótulo 700/11 maiúsculas, letter-spacing 1, `mute`) com chips. Botão "Continuar" (desabilitado sem nenhum hábito selecionado; mínimo 1). Chips pré-selecionados no design: água, meditar, ler, treinar.
 **4.3 Metas** (3/3): título "Defina suas metas". Um cartão por hábito (raio 20, padding 16×18): emoji tile 36 + nome 700/16; à direita stepper (botões 28 redondos, valor 700/15, "−" com borda, "+" em `acc`); abaixo 7 pílulas de dia (S T Q Q S S D; padding 7×0, raio 10, 700/11; ativa `acc`/`accInk`, inativa `line`/`mute`). Botão "Começar" chama `POST /v1/onboarding/complete`.
 Passos do stepper por unidade: água 0,25 L; minutos 5; páginas 5; contagem 1.
 

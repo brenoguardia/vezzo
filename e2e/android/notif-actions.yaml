@@ -1,5 +1,5 @@
-# Android: dispara o lembrete de teste e age pela barra de notificações. -e MODE=foreground|background|closed -e ACTION=Concluir|Pular|Adiar
-appId: com.itbuilder.vezzo
+# Android: dispara o lembrete de teste, age pela barra de notificações e confere que ela fecha e confirma. -e MODE=foreground|background|closed -e ACTION=Concluir|Pular|Adiar
+appId: ${APP_ID}
 ---
 - launchApp
 - tapOn:
@@ -31,8 +31,35 @@ appId: com.itbuilder.vezzo
     optional: true
 - takeScreenshot: and-${MODE}-shade
 - tapOn: "${ACTION}.*"
-- extendedWaitUntil:
-    visible: "__espera__"
-    timeout: 2500
-    optional: true
-- takeScreenshot: and-${MODE}-after
+# A notificação fecha na hora (no Android os botões não fecham sozinhos) e uma confirmação curta aparece.
+# Com o app aberto a confirmação é um toast de 3,5 s, escondido enquanto a bandeja está aberta: fecha a bandeja
+# logo e confere o toast antes de qualquer outra espera; só depois reabre a bandeja para ver que o lembrete saiu.
+- runFlow:
+    when:
+      true: ${MODE == 'foreground'}
+    commands:
+      - pressKey: back
+      - extendedWaitUntil:
+          visible: "Concluído.*|Pulado.*|Lembrete adiado.*"
+          timeout: 3000
+      - takeScreenshot: and-foreground-confirm
+      - swipe:
+          start: "50%, 1%"
+          end: "50%, 70%"
+      - extendedWaitUntil:
+          notVisible: "Teste de lembrete.*"
+          timeout: 4000
+      - pressKey: back
+# Em segundo plano a confirmação é uma notificação sem botões, visível na bandeja que já está aberta.
+- runFlow:
+    when:
+      true: ${MODE != 'foreground'}
+    commands:
+      - extendedWaitUntil:
+          visible: "Concluído.*|Pulado.*|Lembrete adiado.*"
+          timeout: 4000
+      - extendedWaitUntil:
+          notVisible: "Teste de lembrete.*"
+          timeout: 4000
+      - takeScreenshot: and-${MODE}-confirm
+      - pressKey: back # fecha a bandeja e deixa o aparelho limpo para o próximo fluxo
