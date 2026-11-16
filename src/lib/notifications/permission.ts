@@ -7,11 +7,23 @@ import {
 import { Platform } from "react-native";
 
 export const HABITS_CHANNEL = "habits";
+export const FEEDBACK_CHANNEL = "feedback";
 
 /** Android: o canal precisa existir antes de pedir permissão (13+) e antes de agendar. */
 export async function ensureChannel(): Promise<void> {
   if (Platform.OS !== "android") return;
   await setNotificationChannelAsync(HABITS_CHANNEL, { name: HABITS_CHANNEL, importance: AndroidImportance.DEFAULT });
+}
+
+/** Confirmação de ação rápida: aparece como banner, mas sem som nem vibração. */
+export async function ensureFeedbackChannel(): Promise<void> {
+  if (Platform.OS !== "android") return;
+  await setNotificationChannelAsync(FEEDBACK_CHANNEL, {
+    name: FEEDBACK_CHANNEL,
+    importance: AndroidImportance.HIGH,
+    sound: null,
+    enableVibrate: false,
+  });
 }
 
 export type ReminderPermission = "granted" | "denied";

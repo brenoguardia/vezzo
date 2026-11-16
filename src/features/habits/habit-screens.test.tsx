@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import { createHabit, deleteHabit, unarchiveHabit } from "@/api/habits";
 import Habits from "@/app/(tabs)/habits";
 import Today from "@/app/(tabs)/home";
@@ -142,6 +142,18 @@ describe("Hoje", () => {
     await render(<Today />);
     expect(screen.getByText("Sincronizando suas alterações…")).toBeTruthy();
     expect(screen.queryByText(/Sem conexão/)).toBeNull();
+  });
+
+  it("o aviso de envio ocupa a linha do rótulo 'Hoje', sem inserir outra linha que empurre a lista", async () => {
+    useHabitsStore.getState().hydrate([habit("c".repeat(24))], []);
+    await render(<Today />);
+    expect(screen.getByText("Hoje")).toBeTruthy();
+    await act(async () => useHabitsStore.getState().toggleDone("c".repeat(24), "2026-11-10"));
+    expect(screen.getByText("Sincronizando suas alterações…")).toBeTruthy();
+    expect(screen.queryByText("Hoje")).toBeNull();
+    await act(async () => useSyncStore.setState({ queue: [] }));
+    expect(screen.getByText("Hoje")).toBeTruthy();
+    expect(screen.queryByText("Sincronizando suas alterações…")).toBeNull();
   });
 
   it("só afirma 'Sem conexão' depois de um envio que falhou", async () => {
@@ -303,5 +315,28 @@ describe("Novo hábito", () => {
     await render(<NewHabit />);
     await fireEvent.press(screen.getByText(/Beber água/));
     await waitFor(() => expect(screen.getByDisplayValue("Beber água")).toBeTruthy());
+  });
+
+  it("a atividade tocada fica selecionada e desmarca ao editar o nome", async () => {
+    const selected = (label: RegExp) => screen.getByRole("button", { name: label }).props.accessibilityState.selected;
+    await render(<NewHabit />);
+    expect(selected(/Beber água/)).toBe(false);
+    await fireEvent.press(screen.getByText(/Beber água/));
+    await waitFor(() => expect(selected(/Beber água/)).toBe(true));
+    expect(selected(/Meditar/)).toBe(false);
+    await fireEvent.changeText(screen.getByDisplayValue("Beber água"), "Beber mais água");
+    await waitFor(() => expect(selected(/Beber água/)).toBe(false));
+  });
+
+  it("envia o templateSlug da atividade escolhida", async () => {
+    mockCreate.mockResolvedValue(habit("d".repeat(24), { name: "Beber água" }));
+    await render(<NewHabit />);
+    await fireEvent.press(screen.getByText(/Beber água/));
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Salvar" }).props.accessibilityState.disabled).toBe(false),
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(mockCreate).toHaveBeenCalled());
+    expect(mockCreate.mock.calls[0]?.[0]).toMatchObject({ templateSlug: "beber-agua", name: "Beber água" });
   });
 });

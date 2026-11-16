@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { emoji, goalUnit, hhmm, objectId } from "./common";
+import { rewardDto, rewardInput } from "./reward";
 
 const habitFields = z.object({
   name: z.string().trim().min(1).max(40),
@@ -18,11 +19,16 @@ export const habitInput = habitFields.extend({
 });
 export type HabitInput = z.infer<typeof habitInput>;
 
+/** Criação avulsa (POST e formulário): o onboarding continua usando `habitInput`, sem presente. */
+export const habitCreate = habitInput.extend({ reward: rewardInput.nullish() });
+export type HabitCreate = z.infer<typeof habitCreate>;
+
 /** PATCH: sem defaults, para não sobrescrever campos ausentes. */
 export const habitPatch = habitFields
   .partial()
   // `archived: false` desarquiva; `true` arquiva (equivale ao DELETE sem `hard`).
-  .extend({ archived: z.boolean().optional() })
+  // `reward: null` remove o presente.
+  .extend({ archived: z.boolean().optional(), reward: rewardInput.nullable().optional() })
   .refine((v) => Object.keys(v).length > 0, "Informe ao menos um campo");
 
 export const habitListQuery = z.object({
@@ -52,6 +58,7 @@ export const habitDto = z.object({
   order: z.number(),
   archivedAt: z.string().nullable(),
   createdAt: z.string(),
+  reward: rewardDto.nullable().optional(),
 });
 export type HabitDto = z.infer<typeof habitDto>;
 export const habitList = z.object({ habits: z.array(habitDto) });

@@ -9,11 +9,12 @@ import { useLocale } from "@/i18n/useLocale";
 import { useT } from "@/i18n/useT";
 import { useTheme } from "@/lib/useTheme";
 import { CATEGORIES, GOAL_UNITS, type GoalUnit } from "@/shared/categories";
-import { defaultsOf, formatGoal, stepGoal, stepSize, templateName } from "@/shared/onboarding";
-import { habitInput } from "@/shared/schemas";
+import { defaultsOf, formatGoal, isTemplateApplied, stepGoal, stepSize, templateName } from "@/shared/onboarding";
+import { habitCreate } from "@/shared/schemas";
+import { RewardFields } from "./RewardFields";
 
-export type HabitFormValues = z.input<typeof habitInput>;
-export type HabitFormOutput = z.output<typeof habitInput>;
+export type HabitFormValues = z.input<typeof habitCreate>;
+export type HabitFormOutput = z.output<typeof habitCreate>;
 
 export const BLANK_HABIT: HabitFormValues = {
   name: "",
@@ -23,6 +24,7 @@ export const BLANK_HABIT: HabitFormValues = {
   days: [0, 1, 2, 3, 4, 5, 6],
   reminders: [],
   quickActions: true,
+  reward: null,
 };
 
 interface Props {
@@ -36,13 +38,13 @@ interface Props {
   extra?: ReactNode;
 }
 
-/** Criar/editar hábito (docs/05, tela 8): React Hook Form + `habitInput`. Erros do servidor viram `root`. */
+/** Criar/editar hábito (docs/05, tela 8): React Hook Form + `habitCreate`. Erros do servidor viram `root`. */
 export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit, onCancel, title, extra }: Props) {
   const t = useT();
   const theme = useTheme();
   const locale = useLocale();
   const form = useForm<HabitFormValues, unknown, HabitFormOutput>({
-    resolver: zodResolver(habitInput),
+    resolver: zodResolver(habitCreate),
     mode: "onChange",
     defaultValues,
   });
@@ -50,6 +52,7 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
   const unit = useWatch({ control, name: "goalUnit" }) as GoalUnit;
   const goal = useWatch({ control, name: "goalValue" });
   const step = stepSize(unit);
+  const [templateSlug, name, emoji] = useWatch({ control, name: ["templateSlug", "name", "emoji"] });
 
   const submit = handleSubmit(async (values) => {
     try {
@@ -92,6 +95,11 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
                   key={tpl.slug}
                   label={templateName(tpl, locale)}
                   emoji={tpl.emoji}
+                  selected={isTemplateApplied(
+                    tpl,
+                    { templateSlug, name, emoji, goalUnit: unit, goalValue: goal },
+                    locale,
+                  )}
                   onPress={() =>
                     apply({
                       name: templateName(tpl, locale),
@@ -229,6 +237,8 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
             </Card>
           )}
         />
+
+        <RewardFields control={control} />
 
         {formState.errors.root?.message ? (
           <Text variant="caption" tone="danger" accessibilityRole="alert">

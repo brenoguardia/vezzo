@@ -1,11 +1,14 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
+import { AppState } from "react-native";
+import { setLocale } from "@/i18n";
 import { logKey } from "@/shared/logs";
 import type { HabitDto } from "@/shared/schemas";
 import { useHabitsStore } from "@/store/habits";
 import { useSnoozeStore } from "@/store/snooze";
 import { useSyncStore } from "@/store/sync";
+import { useToastStore } from "@/store/toast";
 import { handleNotificationResponse } from "./actions";
 
 jest.mock("expo-notifications", () => ({
@@ -14,6 +17,14 @@ jest.mock("expo-notifications", () => ({
   scheduleNotificationAsync: jest.fn(async () => "snooze-id"),
   cancelScheduledNotificationAsync: jest.fn(async () => {}),
   getAllScheduledNotificationsAsync: jest.fn(async () => []),
+  dismissNotificationAsync: jest.fn(async () => {}),
+  getPresentedNotificationsAsync: jest.fn(async () => []),
+  setNotificationChannelAsync: jest.fn(async () => {}),
+  AndroidImportance: { HIGH: 4, DEFAULT: 3 },
+}));
+jest.mock("expo-haptics", () => ({
+  notificationAsync: jest.fn(async () => {}),
+  NotificationFeedbackType: { Success: "success", Warning: "warning" },
 }));
 jest.mock("expo-crypto", () => {
   let n = 0;
@@ -26,7 +37,10 @@ const N = Notifications as unknown as {
   scheduleNotificationAsync: jest.Mock<(arg: unknown) => Promise<string>>;
   cancelScheduledNotificationAsync: jest.Mock<(id: string) => Promise<void>>;
   getAllScheduledNotificationsAsync: jest.Mock<() => Promise<unknown[]>>;
+  dismissNotificationAsync: jest.Mock<(id: string) => Promise<void>>;
 };
+const setAppState = (state: "active" | "background") =>
+  Object.defineProperty(AppState, "currentState", { value: state, configurable: true });
 
 const ID = "507f1f77bcf86cd799439011";
 const NOW = new Date("2026-11-10T15:00:00Z");
@@ -68,6 +82,8 @@ beforeEach(async () => {
   useSnoozeStore.getState().clear();
   useSyncStore.setState({ queue: [] });
   N.getAllScheduledNotificationsAsync.mockResolvedValue([]);
+  useToastStore.getState().hide();
+  setAppState("active");
 });
 
 describe("COMPLETE", () => {
@@ -150,6 +166,81 @@ describe("robustez", () => {
     const r = response("SNOOZE_1H");
     expect(await handleNotificationResponse(r, undefined, NOW)).toBe("snoozed");
     expect(await handleNotificationResponse(r, undefined, NOW)).toBe("ignored");
+    expect(N.scheduleNotificationAsync).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("fechar a notificação e confirmar", () => {
+  beforeEach(() => setLocale("pt-BR"));
+
+  it.each(["COMPLETE", "SKIP", "SNOOZE_1H"])("%s fecha a notificação tocada", async (action) => {
+    const r = response(action);
+    await handleNotificationResponse(r, undefined, NOW);
+    expect(N.dismissNotificationAsync).toHaveBeenCalledWith(r.notification.request.identifier);
+  });
+
+  it("fecha antes de esperar storage, hidratação ou rede", async () => {
+    const order: string[] = [];
+    N.dismissNotificationAsync.mockImplementationOnce(async () => {
+      order.push("dismiss");
+    });
+    const getItem = jest.spyOn(AsyncStorage, "getItem").mockImplementationOnce(async () => {
+      order.push("storage");
+      return null;
+    });
+    await handleNotificationResponse(response("COMPLETE"), undefined, NOW);
+    getItem.mockRestore();
+    expect(order).toEqual(["dismiss", "storage"]);
+  });
+
+  it("o toque no corpo não fecha por conta própria (abre o hábito)", async () => {
+    await handleNotificationResponse(response("expo.modules.notifications.actions.DEFAULT"), jest.fn(), NOW);
+    expect(N.dismissNotificationAsync).not.toHaveBeenCalled();
+  });
+
+  it("com o app aberto, confirma por toast", async () => {
+    await handleNotificationResponse(response("COMPLETE"), undefined, NOW);
+    expect(useToastStore.getState().message).toBe("Concluído: Ler");
+    await handleNotificationResponse(response("SKIP"), undefined, NOW);
+    expect(useToastStore.getState().message).toBe("Pulado hoje: Ler");
+    await handleNotificationResponse(response("SNOOZE_1H"), undefined, NOW);
+    expect(useToastStore.getState().message).toBe("Lembrete adiado em 1h: Ler");
+  });
+
+  it("em segundo plano, confirma com uma notificação curta, sem botões, e a apaga sozinha", async () => {
+    jest.useFakeTimers();
+    try {
+      setAppState("background");
+      N.scheduleNotificationAsync.mockResolvedValue("feedback-id");
+      await handleNotificationResponse(response("COMPLETE"), undefined, NOW);
+      await jest.advanceTimersByTimeAsync(0);
+      const shown = N.scheduleNotificationAsync.mock.calls.map((c) => c[0] as { content: Record<string, unknown> });
+      const feedback = shown.find((c) => (c.content.data as { kind?: string })?.kind === "feedback");
+      expect(feedback?.content).toMatchObject({ title: "Concluído: Ler", sound: false });
+      expect(feedback?.content.categoryIdentifier).toBeUndefined();
+      expect(useToastStore.getState().message).toBeNull();
+      await jest.advanceTimersByTimeAsync(4000);
+      expect(N.dismissNotificationAsync).toHaveBeenCalledWith("feedback-id");
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("avisa quando o limite de adiamentos do dia foi atingido", async () => {
+    for (let i = 0; i < 3; i++) await handleNotificationResponse(response("SNOOZE_1H"), undefined, NOW);
+    expect(await handleNotificationResponse(response("SNOOZE_1H"), undefined, NOW)).toBe("snooze-limit");
+    expect(useToastStore.getState().message).toBe("Limite de adiamentos de hoje atingido: Ler");
+  });
+
+  it("entregas simultâneas da mesma resposta gravam e adiam uma só vez", async () => {
+    const r = response("SNOOZE_1H");
+    const results = await Promise.all([
+      handleNotificationResponse(r, undefined, NOW),
+      handleNotificationResponse(r, undefined, NOW),
+      handleNotificationResponse(r, undefined, NOW),
+    ]);
+    expect(results.filter((o) => o === "snoozed")).toHaveLength(1);
+    // Só o adiamento: com o app aberto a confirmação é toast, não notificação.
     expect(N.scheduleNotificationAsync).toHaveBeenCalledTimes(1);
   });
 });

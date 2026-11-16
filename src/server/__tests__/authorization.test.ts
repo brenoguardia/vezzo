@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DELETE as deleteAccount } from "@/app/api/v1/account+api";
 import { GET as getCatalog } from "@/app/api/v1/catalog+api";
+import { PATCH as editNote, DELETE as removeNote } from "@/app/api/v1/habits/[id]/notes/[noteId]+api";
+import { POST as addNote, GET as listNotes } from "@/app/api/v1/habits/[id]/notes/index+api";
+import { POST as claimReward } from "@/app/api/v1/habits/[id]/reward/claim+api";
+import { GET as getReward } from "@/app/api/v1/habits/[id]/reward+api";
 import { PATCH as editHabit, DELETE as removeHabit } from "@/app/api/v1/habits/[id]+api";
 import { POST as createHabit, GET as listHabits } from "@/app/api/v1/habits/index+api";
 import { POST as batchLogs } from "@/app/api/v1/logs/batch+api";
@@ -31,6 +35,12 @@ describe("sem sessão, toda rota /v1 responde 401", () => {
     ["POST habits", createHabit, "POST", "/api/v1/habits"],
     ["PATCH habit", editHabit, "PATCH", `/api/v1/habits/${id}`],
     ["DELETE habit", removeHabit, "DELETE", `/api/v1/habits/${id}`],
+    ["GET reward", getReward, "GET", `/api/v1/habits/${id}/reward`],
+    ["POST reward/claim", claimReward, "POST", `/api/v1/habits/${id}/reward/claim`],
+    ["GET notes", listNotes, "GET", `/api/v1/habits/${id}/notes`],
+    ["POST notes", addNote, "POST", `/api/v1/habits/${id}/notes`],
+    ["PATCH note", editNote, "PATCH", `/api/v1/habits/${id}/notes/${id}`],
+    ["DELETE note", removeNote, "DELETE", `/api/v1/habits/${id}/notes/${id}`],
     ["GET logs", listLogs, "GET", "/api/v1/logs?from=2026-11-01&to=2026-11-02"],
     ["PUT logs", putLog, "PUT", "/api/v1/logs"],
     ["POST logs/batch", batchLogs, "POST", "/api/v1/logs/batch"],

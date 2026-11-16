@@ -31,6 +31,13 @@ interface SyncState {
   clear: () => void;
 }
 
+/**
+ * Sobe a cada mudança local (enqueue) e a cada lote aplicado pelo servidor. Quem baixa um snapshot
+ * (hidratação) compara antes e depois: se mudou, o snapshot pode ser mais antigo que o estado local.
+ */
+let epoch = 0;
+export const syncEpoch = () => epoch;
+
 let flushing: Promise<boolean> | null = null;
 let failures = 0;
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -47,6 +54,7 @@ export const useSyncStore = create<SyncState>()(
       lastSyncAt: undefined,
       failed: false,
       enqueue: (item) => {
+        epoch += 1;
         set((s) => ({
           queue: [...s.queue.filter((q) => !(q.habitId === item.habitId && q.date === item.date)), item],
         }));
@@ -64,6 +72,7 @@ export const useSyncStore = create<SyncState>()(
               set((s) => ({
                 queue: s.queue.filter((q) => !sent.has(q.clientId)),
               }));
+              epoch += 1;
               if (result.applied.length) listeners.forEach((fn) => fn(result.applied));
             }
             failures = 0;

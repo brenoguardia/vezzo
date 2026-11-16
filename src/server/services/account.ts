@@ -17,6 +17,7 @@ export async function deleteAccount(
     throw new ApiError("REAUTH_REQUIRED", "Entre novamente para excluir a conta.");
   }
   await db.$transaction(async (tx) => {
+    await tx.habitNote.deleteMany({ where: { userId } });
     await tx.habitLog.deleteMany({ where: { userId } });
     await tx.habit.deleteMany({ where: { userId } });
     await tx.pushToken.deleteMany({ where: { userId } });

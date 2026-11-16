@@ -3,9 +3,12 @@ import { useMemo } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Button, Card, EmojiTile, HabitDetailSkeleton, Text } from "@/components/ui";
 import { cellOpacity, lastFourWeeks, quickAmounts } from "@/features/habits/detail";
+import { RewardCard } from "@/features/habits/RewardCard";
 import { useHydrating } from "@/features/habits/SyncStatus";
 import { statInputs } from "@/features/habits/selectors";
+import { useRewardProgress } from "@/features/habits/useRewardProgress";
 import { useToday } from "@/features/habits/useToday";
+import { NotesCard } from "@/features/notes/NotesCard";
 import { useLocale } from "@/i18n/useLocale";
 import { useT } from "@/i18n/useT";
 import { DEFAULT_TIMEZONE } from "@/lib/habit-stats";
@@ -30,6 +33,8 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
   const logs = useHabitsStore((s) => s.logs);
   const hydrating = useHydrating();
   const { addValue, toggleDone, skip } = useHabitsStore.getState();
+
+  const { progress, error: rewardError, claiming, claim } = useRewardProgress(habit, today);
 
   const streak = useMemo(() => {
     if (!habit) return 0;
@@ -121,6 +126,17 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
         </View>
       </Card>
 
+      {habit.reward ? (
+        <RewardCard
+          habit={habit}
+          reward={habit.reward}
+          progress={progress}
+          error={rewardError}
+          claiming={claiming}
+          onClaim={() => void claim()}
+        />
+      ) : null}
+
       <Text variant="sectionTitle" accessibilityRole="header">
         {t("habit.last4weeks")}
       </Text>
@@ -159,6 +175,8 @@ export function HabitDetailView({ id }: { id: string | undefined }) {
           </Text>
         </Card>
       </View>
+
+      <NotesCard habitId={habit.id} today={today} />
     </>
   );
 }

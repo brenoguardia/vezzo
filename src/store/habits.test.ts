@@ -26,6 +26,17 @@ const habit = (over: Partial<HabitDto> = {}): HabitDto => ({
   ...over,
 });
 const D = "2026-11-10";
+const serverLog = (over: Partial<LogDto> = {}): LogDto => ({
+  id: "507f1f77bcf86cd799439099",
+  habitId: ID,
+  date: D,
+  value: 2.5,
+  status: "DONE",
+  source: "APP",
+  completedAt: "2026-11-10T12:12:00.000Z",
+  clientId: null,
+  ...over,
+});
 const state = () => useHabitsStore.getState();
 const queue = () => useSyncStore.getState().queue;
 
@@ -131,6 +142,22 @@ describe("mergeServerLogs", () => {
     state().addValue(ID, D, 1);
     state().mergeServerLogs([server()]);
     expect(state().logs[logKey(ID, D)]).toMatchObject({ status: "PENDING", value: 1 });
+  });
+});
+
+describe("hydrate", () => {
+  it("não sobrescreve log com mudança local ainda na fila", () => {
+    state().toggleDone(ID, D); // DONE local, na fila
+    state().toggleDone(ID, D); // desfez: PENDING local, na fila
+    state().hydrate([habit()], [serverLog({ status: "DONE", value: 2.5 })]);
+    expect(state().logs[logKey(ID, D)]).toMatchObject({ status: "PENDING", value: 0 });
+  });
+
+  it("sem fila, o snapshot do servidor vence", () => {
+    state().toggleDone(ID, D);
+    useSyncStore.setState({ queue: [] });
+    state().hydrate([habit()], [serverLog({ status: "PENDING", value: 0 })]);
+    expect(state().logs[logKey(ID, D)]).toMatchObject({ status: "PENDING", value: 0 });
   });
 });
 

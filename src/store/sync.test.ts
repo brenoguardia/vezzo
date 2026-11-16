@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { LogUpsert } from "@/shared/schemas";
-import { backoffDelay, useSyncStore } from "./sync";
+import { backoffDelay, syncEpoch, useSyncStore } from "./sync";
 
 const mockPost = jest.fn<(items: LogUpsert[]) => Promise<{ applied: unknown[]; rejected: unknown[] }>>();
 jest.mock("@/api/logs", () => ({ postLogBatch: (items: LogUpsert[]) => mockPost(items) }));
@@ -65,6 +65,22 @@ describe("flush", () => {
     await useSyncStore.getState().flush();
     expect(mockPost.mock.calls.map((c) => c[0].map((i) => i.clientId))).toEqual([[id(1)], [id(9)]]);
     expect(useSyncStore.getState().queue).toEqual([]);
+  });
+
+  it("item novo durante o envio é enviado depois, e a época muda a cada mudança", async () => {
+    const before = syncEpoch();
+    mockPost.mockResolvedValue({ applied: [], rejected: [] });
+    mockPost.mockImplementationOnce(async () => {
+      useSyncStore.getState().enqueue({ ...item(2), status: "PENDING" }); // desfez enquanto c1 voava
+      return { applied: [], rejected: [] };
+    });
+    useSyncStore.getState().enqueue(item(1));
+    await useSyncStore.getState().flush();
+    expect(mockPost.mock.calls.map((c) => c[0].map((i) => [i.clientId, i.status]))).toEqual([
+      [[id(1), "DONE"]],
+      [[id(2), "PENDING"]],
+    ]);
+    expect(syncEpoch()).toBeGreaterThan(before);
   });
 
   it("divide em lotes de 200", async () => {

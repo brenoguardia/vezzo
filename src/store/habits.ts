@@ -47,14 +47,20 @@ export const useHabitsStore = create<HabitsState>()(
       selectedHabitId: null,
       selectHabit: (selectedHabitId) => set({ selectedHabitId }),
       hydrate: (habits, logs) =>
-        set({
-          habits,
-          logs: Object.fromEntries(
+        set((s) => {
+          const next: Record<string, DayLog> = Object.fromEntries(
             logs.map((l) => [
               logKey(l.habitId, l.date),
               { value: l.value, status: l.status, completedAt: l.completedAt },
             ]),
-          ),
+          );
+          // Mudança local ainda na fila é mais nova que o snapshot do servidor: não a descarta.
+          for (const q of useSyncStore.getState().queue) {
+            const key = logKey(q.habitId, q.date);
+            const local = s.logs[key];
+            if (local) next[key] = local;
+          }
+          return { habits, logs: next };
         }),
       applyLog: (habitId, date, change, source = "APP") => {
         const habit = get().habits.find((h) => h.id === habitId);
@@ -125,5 +131,5 @@ export const useHabitsStore = create<HabitsState>()(
   ),
 );
 
-// O servidor resolve conflitos por `updatedAt`: o que ele aplicou vence o estado local já sincronizado.
+// Último a chegar vence no servidor (`upsertLog`); o que ele aplicou vence o estado local já sincronizado.
 onLogsApplied((logs) => useHabitsStore.getState().mergeServerLogs(logs));

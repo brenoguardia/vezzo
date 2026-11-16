@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   cancelScheduledNotificationAsync,
   DEFAULT_ACTION_IDENTIFIER,
+  dismissNotificationAsync,
   getAllScheduledNotificationsAsync,
   type NotificationResponse,
   SchedulableTriggerInputTypes,
@@ -13,6 +14,7 @@ import { useHabitsStore } from "@/store/habits";
 import { useProfileStore } from "@/store/profile";
 import { useSnoozeStore } from "@/store/snooze";
 import { useSyncStore } from "@/store/sync";
+import { showActionFeedback } from "./feedback";
 import { HABITS_CHANNEL } from "./permission";
 import { KIND_SNOOZE } from "./reschedule";
 import { canSnooze, SNOOZE_SECONDS } from "./schedule";
@@ -49,9 +51,31 @@ const deviceZone = () => {
   }
 };
 
-/** O mesmo toque pode chegar pelo listener, pela task e por `getLastNotificationResponse`: processa uma vez. */
+const responseKey = (response: NotificationResponse) =>
+  `${response.notification.request.identifier}|${response.actionIdentifier}|${response.notification.date}`;
+
+/** Chaves já vistas neste processo. A checagem é síncrona: duas entregas simultâneas não passam juntas. */
+const seenInProcess = new Set<string>();
+const SEEN_LIMIT = 50;
+
+function seenBefore(key: string): boolean {
+  if (seenInProcess.has(key)) return true;
+  seenInProcess.add(key);
+  if (seenInProcess.size > SEEN_LIMIT) {
+    const oldest = seenInProcess.values().next().value;
+    if (oldest !== undefined) seenInProcess.delete(oldest);
+  }
+  return false;
+}
+
+/** No Android os botões de ação não fecham a notificação sozinhos: fecha logo, antes de qualquer espera. */
+function dismiss(response: NotificationResponse): void {
+  void dismissNotificationAsync(response.notification.request.identifier).catch(() => {});
+}
+
+/** Entre processos (task e listener): o mesmo toque pode chegar mais de uma vez; processa uma só. */
 async function alreadyHandled(response: NotificationResponse): Promise<boolean> {
-  const key = `${response.notification.request.identifier}|${response.actionIdentifier}|${response.notification.date}`;
+  const key = responseKey(response);
   try {
     if ((await AsyncStorage.getItem(LAST_HANDLED_KEY)) === key) return true;
     await AsyncStorage.setItem(LAST_HANDLED_KEY, key);
@@ -83,29 +107,39 @@ export async function handleNotificationResponse(
   const data = response.notification.request.content.data as { habitId?: unknown } | undefined;
   const habitId = typeof data?.habitId === "string" ? data.habitId : null;
   if (!habitId) return "ignored";
+  const action = response.actionIdentifier;
+  if (seenBefore(responseKey(response))) return "ignored";
+  // Ação rápida (não o toque no corpo): a notificação some na hora, sem esperar storage nem rede.
+  if (action !== DEFAULT_ACTION_IDENTIFIER) dismiss(response);
   if (await alreadyHandled(response)) return "ignored";
   await ensureHydrated();
 
-  const action = response.actionIdentifier;
   if (action === DEFAULT_ACTION_IDENTIFIER) {
     open?.(habitId);
     return "open";
   }
 
   const habits = useHabitsStore.getState();
-  if (!habits.habits.some((h) => h.id === habitId)) return "ignored";
+  const habitName = habits.habits.find((h) => h.id === habitId)?.name;
+  if (habitName === undefined) return "ignored";
   const today = localDate(now, useProfileStore.getState().profile?.timezone ?? deviceZone());
 
   if (action === ACTION_COMPLETE || action === ACTION_SKIP) {
     // As duas ações vêm da notificação: `source` registra isso (docs/07).
     habits.applyLog(habitId, today, { status: action === ACTION_COMPLETE ? "DONE" : "SKIPPED" }, "NOTIFICATION");
+    const outcome = action === ACTION_COMPLETE ? "completed" : "skipped";
+    // Confirma antes das esperas restantes (cancelar adiamentos e enviar ao servidor).
+    void showActionFeedback(outcome, habitName);
     await cancelSnoozes(habitId);
     void useSyncStore.getState().flush();
-    return action === ACTION_COMPLETE ? "completed" : "skipped";
+    return outcome;
   }
 
   if (action === ACTION_SNOOZE) {
-    if (!canSnooze(useSnoozeStore.getState().counts, habitId, today)) return "snooze-limit";
+    if (!canSnooze(useSnoozeStore.getState().counts, habitId, today)) {
+      void showActionFeedback("snooze-limit", habitName);
+      return "snooze-limit";
+    }
     const { title, body } = response.notification.request.content;
     await scheduleNotificationAsync({
       content: {
@@ -118,6 +152,7 @@ export async function handleNotificationResponse(
       trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: SNOOZE_SECONDS, channelId: HABITS_CHANNEL },
     });
     useSnoozeStore.getState().register(habitId, today);
+    void showActionFeedback("snoozed", habitName);
     return "snoozed";
   }
   return "ignored";
