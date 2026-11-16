@@ -8,7 +8,9 @@ import { STORE_LINKS } from "@/shared/landing";
 import { LEGAL_CONFIG } from "@/shared/legal/config";
 import { fontFamily, layout } from "@/shared/tokens";
 import { CreateDemo } from "./CreateDemo";
+import { NotesDemo } from "./NotesDemo";
 import { ReminderDemo } from "./ReminderDemo";
+import { RewardDemo } from "./RewardDemo";
 import { StoreBadge } from "./StoreBadge";
 import { StreakDemo } from "./StreakDemo";
 import { ThemeDemo } from "./ThemeDemo";
@@ -103,6 +105,10 @@ function RowVisual({ row, copy }: { row: LandingRow; copy: LandingCopy }) {
       return <ReminderDemo copy={copy.reminder} />;
     case "create":
       return <CreateDemo copy={copy.create} days={copy.days} />;
+    case "reward":
+      return <RewardDemo copy={copy.reward} />;
+    case "notes":
+      return <NotesDemo copy={copy.notes} />;
     case "streak":
       return <StreakDemo copy={copy.streakDemo} days={copy.days} />;
     case "theme":
