@@ -1,5 +1,5 @@
 # Agenda o lembrete de teste (5 s) e manda o app para segundo plano.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

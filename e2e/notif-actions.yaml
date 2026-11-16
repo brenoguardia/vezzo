@@ -1,5 +1,5 @@
 # Dispara o lembrete de teste e abre as ações do banner (toque longo).
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

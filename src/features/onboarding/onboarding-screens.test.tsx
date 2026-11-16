@@ -72,25 +72,31 @@ describe("etapa 1 · nome", () => {
 });
 
 describe("etapa 2 · atividades", () => {
-  it("mostra os quatro pré-selecionados e conta os escolhidos", async () => {
+  const selected = (label: RegExp) => screen.getByRole("button", { name: label }).props.accessibilityState.selected;
+
+  it("mostra os quatro pré-selecionados e permite marcar e desmarcar", async () => {
     await render(<Activities />);
-    expect(screen.getByRole("button", { name: /Continuar · 4/ })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Continuar" })).toBeEnabled();
     expect(screen.getByText("Saúde")).toBeTruthy();
+    expect(Object.keys(useOnboardingStore.getState().selected)).toHaveLength(4);
+    expect(selected(/Diário/)).toBe(false);
     await fireEvent.press(screen.getByText(/Diário/));
-    expect(screen.getByRole("button", { name: /Continuar · 5/ })).toBeTruthy();
+    expect(selected(/Diário/)).toBe(true);
+    expect(Object.keys(useOnboardingStore.getState().selected)).toHaveLength(5);
     await fireEvent.press(screen.getByText(/Diário/));
-    expect(screen.getByRole("button", { name: /Continuar · 4/ })).toBeTruthy();
+    expect(selected(/Diário/)).toBe(false);
+    expect(Object.keys(useOnboardingStore.getState().selected)).toHaveLength(4);
   });
 
   it("exige ao menos um hábito", async () => {
     useOnboardingStore.setState({ selected: {} });
     await render(<Activities />);
-    expect(screen.getByRole("button", { name: /Continuar · 0/ })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Continuar" })).toBeDisabled();
   });
 
   it("avança para as metas", async () => {
     await render(<Activities />);
-    await fireEvent.press(screen.getByRole("button", { name: /Continuar · 4/ }));
+    await fireEvent.press(screen.getByRole("button", { name: "Continuar" }));
     expect(mockRouter.push).toHaveBeenCalledWith("/goals");
   });
 });

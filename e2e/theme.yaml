@@ -1,5 +1,5 @@
 # Tema: escolher outra cor/modo, ver a prévia, aplicar e restaurar o original.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

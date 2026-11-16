@@ -1,5 +1,5 @@
 # Tema, testar lembrete e excluir conta abrem (antes redirecionavam para a Home).
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

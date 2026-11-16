@@ -2,7 +2,7 @@
 # O Maestro não muda a pose: dobre/abra no Device Hub e rode com o nome dela.
 #   maestro --device <UDID do Duo> test -e POSE=closed e2e/duo/pose.yaml
 # POSE livre (closed, open-portrait, open-landscape, laptop); só dá nome às capturas.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: ../_open.yaml
 - tapOn:

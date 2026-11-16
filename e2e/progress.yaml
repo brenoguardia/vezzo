@@ -1,5 +1,5 @@
 # Progresso: semana, mês e ano abrem sem erro.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:

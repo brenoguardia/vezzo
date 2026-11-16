@@ -1,6 +1,6 @@
 # Criar, persistir após reabrir o app, editar e arquivar um hábito.
 # Usa o nome "E2E Teste": rode `bun scripts/e2e-cleanup.ts` depois para remover os hábitos de teste.
-appId: com.itbuilder.vezzo
+appId: ${APP_ID}
 ---
 - runFlow: _open.yaml
 - tapOn:
