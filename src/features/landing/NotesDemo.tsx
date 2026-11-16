@@ -20,15 +20,20 @@ const noteOf = (n: number, date: string, text: string): NoteDto => ({
 /** Anotações ao vivo: escreva uma anotação e veja a mesma linha do tempo do app crescer. */
 export function NotesDemo({ copy }: { copy: LandingCopy["notes"] }) {
   const today = useMemo(() => localDate(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"), []);
-  const [notes, setNotes] = useState<NoteDto[]>(() =>
-    copy.seed.map((item, i) => noteOf(i + 1, addDays(today, -item.daysAgo), item.text)),
+  // Só as anotações escritas pela pessoa ficam no estado; as de exemplo vêm do texto do idioma atual,
+  // para acompanharem a troca de idioma da página.
+  const [written, setWritten] = useState<NoteDto[]>([]);
+  const seed = useMemo(
+    () => copy.seed.map((item, i) => noteOf(i + 1, addDays(today, -item.daysAgo), item.text)),
+    [copy.seed, today],
   );
+  const notes = [...written, ...seed];
   const [text, setText] = useState("");
   const empty = text.trim().length === 0;
 
   const save = () => {
     if (empty) return;
-    setNotes((current) => [noteOf(current.length + 1, today, text.trim()), ...current]);
+    setWritten((current) => [noteOf(1000 + current.length, today, text.trim()), ...current]);
     setText("");
   };
 

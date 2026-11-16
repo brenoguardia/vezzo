@@ -158,6 +158,20 @@ describe("LandingScreen", () => {
     expect(screen.getByLabelText("Anotação").props.value).toBe("");
   });
 
+  it("anotações: os exemplos acompanham o idioma e mantêm o que a pessoa escreveu", async () => {
+    await render(<LandingScreen />);
+    await fireEvent.changeText(screen.getByLabelText("Anotação"), "Minha anotação");
+    await fireEvent.press(screen.getByRole("button", { name: "Salvar anotação" }));
+    expect(screen.getByText("Meditei logo cedo e o dia rendeu mais.")).toBeTruthy();
+    await fireEvent.press(screen.getByLabelText("Mudar idioma para inglês"));
+    expect(await screen.findByText("Meditated early and the day went better.")).toBeTruthy();
+    expect(screen.queryByText("Meditei logo cedo e o dia rendeu mais.")).toBeNull();
+    // O que foi escrito continua, e os rótulos de dia também mudaram de idioma.
+    expect(screen.getByText("Minha anotação")).toBeTruthy();
+    expect(screen.getByText("Yesterday")).toBeTruthy();
+    expect(screen.queryByText("Ontem")).toBeNull();
+  });
+
   it("tema: o controle de aparência troca o modo da página", async () => {
     await render(<LandingScreen />);
     await fireEvent.press(screen.getByRole("radio", { name: "Claro" }));
