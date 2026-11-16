@@ -19,6 +19,9 @@ describe("textos da landing", () => {
     expect(en.privacy.points).toHaveLength(pt.privacy.points.length);
     expect(en.demo.habits).toHaveLength(pt.demo.habits.length);
     expect(en.create.presets).toHaveLength(pt.create.presets.length);
+    expect(en.reward.gifts).toHaveLength(pt.reward.gifts.length);
+    expect(en.reward.durations).toEqual(pt.reward.durations);
+    expect(en.notes.seed).toHaveLength(pt.notes.seed.length);
     expect(en.days.full).toHaveLength(7);
     expect(pt.days.full).toHaveLength(7);
   });
@@ -43,6 +46,12 @@ describe("textos da landing", () => {
       expect(copy.themeDemo.accentLabel).toContain("{n}");
       expect(copy.streakDemo.milestone).toContain("{target}");
       expect(copy.streakDemo.progress).toContain("{n}");
+      expect(copy.reward.durationOption).toContain("{n}");
+      expect(copy.reward.progress).toContain("{run}");
+      expect(copy.reward.progress).toContain("{total}");
+      expect(copy.reward.daysLeft).toContain("{n}");
+      expect(copy.reward.restarted).toContain("{n}");
+      expect(copy.reward.doneSub).toContain("{gift}");
     }
   });
 });

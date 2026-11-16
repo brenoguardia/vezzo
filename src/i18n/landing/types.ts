@@ -5,7 +5,7 @@ export interface LandingDemoHabit {
 }
 
 export interface LandingRow {
-  id: "reminders" | "create" | "streak" | "theme";
+  id: "reminders" | "create" | "reward" | "streak" | "notes" | "theme";
   title: string;
   body: string;
 }
@@ -70,6 +70,40 @@ export interface LandingCopy {
     everyDay: string;
     decrease: string;
     increase: string;
+    hint: string;
+  };
+  reward: {
+    giftLabel: string;
+    /** Presentes de exemplo (emoji + nome). */
+    gifts: { emoji: string; name: string }[];
+    durationLabel: string;
+    /** Opções de duração em dias. */
+    durations: number[];
+    /** `{n}` é o número de dias. */
+    durationOption: string;
+    cardTitle: string;
+    /** `{run}` e `{total}`. */
+    progress: string;
+    /** `{n}` dias que faltam. */
+    daysLeft: string;
+    daysLeftOne: string;
+    /** `{n}` é o número da tentativa. */
+    restarted: string;
+    doneTitle: string;
+    /** `{gift}` é o presente. */
+    doneSub: string;
+    claim: string;
+    claimed: string;
+    completeDay: string;
+    missDay: string;
+    hint: string;
+  };
+  notes: {
+    textLabel: string;
+    placeholder: string;
+    save: string;
+    /** Anotações de exemplo, de quantos dias atrás. */
+    seed: { daysAgo: number; text: string }[];
     hint: string;
   };
   streakDemo: {

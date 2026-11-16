@@ -113,6 +113,51 @@ describe("LandingScreen", () => {
     expect(screen.getByRole("checkbox", { name: "Sexta" }).props.accessibilityState).toMatchObject({ disabled: true });
   });
 
+  it("apresenta o presente por meta e as anotações como funções", async () => {
+    await render(<LandingScreen />);
+    expect(screen.getByRole("header", { name: "Dê a si mesmo um presente" })).toBeTruthy();
+    expect(screen.getByRole("header", { name: "Seu histórico, em linha do tempo" })).toBeTruthy();
+  });
+
+  it("presente: concluir o dia avança, perder um dia recomeça e cumprir permite resgatar", async () => {
+    await render(<LandingScreen />);
+    expect(screen.getByText("12 de 30 dias")).toBeTruthy();
+    expect(screen.getByText("Faltam 18 dias")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Concluir o dia" }));
+    expect(screen.getByText("13 de 30 dias")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Perder um dia" }));
+    expect(screen.getByText("0 de 30 dias")).toBeTruthy();
+    expect(screen.getByText("Recomeçou · tentativa 2")).toBeTruthy();
+    // 30 dias seguidos: a meta é cumprida e o presente pode ser resgatado.
+    for (let i = 0; i < 30; i++) await fireEvent.press(screen.getByRole("button", { name: "Concluir o dia" }));
+    expect(screen.getByText("Meta cumprida! 🎉")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Concluir o dia" }).props.accessibilityState.disabled).toBe(true);
+    await fireEvent.press(screen.getByRole("button", { name: "Já me presenteei" }));
+    expect(screen.getByText("Presente resgatado")).toBeTruthy();
+  });
+
+  it("presente: escolher o presente e a duração atualiza o cartão", async () => {
+    await render(<LandingScreen />);
+    await fireEvent.press(screen.getByRole("button", { name: /Viagem/ }));
+    // O presente aparece no chip selecionado e no cartão.
+    expect(screen.getAllByText("✈️ Viagem")).toHaveLength(2);
+    await fireEvent.press(screen.getByRole("button", { name: "90 dias" }));
+    expect(screen.getByText("12 de 90 dias")).toBeTruthy();
+  });
+
+  it("anotações: escrever e salvar põe a anotação no topo da linha do tempo", async () => {
+    await render(<LandingScreen />);
+    expect(screen.getByText("Meditei logo cedo e o dia rendeu mais.")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Salvar anotação" }).props.accessibilityState.disabled).toBe(true);
+    const todayLabels = screen.getAllByText("Hoje").length;
+    await fireEvent.changeText(screen.getByLabelText("Anotação"), "Hoje foi tranquilo");
+    await fireEvent.press(screen.getByRole("button", { name: "Salvar anotação" }));
+    expect(screen.getByText("Hoje foi tranquilo")).toBeTruthy();
+    // A anotação de hoje ganha o próprio dia "Hoje" na linha do tempo.
+    expect(screen.getAllByText("Hoje")).toHaveLength(todayLabels + 1);
+    expect(screen.getByLabelText("Anotação").props.value).toBe("");
+  });
+
   it("tema: o controle de aparência troca o modo da página", async () => {
     await render(<LandingScreen />);
     await fireEvent.press(screen.getByRole("radio", { name: "Claro" }));
