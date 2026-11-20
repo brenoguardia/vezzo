@@ -48,6 +48,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     plugins: [
       "expo-secure-store",
       "expo-localization",
+      "expo-web-browser",
       [
         "expo-router",
         {
@@ -170,7 +171,9 @@ function getDynamicConfig() {
   };
 
   if (!isProfileKey(APP_CONFIG.ambient)) {
-    throw new Error(`APP_ENV inválido: "${APP_CONFIG.ambient}". Valores aceitos: ${PROFILE_KEYS.join(", ")}.`);
+    throw new Error(
+      `APP_ENV inválido: "${APP_CONFIG.ambient}". Valores aceitos: ${PROFILE_KEYS.join(", ")}.`,
+    );
   }
 
   return useCaseProfile[APP_CONFIG.ambient];
