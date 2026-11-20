@@ -83,7 +83,7 @@ export const resetPasswordInput = z.object({ password: passwordRule, confirm: z.
 ## Lógica de estatísticas (pura, em `src/shared/stats.ts`, com testes)
 - `scheduled(habit, date)`: `habit.days` contém o dia da semana de `date` e `date >= createdAt`.
 - `dayCompletion(date)`: `feitos / agendados` (ignora `SKIPPED` no denominador). Anel da home: `feitos/agendados` do dia.
-- `weekCompletion`: média ponderada por hábitos agendados nos 7 dias (segunda a domingo). Exibida como "78%" com variação vs semana anterior.
+- `weekCompletion`: média ponderada por hábitos agendados na semana (segunda a domingo), contando só os dias até hoje: dias que ainda não chegaram não entram no denominador. Exibida como "78%" com variação vs semana anterior, medida no mesmo trecho (segunda até o mesmo dia da semana). Mês e ano seguem a mesma regra (dias futuros ficam de fora).
 - Dia cumprido: `agendados > 0` e todos concluídos. Dia sem hábitos agendados não quebra nem soma.
 - `currentStreak`: dias cumpridos consecutivos até hoje. Se hoje ainda não está cumprido, contagem continua a partir de ontem (não zera durante o dia).
 - `bestStreak`, `bestDay` (dia da semana com maior média), progresso por hábito (concluídos/agendados na semana), marcos 15, 30 e 100 dias.

@@ -15,5 +15,8 @@ jest.mock("react-native-reanimated", () => ({
   withRepeat: (value) => value,
 }));
 
+// Teclado: o mock oficial troca os componentes nativos por View/ScrollView.
+jest.mock("react-native-keyboard-controller", () => require("react-native-keyboard-controller/jest"));
+
 // O SDK do Sentry é nativo: nos testes o monitoramento fica desligado (sem DSN) e o módulo é um stub.
 jest.mock("@sentry/react-native", () => ({ init: jest.fn(), wrap: (c) => c, captureException: jest.fn() }));

@@ -36,7 +36,9 @@ export default function Progress() {
   const hasHabits = habits.some((h) => !h.archivedAt);
   const loadingFirst = useLoadingFirst();
   const periodDays = period === "week" ? week.days : remote.days;
-  const completion = period === "week" ? week.cmp.current.completion : completionOf(remote.days);
+  // Dias que ainda não chegaram não entram na conclusão (mês e ano incluem o futuro no intervalo).
+  const elapsedDays = remote.days.filter((d) => d.date <= today);
+  const completion = period === "week" ? week.cmp.current.completion : completionOf(elapsedDays);
   const bestDayName = week.best === null ? "—" : t(`onboarding.daysNames.${week.best}`);
   const names = new Map(habits.map((h) => [h.id, h.name]));
 
@@ -102,7 +104,7 @@ export default function Progress() {
       ) : period === "year" ? (
         <BarChart
           accessibilityLabel={t("progress.completion")}
-          data={byMonth(remote.days).map((m) => ({
+          data={byMonth(elapsedDays).map((m) => ({
             label: monthLetter(m.month),
             value: m.completion,
             highlight: m.month === today.slice(0, 7),

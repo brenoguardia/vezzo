@@ -13,7 +13,6 @@ import { signOutAndClear } from "@/features/profile/sign-out";
 import { useHasPassword } from "@/features/profile/useHasPassword";
 import { translateMessage } from "@/i18n";
 import { useT } from "@/i18n/useT";
-import { useTheme } from "@/lib/useTheme";
 import { type DeleteAccountInput, deleteAccountInput } from "@/shared/schemas";
 
 /**
@@ -22,7 +21,6 @@ import { type DeleteAccountInput, deleteAccountInput } from "@/shared/schemas";
  */
 export default function DeleteAccountScreen() {
   const t = useT();
-  const theme = useTheme();
   const router = useRouter();
   const { data: session } = authClient.useSession();
   const hasPassword = useHasPassword();
@@ -80,7 +78,7 @@ export default function DeleteAccountScreen() {
               disabled={!ready || (hasPassword === true && !formState.isValid)}
               loading={submitting}
               onPress={() => void (hasPassword ? onSubmit() : remove())}
-              style={{ backgroundColor: theme.danger }}
+              variant="danger"
             />
             <Button
               label={t("profile.deleteCancel")}

@@ -28,7 +28,9 @@ export function CredentialsForm({ mode }: { mode: "sign-up" | "sign-in" }) {
 
   const form = useForm<Values>({
     resolver: zodResolver(signUp ? signUpInput : signInInput),
-    mode: "onChange",
+    // Erro só depois de sair do campo (e a cada tecla depois disso): o aviso não pisca (e empurra o layout
+    // em ~23 dp) já no primeiro caractere digitado.
+    mode: "onTouched",
     defaultValues: { email: "", password: "" },
   });
   const { control, handleSubmit, setError, formState } = form;
@@ -102,13 +104,15 @@ export function CredentialsForm({ mode }: { mode: "sign-up" | "sign-in" }) {
           />
         )}
       />
-      <Link href="/forgot-password" asChild>
-        <Pressable accessibilityRole="link" style={styles.forgot}>
-          <Text variant="captionStrong" tone="acc" style={styles.forgotText}>
-            {t("auth.forgot")}
-          </Text>
-        </Pressable>
-      </Link>
+      {signUp ? null : (
+        <Link href="/forgot-password" asChild>
+          <Pressable accessibilityRole="link" style={styles.forgot}>
+            <Text variant="captionStrong" tone="acc" style={styles.forgotText}>
+              {t("auth.forgot")}
+            </Text>
+          </Pressable>
+        </Link>
+      )}
 
       {rootError ? (
         <Text variant="caption" tone="danger" accessibilityRole="alert">

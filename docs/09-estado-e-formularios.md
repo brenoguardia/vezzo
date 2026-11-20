@@ -23,7 +23,7 @@ Persistência com `persist` + `createJSONStorage(() => mmkvStorage)`. Um store p
 ```
 `flush()` roda: ao abrir o app, ao voltar para primeiro plano, ao recuperar rede (`NetInfo`) e a cada gravação (debounce 1 s). Envia `POST /v1/logs/batch`; remove da fila os itens confirmados; reenvio com backoff exponencial (2 s até 60 s). Conflito: vence o `updatedAt` mais recente do servidor para o mesmo `(habitId, date)`.
 
-Hidratação: após login, `GET /v1/profile`, `GET /v1/habits`, `GET /v1/logs?from=<hoje-90d>`. Estatísticas (`lib/stats.ts`) são funções puras sobre o store.
+Hidratação: após login, `GET /v1/profile`, `GET /v1/habits`, `GET /v1/logs?from=<hoje-90d>`. Estatísticas (`src/shared/stats.ts` e `src/lib/habit-stats.ts`) são funções puras sobre o store.
 
 Logout: limpar stores de dados (não o tema), cancelar notificações agendadas, `DELETE /v1/push/register`.
 
@@ -49,14 +49,23 @@ Formulários e seus schemas (`src/shared`):
 | Criar/editar hábito | `habitInput` |
 | Perfil | `profileUpdate` |
 
+Validação: login, cadastro e esqueci minha senha usam `mode: "onTouched"` (o erro só aparece ao sair do campo e depois revalida a cada tecla): com `onChange` a mensagem surgia no 1º caractere e empurrava o layout em ~23 dp. Os demais formulários seguem em `onChange`.
+
 Regras: botão primário desabilitado enquanto `!formState.isValid || isSubmitting`; foco no primeiro campo inválido; teclado adequado (`email-address`, `textContentType`, `autoComplete`); erros de servidor mapeados com `setError`.
+
+## Teclado
+O teclado nunca pode cobrir o campo focado nem a ação principal da tela (Expo: guides/keyboard-handling). Biblioteca: `react-native-keyboard-controller` (exige dev build; `KeyboardProvider` em `src/app/_layout.tsx`).
+- **Telas com campos** rolam dentro de `KeyboardScrollView` (`src/components/layout`): `KeyboardAwareScrollView` com folga de 112 dp (cobre o erro do campo e a linha de botões logo abaixo, como Cancelar/Salvar da anotação).
+- **Botão ancorado ao fim** (auth, onboarding, ajustes): a casca (`AuthScreen`, `OnboardingShell`, `SettingsShell`) envolve o scroll em `KeyboardAvoidingView` da mesma biblioteca (`behavior="padding"`), para o rodapé ficar logo acima do teclado. Sem isso o campo fica visível, mas "Continuar" some atrás do teclado.
+- Não usar `ScrollView` puro nem o `KeyboardAvoidingView` do React Native em tela com campo de texto.
+- Toque: o `Field` inteiro foca o input (≥ 64 dp) e `SwitchRow` alterna pela linha toda; botões pequenos usam `hitSlop` para chegar a 44 pt.
 
 ## i18n
 `pt-BR` (padrão) e `en`. Idioma inicial por `expo-localization`; usuário pode alterar em Perfil. Chaves agrupadas por tela (`auth.*`, `onboarding.*`, `home.*`, `notif.*`). Textos do design estão em `design/Vezzo Habit App.dc.html` (objeto `t` na classe lógica), usar como fonte.
 
 ## Testes recomendados
-- `lib/streak.ts`: sequência com dias sem agendamento, hábito criado no meio, `SKIPPED`, virada de fuso.
-- `lib/stats.ts`: conclusão semanal, melhor dia, variação vs semana anterior.
+- `src/shared/stats.ts`: sequência com dias sem agendamento, hábito criado no meio, `SKIPPED`, virada de fuso; conclusão semanal (só até hoje), melhor dia, variação vs mesmo trecho da semana anterior.
+- `src/store/profile.ts`: perfil em cache só vale para o mesmo usuário; falha de rede com cache não vira erro.
 - `notifications/schedule.ts`: conversão de dias e gatilhos.
 - Schemas Zod: `isSingleEmoji`, `passwordRule`, `hhmm`.
 - Rotas de API: autorização (usuário A não acessa dados de B), idempotência de `/logs`, `onboarding/complete` transacional.

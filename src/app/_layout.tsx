@@ -10,11 +10,11 @@ import { Roboto_500Medium } from "@expo-google-fonts/roboto";
 import { Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { authClient } from "@/auth/client";
-import { resolveGate } from "@/auth/guard";
-import { useInitialSessionPending } from "@/auth/useInitialSessionPending";
+import { KeyboardProvider } from "react-native-keyboard-controller";
+import { resolveGate, SPLASH_MAX_MS, shouldHideSplash } from "@/auth/guard";
+import { useGateInputs } from "@/auth/useGateInputs";
 import { AppShellSkeleton, Button, Text, ToastHost } from "@/components/ui";
 import { clearHabitData } from "@/features/habits/hydrate";
 import { useHabitsSync } from "@/features/habits/useHabitsSync";
@@ -42,18 +42,15 @@ function RootLayout() {
   });
   const fontsReady = fontsLoaded || !!fontError;
 
-  const { data: session, isPending: sessionRefetching } = authClient.useSession();
-  const isPending = useInitialSessionPending(sessionRefetching);
-  const userId = session?.user.id;
-  const profileStatus = useProfileStore((s) => s.status);
-  const onboardingDone = useProfileStore((s) => s.profile?.onboardingDone ?? false);
+  const { userId, input: gateInput } = useGateInputs();
+  const isPending = gateInput.sessionPending;
   const loadProfile = useProfileStore((s) => s.load);
   const clearProfile = useProfileStore((s) => s.clear);
 
   // Perfil do servidor decide entre onboarding e abas; troca de usuário recarrega, logout limpa.
   useEffect(() => {
     if (isPending) return;
-    if (userId) void loadProfile();
+    if (userId) void loadProfile(userId);
     else {
       clearProfile();
       clearHabitData();
@@ -63,16 +60,22 @@ function RootLayout() {
 
   // Termos e Privacidade são públicos: abrem sem esperar sessão/perfil (visitante na web, lojas).
   const isLegalRoute = useSegments()[0] === "(legal)";
-  const gate = resolveGate({ sessionPending: isPending, hasSession: !!userId, profileStatus, onboardingDone });
+  const gate = resolveGate(gateInput);
   const timezone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
   useHabitsSync(gate === "tabs", timezone);
   useNotificationRuntime(gate === "tabs");
 
-  // A splash nativa sai assim que as fontes carregam; enquanto sessão e perfil resolvem o gate,
-  // mostramos um skeleton do app em vez de segurar a splash.
+  // A splash nativa fica até fontes, sessão e perfil resolverem o gate (sem tela de loading no meio).
+  // O limite evita prender o usuário sem rede: depois dele cai no skeleton/erro de sempre.
+  const [splashTimedOut, setSplashTimedOut] = useState(false);
   useEffect(() => {
-    if (fontsReady) SplashScreen.hideAsync().catch(() => {});
-  }, [fontsReady]);
+    const id = setTimeout(() => setSplashTimedOut(true), SPLASH_MAX_MS);
+    return () => clearTimeout(id);
+  }, []);
+  const hideSplash = shouldHideSplash({ fontsReady, gate, isPublicRoute: isLegalRoute, timedOut: splashTimedOut });
+  useEffect(() => {
+    if (hideSplash) SplashScreen.hideAsync().catch(() => {});
+  }, [hideSplash]);
 
   if (!fontsReady) return null;
   if (gate === "loading" && !isLegalRoute) {
@@ -85,12 +88,12 @@ function RootLayout() {
   }
 
   return (
-    <>
+    <KeyboardProvider>
       <StatusBar style={theme.scheme === "dark" ? "light" : "dark"} />
       {gate === "error" && !isLegalRoute ? (
         <View style={[styles.error, { backgroundColor: theme.bg }]}>
           <Text tone="mute">{t("common.loadError")}</Text>
-          <Button label={t("common.retry")} onPress={() => void loadProfile()} />
+          <Button label={t("common.retry")} onPress={() => userId && void loadProfile(userId)} />
         </View>
       ) : (
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.bg } }}>
@@ -113,7 +116,7 @@ function RootLayout() {
         </Stack>
       )}
       <ToastHost />
-    </>
+    </KeyboardProvider>
   );
 }
 

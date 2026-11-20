@@ -1,8 +1,9 @@
 import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SplitView } from "@/components/layout";
+import { KeyboardScrollView, SplitView } from "@/components/layout";
 import { Text } from "@/components/ui";
 import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
@@ -73,37 +74,38 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
   }
 
   return (
-    <ScrollView
-      testID="settings-scroll"
-      style={{ backgroundColor: theme.bg }}
-      contentContainerStyle={[
-        styles.scroll,
-        {
-          paddingTop: insets.top + 16,
-          paddingBottom: Math.max(22, insets.bottom) + (tabBar ? layout.tabBarHeight + 24 : 24),
-          // Rail do dobrável: o conteúdo fica fora dele, mas o fundo continua de borda a borda.
-          paddingLeft: sides.left,
-          paddingRight: sides.right,
-        },
-      ]}
-      showsVerticalScrollIndicator={false}
-    >
-      <View
-        style={{
-          width: Math.min(usableWidth, layout.formMaxWidth),
-          paddingHorizontal: layout.screenMargin,
-          flexGrow: 1,
-        }}
+    <KeyboardAvoidingView behavior="padding" style={[styles.flex, { backgroundColor: theme.bg }]}>
+      <KeyboardScrollView
+        testID="settings-scroll"
+        contentContainerStyle={[
+          styles.scroll,
+          {
+            paddingTop: insets.top + 16,
+            paddingBottom: Math.max(22, insets.bottom) + (tabBar ? layout.tabBarHeight + 24 : 24),
+            // Rail do dobrável: o conteúdo fica fora dele, mas o fundo continua de borda a borda.
+            paddingLeft: sides.left,
+            paddingRight: sides.right,
+          },
+        ]}
       >
-        {header}
-        <View style={styles.body}>{children}</View>
-        {footer ? <View style={styles.footer}>{footer}</View> : null}
-      </View>
-    </ScrollView>
+        <View
+          style={{
+            width: Math.min(usableWidth, layout.formMaxWidth),
+            paddingHorizontal: layout.screenMargin,
+            flexGrow: 1,
+          }}
+        >
+          {header}
+          <View style={styles.body}>{children}</View>
+          {footer ? <View style={styles.footer}>{footer}</View> : null}
+        </View>
+      </KeyboardScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
   scroll: { flexGrow: 1, alignItems: "center" },
   back: { minHeight: layout.minTouch, justifyContent: "center", alignSelf: "flex-start" },
   backText: { fontWeight: "700" },

@@ -147,7 +147,8 @@ describe("tela de perfil", () => {
     expect(screen.getByText("12")).toBeTruthy();
     expect(screen.getByText("Preferências")).toBeTruthy();
     expect(screen.getByText("Conta e segurança")).toBeTruthy();
-    expect(screen.getByText("ana@exemplo.com")).toBeTruthy();
+    // O e-mail leva um espaço de largura zero antes do "@" para quebrar entre usuário e domínio.
+    expect(screen.getByText("ana\u200b@exemplo.com")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Tema, Verde-limão" })).toBeTruthy();
   });
 

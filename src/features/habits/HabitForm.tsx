@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ReactNode } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { ScrollView, StyleSheet, Switch, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import type { z } from "zod";
-import { Button, Card, Chip, DayPills, EmojiField, Field, Stepper, Text, TimeChips } from "@/components/ui";
+import { KeyboardScrollView } from "@/components/layout";
+import { Button, Card, Chip, DayPills, EmojiField, Field, Stepper, SwitchRow, Text, TimeChips } from "@/components/ui";
 import { dayLetters, dayNames } from "@/features/onboarding/locale";
 import { useLocale } from "@/i18n/useLocale";
 import { useT } from "@/i18n/useT";
-import { useTheme } from "@/lib/useTheme";
 import { CATEGORIES, GOAL_UNITS, type GoalUnit } from "@/shared/categories";
 import { defaultsOf, formatGoal, isTemplateApplied, stepGoal, stepSize, templateName } from "@/shared/onboarding";
 import { habitCreate } from "@/shared/schemas";
@@ -41,7 +41,6 @@ interface Props {
 /** Criar/editar hábito (docs/05, tela 8): React Hook Form + `habitCreate`. Erros do servidor viram `root`. */
 export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit, onCancel, title, extra }: Props) {
   const t = useT();
-  const theme = useTheme();
   const locale = useLocale();
   const form = useForm<HabitFormValues, unknown, HabitFormOutput>({
     resolver: zodResolver(habitCreate),
@@ -83,7 +82,7 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
         />
       </View>
 
-      <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
+      <KeyboardScrollView contentContainerStyle={styles.body}>
         {showTemplates ? (
           <View style={styles.block}>
             <Text variant="label" tone="mute">
@@ -224,17 +223,7 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
           control={control}
           name="quickActions"
           render={({ field }) => (
-            <Card radius={16} padding={14} style={styles.switchRow}>
-              <Text variant="bodyMedium" style={styles.flex}>
-                {t("habit.quickActions")}
-              </Text>
-              <Switch
-                accessibilityLabel={t("habit.quickActions")}
-                value={field.value}
-                onValueChange={field.onChange}
-                trackColor={{ true: theme.acc, false: theme.line }}
-              />
-            </Card>
+            <SwitchRow label={t("habit.quickActions")} value={field.value ?? true} onValueChange={field.onChange} />
           )}
         />
 
@@ -246,7 +235,7 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
           </Text>
         ) : null}
         {extra}
-      </ScrollView>
+      </KeyboardScrollView>
     </View>
   );
 }
@@ -266,5 +255,4 @@ const styles = StyleSheet.create({
   block: { gap: 10 },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   goal: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  switchRow: { flexDirection: "row", alignItems: "center", gap: 12 },
 });

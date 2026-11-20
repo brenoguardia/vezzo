@@ -12,6 +12,8 @@ interface Props {
   /** Remove a linha divisória inferior (última linha do cartão). */
   last?: boolean;
   disabled?: boolean;
+  /** Linhas máximas do valor (padrão 1). O e-mail usa 2 para não ficar cortado. */
+  valueLines?: number;
   /** Valor ainda carregando: mostra um skeleton no lugar dele. */
   loading?: boolean;
   accessibilityState?: { expanded?: boolean; busy?: boolean };
@@ -27,6 +29,7 @@ export function SettingsRow({
   last,
   disabled,
   loading,
+  valueLines = 1,
   accessibilityState,
 }: Props) {
   const theme = useTheme();
@@ -40,7 +43,7 @@ export function SettingsRow({
           <Skeleton width={72} height={14} radius={6} />
         </SkeletonGroup>
       ) : value ? (
-        <Text tone="mute" numberOfLines={1} style={styles.value}>
+        <Text tone="mute" numberOfLines={valueLines} ellipsizeMode="middle" style={styles.value}>
           {value}
         </Text>
       ) : null}
@@ -76,5 +79,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 12,
   },
-  value: { flexShrink: 1, textAlign: "right" },
+  // `flex: 1` + alinhado à direita: o valor fica junto da seta (ou da borda) em todas as linhas.
+  // Só com `flexShrink`, o `space-between` centraliza o valor quando há seta (rótulo, valor, seta).
+  value: { flex: 1, textAlign: "right" },
 });

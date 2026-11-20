@@ -38,7 +38,7 @@ export async function getStats(db: Db, userId: string, from: string, to: string,
     currentStreak: current,
     bestStreak: best,
     bestDay: bestDay(habits, logs, today),
-    week: weekComparison(habits, logs, to),
+    week: weekComparison(habits, logs, to, today),
     habits: habitWeekProgress(active, logs, to),
     milestones: milestones(current),
   };

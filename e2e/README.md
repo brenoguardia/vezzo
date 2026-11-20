@@ -20,8 +20,13 @@ Fluxos que rodam no simulador iOS ou no emulador Android com o development build
 | `theme.yaml` | trocar cor e modo, aplicar e restaurar |
 | `notifications.yaml` | tela de debug agenda um lembrete |
 | `dual-layout.yaml` | layout de duas colunas (iPhone em paisagem) |
+| `keyboard-note.yaml` | composer de anotação com o teclado aberto: "Cancelar" continua acima dele |
+| `keyboard-delete-account.yaml` | Excluir conta com o teclado aberto: "Excluir definitivamente" e "Cancelar" visíveis (não exclui) |
+| `keyboard-habit-form.yaml` | formulário de hábito: último campo (dias do presente) rola até o teclado e aceita digitação; linha inteira do presente alterna (não salva) |
 
 Não cobertos: cadastro, login, Apple/Google e recuperação de senha (exigem credenciais ou e-mail) e as ações das notificações com o app fechado (só em aparelho real).
+
+Os fluxos `keyboard-*` partem de uma conta logada **com senha** (a conta Google não mostra o campo em Excluir conta), em pt-BR. Eles pegam o **rodapé inteiro escondido** pelo teclado (confirmado desligando o `KeyboardAvoidingView` do `SettingsShell`: o fluxo falha em `assertVisible "Excluir definitivamente"`). Não distinguem uma folga de 68 dp de 112 dp: cortes parciais se conferem à mão (captura no emulador).
 
 ## Rodar
 ```

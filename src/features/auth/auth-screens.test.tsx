@@ -84,6 +84,11 @@ describe("links legais", () => {
 });
 
 describe("sign-up", () => {
+  it("não oferece Esqueci minha senha no cadastro", async () => {
+    await render(<SignUp />);
+    expect(screen.queryByText("Esqueci minha senha")).toBeNull();
+  });
+
   it("mantém Continuar desabilitado até o formulário ser válido e mostra erro i18n", async () => {
     await render(<SignUp />);
     const button = () => screen.getByRole("button", { name: "Continuar" });
@@ -91,6 +96,12 @@ describe("sign-up", () => {
 
     await fireEvent.changeText(screen.getByLabelText("E-mail"), "ana");
     await fireEvent.changeText(screen.getByLabelText("Senha"), "curta");
+    // Enquanto digita (campo ainda não foi abandonado), o erro não aparece nem empurra o layout.
+    expect(screen.queryByText("Informe um e-mail válido.")).toBeNull();
+    expect(button()).toBeDisabled();
+
+    await fireEvent(screen.getByLabelText("E-mail"), "blur");
+    await fireEvent(screen.getByLabelText("Senha"), "blur");
     await waitFor(() => expect(screen.getByText("Informe um e-mail válido.")).toBeTruthy());
     expect(screen.getByText("A senha precisa ter ao menos 8 caracteres.")).toBeTruthy();
     expect(button()).toBeDisabled();
@@ -127,6 +138,11 @@ describe("sign-up", () => {
 });
 
 describe("sign-in", () => {
+  it("oferece Esqueci minha senha", async () => {
+    await render(<SignIn />);
+    expect(screen.getByText("Esqueci minha senha")).toBeTruthy();
+  });
+
   async function fillAndSubmit() {
     await fireEvent.changeText(screen.getByLabelText("E-mail"), "ana@exemplo.com");
     await fireEvent.changeText(screen.getByLabelText("Senha"), "qualquer");

@@ -1,0 +1,26 @@
+# Teclado x formulário de hábito: o último campo (dias do presente) rola até ficar acima do teclado e
+# aceita digitação. Não salva: termina em "Cancelar".
+appId: ${APP_ID}
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-habits"
+- tapOn: "Novo hábito"
+# A linha inteira alterna o presente (não só o interruptor de ~27 dp).
+- scrollUntilVisible:
+    element: "Definir um presente"
+    centerElement: true
+- tapOn: "Definir um presente"
+- scrollUntilVisible:
+    element: "Dias sem falhar"
+    centerElement: true
+- tapOn: "Dias sem falhar"
+- eraseText: 5
+- inputText: "45"
+- takeScreenshot: keyboard-habit-form
+- assertVisible: "45"
+- hideKeyboard
+- tapOn:
+    text: "Cancelar"
+    point: "25%,50%"
+- assertVisible: "Novo hábito"

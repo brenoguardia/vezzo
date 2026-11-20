@@ -1,7 +1,9 @@
 import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { KeyboardScrollView } from "@/components/layout";
 import { Text } from "@/components/ui";
 import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
@@ -30,11 +32,8 @@ export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
   const contentWidth = Math.min(usableWidth, MAX_CONTENT_WIDTH);
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.flex, { backgroundColor: theme.bg }]}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <ScrollView
+    <KeyboardAvoidingView behavior="padding" style={[styles.flex, { backgroundColor: theme.bg }]}>
+      <KeyboardScrollView
         contentContainerStyle={[
           styles.scroll,
           {
@@ -44,8 +43,6 @@ export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
             paddingRight: sides.right,
           },
         ]}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
       >
         <View style={{ width: contentWidth, paddingHorizontal: layout.authMargin, flexGrow: 1 }}>
           {back ? (
@@ -72,7 +69,7 @@ export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
           <View style={styles.body}>{children}</View>
           {footer ? <View style={styles.footer}>{footer}</View> : null}
         </View>
-      </ScrollView>
+      </KeyboardScrollView>
     </KeyboardAvoidingView>
   );
 }

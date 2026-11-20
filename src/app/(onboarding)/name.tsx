@@ -59,7 +59,7 @@ export default function OnboardingName() {
               autoCapitalize="words"
               autoComplete="name"
               textContentType="givenName"
-              returnKeyType="next"
+              returnKeyType="done"
               onSubmitEditing={() => void onSubmit()}
               selectionColor={theme.acc}
               style={[

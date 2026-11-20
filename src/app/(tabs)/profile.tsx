@@ -186,7 +186,7 @@ export default function ProfileScreen() {
         {t("profile.account")}
       </Text>
       <Card radius={radius.cardLarge} padding={0}>
-        <SettingsRow label={t("profile.email")} value={email} />
+        <SettingsRow label={t("profile.email")} value={email?.replace("@", "\u200b@")} valueLines={2} />
         {hasPassword === null ? (
           <SkeletonSettingRow />
         ) : hasPassword ? (
