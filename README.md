@@ -62,6 +62,9 @@ Projeto único (sem monorepo e sem API externa): o Expo Router serve o app e as 
 ## Observação sobre "iPhone Duo"
 Não existe iPhone de duas telas. O design usa o conceito de dobrável de duas telas (2 × 540 pt, dobradiça de 28 pt). No iOS, o layout de duas colunas é ativado por **largura da janela** (`>= 600 pt`): iPad, iPhone em paisagem Max e dobráveis Android. Detalhes em `docs/08-layout-adaptativo.md`.
 
+## Qualidade e CI
+`bun run typecheck`, `bun run lint` (ESLint + Biome) e `bun run test` (Vitest para `src/shared` e `src/server`, jest-expo para o cliente) rodam a cada pull request e a cada push em `main` (`.github/workflows/ci.yml`). Os fluxos E2E (Maestro, `e2e/`) rodam à mão contra o dev build: ver `e2e/README.md`. Regras de teclado, toque e contraste: `docs/09-estado-e-formularios.md`.
+
 ## Índice
 1. `CLAUDE.md`: regras permanentes para o agente
 2. `docs/01-arquitetura.md`: projeto Expo full stack, pastas, fluxo de dados

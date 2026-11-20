@@ -1,0 +1,43 @@
+# Mesmos comandos do dia a dia (CLAUDE.md): tipos, lint (ESLint + Biome) e testes (Vitest + jest-expo).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Um push novo na mesma branch cancela a execução anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # A versão do Bun vem de `packageManager` no package.json (mesma do EAS Build).
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+
+      # `postinstall` roda `prisma generate` (precisa só do schema, sem banco).
+      - run: bun install --frozen-lockfile
+
+      - name: Tipos
+        run: bun run typecheck
+
+      - name: Lint (ESLint + Biome)
+        run: bun run lint
+
+      # Nunca `bun test`: ele usa o executor do Bun e não o jest-expo (CLAUDE.md).
+      - name: Testes (Vitest + jest-expo)
+        run: bun run test

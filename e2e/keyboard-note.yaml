@@ -1,0 +1,20 @@
+# Teclado x anotação: com o teclado aberto, os botões Cancelar/Salvar do composer continuam visíveis.
+# O Maestro não vê o que o teclado cobre; então tocamos na BORDA INFERIOR de "Cancelar" (90% da altura do
+# botão) com o teclado aberto. Se qualquer parte do botão estiver sob o teclado, o toque cai numa tecla e o
+# composer continua aberto (a verificação falha). Tocar no centro não basta: um botão cortado pela metade passa.
+appId: ${APP_ID}
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-habits"
+- tapOn: "Beber água.*"
+# Sem centralizar: o composer precisa abrir perto da base da tela, onde o teclado o cobriria.
+- scrollUntilVisible:
+    element: "Nova anotação"
+- tapOn: "Nova anotação"
+# O campo abre com foco e o teclado sobe.
+- takeScreenshot: keyboard-note-open
+- tapOn:
+    text: "Cancelar"
+    point: "50%,90%"
+- assertVisible: "Nova anotação"

@@ -9,7 +9,9 @@ import { PATCH as editHabit, DELETE as removeHabit } from "@/app/api/v1/habits/[
 import { POST as createHabit, GET as listHabits } from "@/app/api/v1/habits/index+api";
 import { POST as batchLogs } from "@/app/api/v1/logs/batch+api";
 import { GET as listLogs, PUT as putLog } from "@/app/api/v1/logs/index+api";
+import { POST as completeOnboarding } from "@/app/api/v1/onboarding/complete+api";
 import { GET as getProfile, PUT as putProfile } from "@/app/api/v1/profile+api";
+import { POST as registerPush, DELETE as unregisterPush } from "@/app/api/v1/push/register+api";
 import { GET as getStats } from "@/app/api/v1/stats+api";
 import { db, installFakeSession, req, seedHabit, seedProfile, USER_A, USER_B } from "@/server/testing/harness";
 
@@ -46,6 +48,9 @@ describe("sem sessão, toda rota /v1 responde 401", () => {
     ["POST logs/batch", batchLogs, "POST", "/api/v1/logs/batch"],
     ["DELETE account", deleteAccount, "DELETE", "/api/v1/account"],
     ["GET stats", getStats, "GET", "/api/v1/stats?from=2026-11-01&to=2026-11-02"],
+    ["POST onboarding/complete", completeOnboarding, "POST", "/api/v1/onboarding/complete"],
+    ["POST push/register", registerPush, "POST", "/api/v1/push/register"],
+    ["DELETE push/register", unregisterPush, "DELETE", "/api/v1/push/register"],
   ];
   it.each(cases)("%s", async (_name, handler, method, url) => {
     const res = await handler(req(url, { method, body: method === "GET" ? undefined : {} }), { id });
@@ -94,5 +99,26 @@ describe("isolamento entre usuários", () => {
     await seedProfile(USER_B, { displayName: "Bia" });
     await putProfile(req("/x", { user: USER_B, method: "PUT", body: { displayName: "Hack" } }));
     expect((await db.profile.findMany({ where: { userId: USER_A } }))[0]).toMatchObject({ displayName: "Ana" });
+  });
+});
+
+describe("cobertura da tabela de autorização", () => {
+  it("toda rota /v1 está na tabela de 401 (rota nova sem teste de autorização falha aqui)", async () => {
+    const { readdirSync, readFileSync, statSync } = await import("node:fs");
+    const { join, relative } = await import("node:path");
+    const root = join(process.cwd(), "src/app/api/v1");
+    const files: string[] = [];
+    const walk = (dir: string) => {
+      for (const name of readdirSync(dir)) {
+        const full = join(dir, name);
+        if (statSync(full).isDirectory()) walk(full);
+        else if (name.endsWith("+api.ts")) files.push(relative(join(process.cwd(), "src/app/api"), full));
+      }
+    };
+    walk(root);
+    const source = readFileSync(join(process.cwd(), "src/server/__tests__/authorization.test.ts"), "utf8");
+    const missing = files.filter((f) => !source.includes(`@/app/api/${f.replace(/\\/g, "/").replace(/\.ts$/, "")}`));
+    expect(missing).toEqual([]);
+    expect(files.length).toBeGreaterThan(10);
   });
 });

@@ -1,0 +1,23 @@
+# Teclado x Excluir conta: com o teclado aberto no campo de senha, "Excluir definitivamente" e "Cancelar"
+# ficam visíveis. Não exclui nada: termina em "Cancelar", tocado na borda inferior (90% da altura): só
+# funciona se o botão inteiro estiver acima do teclado.
+# Requer uma conta com senha (a conta Google não mostra o campo).
+appId: ${APP_ID}
+---
+- runFlow: _open.yaml
+- tapOn:
+    id: "tab-profile"
+- scrollUntilVisible:
+    element: "Excluir conta"
+    centerElement: true
+- tapOn: "Excluir conta"
+- assertVisible: "Confirme sua senha.*"
+- tapOn: "Senha"
+- inputText: "senha-qualquer"
+- takeScreenshot: keyboard-delete-open
+- assertVisible: "Excluir definitivamente"
+- tapOn:
+    text: "Cancelar"
+    point: "50%,90%"
+# Voltou ao Perfil sem excluir.
+- assertVisible: "Preferências"
