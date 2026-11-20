@@ -1,4 +1,5 @@
 import type { ConfigContext, ExpoConfig } from "expo/config";
+import { type ConfigPlugin, withAndroidManifest } from "expo/config-plugins";
 
 const PROFILE_KEYS = ["development", "preview", "production"] as const;
 
@@ -22,6 +23,22 @@ const APP_CONFIG = {
 
 let logged = false;
 
+// O netinfo declara ACCESS_WIFI_STATE, o que faz a Google Play exigir android.hardware.wifi
+// e esconder o app de dispositivos sem Wi-Fi. Torna o recurso opcional.
+const withOptionalWifi: ConfigPlugin = (config) =>
+  withAndroidManifest(config, (mod) => {
+    const manifest = mod.modResults.manifest;
+    manifest.$["xmlns:tools"] ??= "http://schemas.android.com/tools";
+    const features = (manifest["uses-feature"] ??= []);
+    const wifi = features.find((f) => f.$["android:name"] === "android.hardware.wifi");
+    if (wifi) {
+      wifi.$["android:required"] = "false";
+    } else {
+      features.push({ $: { "android:name": "android.hardware.wifi", "android:required": "false" } });
+    }
+    return mod;
+  });
+
 export default ({ config }: ConfigContext): ExpoConfig => {
   if (!logged) {
     console.log(`🔥 Build app with environment => ${APP_CONFIG.ambient}`);
@@ -30,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   const { name, slug, scheme, icon, ios, android, origin } = getDynamicConfig();
 
-  return {
+  return withOptionalWifi({
     ...config,
     name,
     slug,
@@ -94,7 +111,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     runtimeVersion: {
       policy: "appVersion",
     },
-  };
+  });
 };
 
 function getDynamicConfig() {
