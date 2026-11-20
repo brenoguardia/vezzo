@@ -13,9 +13,8 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { authClient } from "@/auth/client";
-import { resolveGate, resolveProfileStatus, SPLASH_MAX_MS, shouldHideSplash } from "@/auth/guard";
-import { useInitialSessionPending } from "@/auth/useInitialSessionPending";
+import { resolveGate, SPLASH_MAX_MS, shouldHideSplash } from "@/auth/guard";
+import { useGateInputs } from "@/auth/useGateInputs";
 import { AppShellSkeleton, Button, Text, ToastHost } from "@/components/ui";
 import { clearHabitData } from "@/features/habits/hydrate";
 import { useHabitsSync } from "@/features/habits/useHabitsSync";
@@ -43,14 +42,8 @@ function RootLayout() {
   });
   const fontsReady = fontsLoaded || !!fontError;
 
-  const { data: session, isPending: sessionRefetching } = authClient.useSession();
-  const isPending = useInitialSessionPending(sessionRefetching);
-  const userId = session?.user.id;
-  const rawProfileStatus = useProfileStore((s) => s.status);
-  const hasProfile = useProfileStore((s) => s.profile !== null);
-  const ownerId = useProfileStore((s) => s.ownerId);
-  const profileStatus = resolveProfileStatus({ status: rawProfileStatus, hasProfile, ownerId, userId });
-  const onboardingDone = useProfileStore((s) => s.profile?.onboardingDone ?? false);
+  const { userId, input: gateInput } = useGateInputs();
+  const isPending = gateInput.sessionPending;
   const loadProfile = useProfileStore((s) => s.load);
   const clearProfile = useProfileStore((s) => s.clear);
 
@@ -67,7 +60,7 @@ function RootLayout() {
 
   // Termos e Privacidade são públicos: abrem sem esperar sessão/perfil (visitante na web, lojas).
   const isLegalRoute = useSegments()[0] === "(legal)";
-  const gate = resolveGate({ sessionPending: isPending, hasSession: !!userId, profileStatus, onboardingDone });
+  const gate = resolveGate(gateInput);
   const timezone = useProfileStore((s) => s.profile?.timezone ?? DEFAULT_TIMEZONE);
   useHabitsSync(gate === "tabs", timezone);
   useNotificationRuntime(gate === "tabs");
