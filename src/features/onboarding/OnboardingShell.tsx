@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SplitView } from "@/components/layout";
+import { KeyboardScrollView, SplitView } from "@/components/layout";
 import { ProgressSteps, Text } from "@/components/ui";
 import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
@@ -72,11 +72,8 @@ export function OnboardingShell({ step, title, titleVariant = "authTitle", subti
   }
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.flex, { backgroundColor: theme.bg }]}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <ScrollView
+    <View style={[styles.flex, { backgroundColor: theme.bg }]}>
+      <KeyboardScrollView
         contentContainerStyle={[
           styles.scroll,
           {
@@ -86,16 +83,14 @@ export function OnboardingShell({ step, title, titleVariant = "authTitle", subti
             paddingRight: sides.right,
           },
         ]}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
       >
         <View style={{ width: contentWidth, paddingHorizontal: layout.authMargin, flexGrow: 1 }}>
           {heading}
           {children ? <View style={styles.body}>{children}</View> : null}
           <View style={styles.footer}>{footer}</View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardScrollView>
+    </View>
   );
 }
 

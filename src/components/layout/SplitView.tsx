@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLayoutMode } from "@/lib/useLayoutMode";
 import { useTheme } from "@/lib/useTheme";
 import { layout } from "@/shared/tokens";
+import { KeyboardScrollView } from "./KeyboardScrollView";
 
 interface Props {
   left: ReactNode;
@@ -30,7 +31,7 @@ export function SplitView({ left, right, active = "left", tabBar = true, rightSc
   if (!dual) return <>{active === "left" ? left : right}</>;
 
   const pane = (children: ReactNode, testID: string) => (
-    <ScrollView
+    <KeyboardScrollView
       testID={testID}
       style={[styles.pane, { width: columnWidth }]}
       contentContainerStyle={{
@@ -40,10 +41,9 @@ export function SplitView({ left, right, active = "left", tabBar = true, rightSc
         paddingHorizontal: layout.dualPaddingSide,
         gap: 14,
       }}
-      showsVerticalScrollIndicator={false}
     >
       {children}
-    </ScrollView>
+    </KeyboardScrollView>
   );
 
   return (

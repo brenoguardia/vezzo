@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { ScrollView, StyleSheet, Switch, View } from "react-native";
 import type { z } from "zod";
+import { KeyboardScrollView } from "@/components/layout";
 import { Button, Card, Chip, DayPills, EmojiField, Field, Stepper, Text, TimeChips } from "@/components/ui";
 import { dayLetters, dayNames } from "@/features/onboarding/locale";
 import { useLocale } from "@/i18n/useLocale";
@@ -83,7 +84,7 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
         />
       </View>
 
-      <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
+      <KeyboardScrollView contentContainerStyle={styles.body}>
         {showTemplates ? (
           <View style={styles.block}>
             <Text variant="label" tone="mute">
@@ -246,7 +247,7 @@ export function HabitForm({ defaultValues = BLANK_HABIT, showTemplates, onSubmit
           </Text>
         ) : null}
         {extra}
-      </ScrollView>
+      </KeyboardScrollView>
     </View>
   );
 }

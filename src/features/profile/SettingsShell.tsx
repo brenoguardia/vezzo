@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SplitView } from "@/components/layout";
+import { KeyboardScrollView, SplitView } from "@/components/layout";
 import { Text } from "@/components/ui";
 import { useT } from "@/i18n/useT";
 import { useLayoutMode } from "@/lib/useLayoutMode";
@@ -73,7 +73,7 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
   }
 
   return (
-    <ScrollView
+    <KeyboardScrollView
       testID="settings-scroll"
       style={{ backgroundColor: theme.bg }}
       contentContainerStyle={[
@@ -86,7 +86,6 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
           paddingRight: sides.right,
         },
       ]}
-      showsVerticalScrollIndicator={false}
     >
       <View
         style={{
@@ -99,7 +98,7 @@ export function SettingsShell({ title, back, children, footer, aside, asideScrol
         <View style={styles.body}>{children}</View>
         {footer ? <View style={styles.footer}>{footer}</View> : null}
       </View>
-    </ScrollView>
+    </KeyboardScrollView>
   );
 }
 

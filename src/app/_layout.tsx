@@ -12,6 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { authClient } from "@/auth/client";
 import { resolveGate } from "@/auth/guard";
 import { useInitialSessionPending } from "@/auth/useInitialSessionPending";
@@ -85,7 +86,7 @@ function RootLayout() {
   }
 
   return (
-    <>
+    <KeyboardProvider>
       <StatusBar style={theme.scheme === "dark" ? "light" : "dark"} />
       {gate === "error" && !isLegalRoute ? (
         <View style={[styles.error, { backgroundColor: theme.bg }]}>
@@ -113,7 +114,7 @@ function RootLayout() {
         </Stack>
       )}
       <ToastHost />
-    </>
+    </KeyboardProvider>
   );
 }
 
