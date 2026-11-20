@@ -7,7 +7,7 @@ type ProfileKey = (typeof PROFILE_KEYS)[number];
 const APP_NAME = "Vezzo" as const;
 const APP_SLUG = "vezzo" as const;
 const APP_SCHEMA = "vezzo" as const;
-const APP_VERSION = "1.1.0" as const;
+const APP_VERSION = "1.2.0" as const;
 const APP_IDENTIFIER = "com.itbuilder.vezzo" as const;
 
 const APP_CONFIG = {
