@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardScrollView } from "@/components/layout";
 import { Text } from "@/components/ui";
@@ -31,7 +32,7 @@ export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
   const contentWidth = Math.min(usableWidth, MAX_CONTENT_WIDTH);
 
   return (
-    <View style={[styles.flex, { backgroundColor: theme.bg }]}>
+    <KeyboardAvoidingView behavior="padding" style={[styles.flex, { backgroundColor: theme.bg }]}>
       <KeyboardScrollView
         contentContainerStyle={[
           styles.scroll,
@@ -69,7 +70,7 @@ export function AuthScreen({ title, subtitle, back, children, footer }: Props) {
           {footer ? <View style={styles.footer}>{footer}</View> : null}
         </View>
       </KeyboardScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

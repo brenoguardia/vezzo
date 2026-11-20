@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardScrollView, SplitView } from "@/components/layout";
 import { ProgressSteps, Text } from "@/components/ui";
@@ -72,7 +73,7 @@ export function OnboardingShell({ step, title, titleVariant = "authTitle", subti
   }
 
   return (
-    <View style={[styles.flex, { backgroundColor: theme.bg }]}>
+    <KeyboardAvoidingView behavior="padding" style={[styles.flex, { backgroundColor: theme.bg }]}>
       <KeyboardScrollView
         contentContainerStyle={[
           styles.scroll,
@@ -90,7 +91,7 @@ export function OnboardingShell({ step, title, titleVariant = "authTitle", subti
           <View style={styles.footer}>{footer}</View>
         </View>
       </KeyboardScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
