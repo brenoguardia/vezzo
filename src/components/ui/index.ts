@@ -12,6 +12,7 @@ export { Ring } from "./Ring";
 export { SegmentedControl } from "./SegmentedControl";
 export { Skeleton, SkeletonGroup } from "./Skeleton";
 export { Stepper } from "./Stepper";
+export { SwitchRow } from "./SwitchRow";
 export {
   AppShellSkeleton,
   ChartAreaSkeleton,

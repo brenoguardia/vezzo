@@ -1,4 +1,4 @@
-import { type ComponentRef, forwardRef, useState } from "react";
+import { type ComponentRef, forwardRef, useCallback, useRef, useState } from "react";
 import { Pressable, StyleSheet, TextInput, type TextInputProps, View } from "react-native";
 import { useTheme } from "@/lib/useTheme";
 import { fontFamily, radius } from "@/shared/tokens";
@@ -19,17 +19,32 @@ export const Field = forwardRef<FieldInput, FieldProps>(function Field(
 ) {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
+  const inner = useRef<FieldInput | null>(null);
+  const setRef = useCallback(
+    (node: FieldInput | null) => {
+      inner.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) ref.current = node;
+    },
+    [ref],
+  );
   const borderColor = error ? theme.danger : focused ? theme.acc : "transparent";
   return (
     <View>
-      <View style={[styles.box, { backgroundColor: theme.card, borderColor }]}>
+      {/* A caixa inteira (≥ 64 dp) foca o campo: o TextInput sozinho tem só ~22 dp de altura. Fora da árvore de acessibilidade para não duplicar o foco do leitor de tela. */}
+      <Pressable
+        accessible={false}
+        importantForAccessibility="no"
+        onPress={() => inner.current?.focus()}
+        style={[styles.box, { backgroundColor: theme.card, borderColor }]}
+      >
         <View style={styles.main}>
           <Text variant="label" tone="mute" style={styles.label}>
             {label}
           </Text>
           <TextInput
             maxFontSizeMultiplier={MAX_FONT_SCALE}
-            ref={ref}
+            ref={setRef}
             accessibilityLabel={label}
             placeholderTextColor={theme.mute}
             selectionColor={theme.acc}
@@ -46,7 +61,7 @@ export const Field = forwardRef<FieldInput, FieldProps>(function Field(
           />
         </View>
         {right}
-      </View>
+      </Pressable>
       {error ? (
         <Text variant="caption" tone="danger" style={styles.error} accessibilityRole="alert">
           {error}

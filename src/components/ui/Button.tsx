@@ -6,7 +6,8 @@ import { Text } from "./Text";
 interface Props {
   label: string;
   onPress?: () => void;
-  variant?: "primary" | "secondary";
+  /** `danger`: ação destrutiva (Excluir conta), com cor de perigo e texto legível nos dois temas. */
+  variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
   loading?: boolean;
   /** Elemento à esquerda do rótulo (ex.: logo do Google/Apple). */
@@ -17,6 +18,8 @@ interface Props {
 export function Button({ label, onPress, variant = "primary", disabled, loading, left, style }: Props) {
   const theme = useTheme();
   const primary = variant === "primary";
+  const danger = variant === "danger";
+  const filled = primary || danger;
   const inactive = disabled || loading;
   return (
     <Pressable
@@ -26,20 +29,20 @@ export function Button({ label, onPress, variant = "primary", disabled, loading,
       onPress={onPress}
       style={({ pressed }) => [
         styles.base,
-        primary ? { backgroundColor: theme.acc } : { borderWidth: 1, borderColor: theme.line },
+        filled ? { backgroundColor: danger ? theme.danger : theme.acc } : { borderWidth: 1, borderColor: theme.line },
         // 0,55 mantém o rótulo legível (≈4,4:1) também no tema escuro; com 0,4 caía para ≈2,8:1.
         { opacity: disabled ? 0.55 : pressed ? 0.85 : 1 },
         style,
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={primary ? theme.accInk : theme.ink} />
+        <ActivityIndicator color={danger ? theme.dangerInk : primary ? theme.accInk : theme.ink} />
       ) : (
         <View style={styles.content}>
           {left}
           <Text
-            tone={primary ? "accInk" : "ink"}
-            style={{ fontFamily: primary ? fontFamily.bold : fontFamily.semibold, fontSize: 16, lineHeight: 22 }}
+            tone={danger ? "dangerInk" : primary ? "accInk" : "ink"}
+            style={{ fontFamily: filled ? fontFamily.bold : fontFamily.semibold, fontSize: 16, lineHeight: 22 }}
           >
             {label}
           </Text>

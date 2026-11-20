@@ -1,8 +1,7 @@
 import { type Control, Controller, useFormState } from "react-hook-form";
-import { StyleSheet, Switch, View } from "react-native";
-import { Card, Chip, EmojiField, Field, Text } from "@/components/ui";
+import { StyleSheet, View } from "react-native";
+import { Chip, EmojiField, Field, SwitchRow, Text } from "@/components/ui";
 import { useT } from "@/i18n/useT";
-import { useTheme } from "@/lib/useTheme";
 import { REWARD_PRESETS } from "@/shared/reward";
 import { DEFAULT_REWARD_EMOJI, REWARD_TITLE_MAX } from "@/shared/schemas";
 import type { HabitFormOutput, HabitFormValues } from "./HabitForm";
@@ -12,7 +11,6 @@ const DEFAULT_DAYS = 90;
 /** Bloco opcional "Meta e presente" do formulário de hábito. `reward: null` significa sem presente. */
 export function RewardFields({ control }: { control: Control<HabitFormValues, unknown, HabitFormOutput> }) {
   const t = useT();
-  const theme = useTheme();
   const { errors } = useFormState({ control, name: "reward" });
 
   return (
@@ -27,22 +25,14 @@ export function RewardFields({ control }: { control: Control<HabitFormValues, un
           const reward = field.value;
           return (
             <>
-              <Card radius={16} padding={14} style={styles.switchRow}>
-                <View style={styles.flex}>
-                  <Text variant="bodyMedium">{t("habit.reward.toggle")}</Text>
-                  <Text variant="caption" tone="mute">
-                    {t("habit.reward.hint")}
-                  </Text>
-                </View>
-                <Switch
-                  accessibilityLabel={t("habit.reward.toggle")}
-                  value={!!reward}
-                  onValueChange={(on) =>
-                    field.onChange(on ? { title: "", emoji: DEFAULT_REWARD_EMOJI, days: DEFAULT_DAYS } : null)
-                  }
-                  trackColor={{ true: theme.acc, false: theme.line }}
-                />
-              </Card>
+              <SwitchRow
+                label={t("habit.reward.toggle")}
+                hint={t("habit.reward.hint")}
+                value={!!reward}
+                onValueChange={(on) =>
+                  field.onChange(on ? { title: "", emoji: DEFAULT_REWARD_EMOJI, days: DEFAULT_DAYS } : null)
+                }
+              />
 
               {reward ? (
                 <>
@@ -93,8 +83,6 @@ export function RewardFields({ control }: { control: Control<HabitFormValues, un
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
   block: { gap: 10 },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  switchRow: { flexDirection: "row", alignItems: "center", gap: 12 },
 });

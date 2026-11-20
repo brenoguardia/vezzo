@@ -15,6 +15,8 @@ export interface Palette {
   line: string;
   accInk: string;
   danger: string;
+  /** Texto sobre `danger` (botão de exclusão): garante 4,5:1 nos dois temas. */
+  dangerInk: string;
   /** Alfa (hex) aplicado à cor de destaque no fundo do emoji. */
   tintAlpha: string;
 }
@@ -28,6 +30,7 @@ export const palettes: Record<ThemeScheme, Palette> = {
     line: "#2e332f",
     accInk: "#14170c",
     danger: "#ee6f6f",
+    dangerInk: "#14170c",
     tintAlpha: "30",
   },
   light: {
@@ -38,6 +41,7 @@ export const palettes: Record<ThemeScheme, Palette> = {
     line: "#e4e1d8",
     accInk: "#14170c",
     danger: "#bf3a3a",
+    dangerInk: "#ffffff",
     tintAlpha: "40",
   },
 };

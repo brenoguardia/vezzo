@@ -114,7 +114,7 @@ describe("bloco Meta e presente do formulário", () => {
     const onSubmit = jest.fn(async (_values: unknown) => {});
     await form(onSubmit);
     await fireEvent.changeText(screen.getByLabelText("Nome"), "Meditar");
-    await fireEvent(screen.getByLabelText("Definir um presente"), "valueChange", true);
+    await fireEvent.press(screen.getByLabelText("Definir um presente"));
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Salvar" }).props.accessibilityState.disabled).toBe(true),
     );

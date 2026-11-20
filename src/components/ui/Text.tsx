@@ -2,7 +2,7 @@ import { Text as RNText, type TextProps as RNTextProps } from "react-native";
 import { useTheme } from "@/lib/useTheme";
 import { type TextVariant, typography } from "@/shared/tokens";
 
-export type TextTone = "ink" | "mute" | "acc" | "accInk" | "danger";
+export type TextTone = "ink" | "mute" | "acc" | "accInk" | "danger" | "dangerInk";
 
 /** Teto do Dynamic Type / fonte do Android (docs: suporte até 130%). */
 export const MAX_FONT_SCALE = 1.3;
