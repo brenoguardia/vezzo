@@ -202,7 +202,7 @@ export const en: Catalog<typeof ptBR> = {
     bestDay: "Best day",
     streak: "Streak",
     streakDays: { one: "%{count} day", other: "%{count} days" },
-    record: "Best: %{count}",
+    record: { one: "Best: %{count} day", other: "Best: %{count} days" },
     byHabit: "By habit",
     empty: "No data yet",
     emptySub: "Complete habits to see your progress here.",

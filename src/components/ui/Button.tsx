@@ -27,7 +27,8 @@ export function Button({ label, onPress, variant = "primary", disabled, loading,
       style={({ pressed }) => [
         styles.base,
         primary ? { backgroundColor: theme.acc } : { borderWidth: 1, borderColor: theme.line },
-        { opacity: disabled ? 0.4 : pressed ? 0.85 : 1 },
+        // 0,55 mantém o rótulo legível (≈4,4:1) também no tema escuro; com 0,4 caía para ≈2,8:1.
+        { opacity: disabled ? 0.55 : pressed ? 0.85 : 1 },
         style,
       ]}
     >

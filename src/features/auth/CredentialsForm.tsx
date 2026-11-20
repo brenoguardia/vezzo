@@ -102,13 +102,15 @@ export function CredentialsForm({ mode }: { mode: "sign-up" | "sign-in" }) {
           />
         )}
       />
-      <Link href="/forgot-password" asChild>
-        <Pressable accessibilityRole="link" style={styles.forgot}>
-          <Text variant="captionStrong" tone="acc" style={styles.forgotText}>
-            {t("auth.forgot")}
-          </Text>
-        </Pressable>
-      </Link>
+      {signUp ? null : (
+        <Link href="/forgot-password" asChild>
+          <Pressable accessibilityRole="link" style={styles.forgot}>
+            <Text variant="captionStrong" tone="acc" style={styles.forgotText}>
+              {t("auth.forgot")}
+            </Text>
+          </Pressable>
+        </Link>
+      )}
 
       {rootError ? (
         <Text variant="caption" tone="danger" accessibilityRole="alert">

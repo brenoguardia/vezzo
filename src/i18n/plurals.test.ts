@@ -15,6 +15,8 @@ describe("plural de dias", () => {
     ["pt-BR", "home.streakDays", 1, "Sequência de 1 dia"],
     ["pt-BR", "habit.reward.best", 1, "Melhor sequência: 1 dia"],
     ["pt-BR", "streakScreen.record", 1, "Recorde: 1 dia"],
+    ["pt-BR", "progress.record", 12, "Recorde: 12 dias"],
+    ["en", "progress.record", 1, "Best: 1 day"],
     ["en", "progress.streakDays", 0, "0 days"],
     ["en", "progress.streakDays", 1, "1 day"],
     ["en", "progress.streakDays", 5, "5 days"],

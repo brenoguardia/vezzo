@@ -196,7 +196,7 @@ export const ptBR = {
     bestDay: "Melhor dia",
     streak: "Sequência",
     streakDays: { one: "%{count} dia", other: "%{count} dias" },
-    record: "Recorde: %{count}",
+    record: { one: "Recorde: %{count} dia", other: "Recorde: %{count} dias" },
     byHabit: "Por hábito",
     empty: "Sem dados ainda",
     emptySub: "Conclua hábitos para ver seu progresso aqui.",

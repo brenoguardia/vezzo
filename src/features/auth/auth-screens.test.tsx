@@ -84,6 +84,11 @@ describe("links legais", () => {
 });
 
 describe("sign-up", () => {
+  it("não oferece Esqueci minha senha no cadastro", async () => {
+    await render(<SignUp />);
+    expect(screen.queryByText("Esqueci minha senha")).toBeNull();
+  });
+
   it("mantém Continuar desabilitado até o formulário ser válido e mostra erro i18n", async () => {
     await render(<SignUp />);
     const button = () => screen.getByRole("button", { name: "Continuar" });
@@ -127,6 +132,11 @@ describe("sign-up", () => {
 });
 
 describe("sign-in", () => {
+  it("oferece Esqueci minha senha", async () => {
+    await render(<SignIn />);
+    expect(screen.getByText("Esqueci minha senha")).toBeTruthy();
+  });
+
   async function fillAndSubmit() {
     await fireEvent.changeText(screen.getByLabelText("E-mail"), "ana@exemplo.com");
     await fireEvent.changeText(screen.getByLabelText("Senha"), "qualquer");
