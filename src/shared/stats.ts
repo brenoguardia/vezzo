@@ -1,5 +1,5 @@
 // Estatísticas puras (docs/03). Sem acesso a banco nem a relógio.
-import { addDays, eachDay, startOfWeek, weekdayIndex, type Ymd } from "./dates";
+import { addDays, diffDays, eachDay, startOfWeek, weekdayIndex, type Ymd } from "./dates";
 import type { LogStatus } from "./logs";
 
 export type StatHabit = {
@@ -100,27 +100,40 @@ export const bestStreak = (h: readonly StatHabit[], l: readonly StatLog[], today
 
 export type WeekCompletion = { start: Ymd; end: Ymd; done: number; counted: number; completion: number };
 
-/** Média ponderada pelos hábitos agendados nos 7 dias (segunda a domingo). */
+/**
+ * Média ponderada pelos hábitos agendados na semana (segunda a domingo). Com `today`, só conta os
+ * dias até ele: dias que ainda não chegaram não entram no denominador (senão numa sexta com tudo
+ * feito a conclusão sairia 5/7). `end` segue sendo o domingo.
+ */
 export function weekCompletion(
   habits: readonly StatHabit[],
   logs: readonly StatLog[],
   anyDateInWeek: Ymd,
+  today?: Ymd,
 ): WeekCompletion {
   const start = startOfWeek(anyDateInWeek);
   const end = addDays(start, 6);
-  const days = dailyStats(habits, logs, start, end);
+  const last = today !== undefined && today < end ? today : end;
+  const days = dailyStats(habits, logs, start, last);
   const done = days.reduce((n, d) => n + d.done, 0);
   const counted = days.reduce((n, d) => n + d.counted, 0);
   return { start, end, done, counted, completion: counted ? done / counted : 0 };
 }
 
+/**
+ * Semana atual vs anterior. Com `today`, a semana anterior é medida no mesmo trecho (segunda até o
+ * mesmo dia da semana), para comparar períodos do mesmo tamanho.
+ */
 export function weekComparison(
   habits: readonly StatHabit[],
   logs: readonly StatLog[],
   anyDateInWeek: Ymd,
+  today?: Ymd,
 ): { current: WeekCompletion; previous: WeekCompletion | null; delta: number | null } {
-  const current = weekCompletion(habits, logs, anyDateInWeek);
-  const prev = weekCompletion(habits, logs, addDays(current.start, -7));
+  const current = weekCompletion(habits, logs, anyDateInWeek, today);
+  const previousStart = addDays(current.start, -7);
+  const elapsed = today !== undefined && today < current.end ? diffDays(current.start, today) : 6;
+  const prev = weekCompletion(habits, logs, previousStart, addDays(previousStart, Math.max(elapsed, 0)));
   const previous = prev.counted > 0 ? prev : null;
   return { current, previous, delta: previous ? current.completion - previous.completion : null };
 }

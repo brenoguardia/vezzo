@@ -15,7 +15,7 @@ export function useWeekStats() {
   const logs = useHabitsStore((s) => s.logs);
   return useMemo(() => {
     const { statHabits, statLogs } = statInputs(habits, logs, timeZone);
-    const cmp = weekComparison(statHabits, statLogs, today);
+    const cmp = weekComparison(statHabits, statLogs, today, today);
     const { from, to } = periodRange("week", today);
     return {
       cmp,

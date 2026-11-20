@@ -116,6 +116,30 @@ describe("weekCompletion", () => {
     expect(cmp.previous?.completion).toBe(0);
     expect(cmp.delta).toBeCloseTo(0.7);
   });
+  it("com today, só conta os dias até ele (o futuro não vira falha)", () => {
+    // Quinta 05/11: seg-qui cumpridos; sex, sáb e dom ainda não chegaram.
+    const week = weekCompletion([daily, mwf], logs, "2026-11-05", "2026-11-05");
+    expect(week).toMatchObject({ start: "2026-11-02", end: "2026-11-08", done: 6, counted: 6 });
+    expect(week.completion).toBe(1);
+  });
+  it("com today na semana futura inteira não há dias contáveis", () => {
+    const week = weekCompletion([daily], [], "2026-11-09", "2026-11-05");
+    expect(week).toMatchObject({ done: 0, counted: 0, completion: 0 });
+  });
+  it("compara com o mesmo trecho da semana anterior", () => {
+    const antigo: StatHabit = { ...daily, createdAt: "2026-10-01" };
+    const feitos = [
+      ...["26", "27", "28", "29"].map((d) => log("h1", `2026-10-${d}`)),
+      ...["02", "03", "04", "05"].map((d) => log("h1", `2026-11-${d}`)),
+    ];
+    const cmp = weekComparison([antigo], feitos, "2026-11-05", "2026-11-05");
+    expect(cmp.current.completion).toBe(1);
+    expect(cmp.previous?.completion).toBe(1);
+    expect(cmp.delta).toBe(0);
+    // Sem today, a semana anterior inteira (4/7) é a base: comportamento antigo.
+    const antiga = weekComparison([antigo], feitos, "2026-11-05");
+    expect(antiga.previous?.completion).toBeCloseTo(4 / 7);
+  });
   it("sem semana anterior comparável, delta é null", () => {
     const novo = { ...daily, createdAt: "2026-11-02" };
     const cmp = weekComparison([novo], [], "2026-11-05");

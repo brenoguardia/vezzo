@@ -30,7 +30,7 @@ Lista do que falta fazer fora do código. O que depende de conta, domínio ou de
 3. Entrar no app com o e-mail de demonstração, escolher o idioma em Perfil → Idioma e desligar o "Tools button" do menu do dev client (senão a engrenagem aparece nas capturas).
 4. Barra de status limpa: `adb shell settings put global sysui_demo_allowed 1` e broadcasts `com.android.systemui.demo` (`clock hhmm 0941`, `battery level 100`, `network wifi show level 4 fully true`, `mobile hide`, `notifications visible false`).
 5. Abrir cada tela por deep link (`vezzo-development://home|habits|theme|streak`; o detalhe do hábito com presente e as anotações usam o id do "Meditar": `vezzo-development://habit/<id>` e `.../habit/<id>/notes`) e capturar com `adb exec-out screencap -p`. O emulador tem 1280 × 2856 (proporção acima de 2:1, fora do limite do Play), por isso as imagens finais são compostas em 1080 × 1920 com legenda e moldura por `bun scripts/store-compose.ts <captura.png> <saida.png> "<legenda>" "<destaque>"` (Chrome headless, fonte Manrope).
-6. O percentual de Progresso (semana e mês) conta os dias futuros no denominador (ex.: 66% e "-34% vs semana passada" numa sexta com tudo feito); por isso a tela Progresso ficou fora das capturas.
+6. A tela Progresso ficou fora das capturas porque o percentual de semana e mês contava os dias futuros no denominador (66% e "-34% vs semana passada" numa sexta com tudo feito). A regra foi corrigida (conta só até hoje); a tela já pode entrar numa próxima rodada de capturas.
 
 ## Questionários de privacidade das lojas (rascunho de respostas)
 | Dado | Coleta | Vinculado ao usuário | Finalidade |
