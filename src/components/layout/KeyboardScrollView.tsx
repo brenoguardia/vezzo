@@ -16,9 +16,10 @@ const KEYBOARD_BOTTOM_OFFSET = 48 + MAX_EXTRA_OFFSET;
  */
 export function KeyboardScrollView(props: KeyboardAwareScrollViewProps) {
   const insets = useSafeAreaInsets();
-  const keyboardOffSet =
-    Math.max(insets.bottom + MAX_EXTRA_OFFSET, KEYBOARD_BOTTOM_OFFSET) ??
-    KEYBOARD_BOTTOM_OFFSET;
+  const keyboardOffSet = Math.max(
+    insets.bottom + MAX_EXTRA_OFFSET,
+    KEYBOARD_BOTTOM_OFFSET,
+  );
 
   return (
     <KeyboardAwareScrollView
