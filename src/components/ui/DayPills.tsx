@@ -29,7 +29,8 @@ export function DayPills({ labels, value, onChange, accessibilityLabels }: Props
             accessibilityRole="button"
             accessibilityLabel={accessibilityLabels?.[day] ?? label}
             accessibilityState={{ selected: active }}
-            hitSlop={{ top: 10, bottom: 10 }}
+            // Altura 29 + 20 = 49 dp; largura de 40 dp (onboarding) + 4 = 44 dp, sem invadir o vizinho (gap 6).
+            hitSlop={{ top: 10, bottom: 10, left: 2, right: 2 }}
             onPress={() => toggle(day)}
             style={[styles.pill, { backgroundColor: active ? theme.acc : theme.line }]}
           >
