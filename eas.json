@@ -13,7 +13,7 @@
       "channel": "development",
       "env": {
         "APP_ENV": "development",
-        "EXPO_PUBLIC_API_URL": "https://dev.vezzo.cloud"
+        "EXPO_PUBLIC_API_URL": "https://hml.vezzo.cloud"
       }
     },
     "preview": {
