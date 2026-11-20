@@ -12,10 +12,8 @@ appId: ${APP_ID}
 - scrollUntilVisible:
     element: "Definir um presente"
     centerElement: true
-# O interruptor é o segundo elemento com esse rótulo (o primeiro é o texto do cartão).
-- tapOn:
-    text: "Definir um presente"
-    index: 1
+# A linha inteira é um único interruptor (SwitchRow): um só elemento com esse rótulo.
+- tapOn: "Definir um presente"
 - tapOn: "Ex.: Um iPhone novo"
 - inputText: "Viagem"
 - hideKeyboard
